@@ -90,6 +90,20 @@ function Sidebar({
             <ChevronRight className="size-4" />
           )}
         </Button>
+        <div className="flex items-center gap-3 px-5 pt-6 pb-2">
+          <Image
+            src="/cart.png" // Place your logo in public/company-logo.png
+            alt="Company Logo"
+            width={80}
+            height={80}
+            className="rounded-full"
+          />
+          {sidebar && (
+            <span className="font-bold text-lg text-primary whitespace-nowrap">
+              MyCompany
+            </span>
+          )}
+        </div>
         {/* <Logo sidebar={sidebar} /> */}
         <div className="max-xl:lg:px-2 px-5 pt-10 grid gap-2 auto-rows-min overflow-auto">
           {menu.map(({ label, url, icon }, i) => (
@@ -168,7 +182,7 @@ function User({ sidebar }: { sidebar: boolean }) {
           >
             <Image
               alt=""
-              src="/suffah.png"
+              src="/profile.jpg"
               width={100}
               height={100}
               className="size-10"
