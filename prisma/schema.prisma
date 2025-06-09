@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model user {
+  id                  String   @id @default(cuid())
+  username            String?
+  phone               String   @unique
+  email               String?  @unique
+  photo               String?
+  role                Role     @default(USER) // Only one admin will have ADMIN
+  balance             Decimal  @default(0.00)
+  account             String   @default("")
+  isBlocked           Boolean  @default(false)
+  invitationCode      String
+  myCode              String   @unique
+  password            String
+  transactionPassword String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  rechargeRecords   rechargeRecord[]
+  withdrewalRecords withdrewalRecord[]
+  orders            order[]
+  withdrewalAccount withdrewalAccount[]
+}
+
+model campanyAccount {
+  id      String @id @default(cuid())
+  name    String
+  account String
+}
+
+model rechargeRecord {
+  id        String   @id @default(cuid())
+  amount    Decimal
+  photo     String?
+  status    Status   @default(PENDING)
+  createdAt DateTime @default(now())
+
+  user   user   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model withdrewalRecord {
+  id        String   @id @default(cuid())
+  amount    Decimal
+  createdAt DateTime @default(now())
+  status    Status   @default(PENDING)
+
+  user   user   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model withdrewalAccount {
+  id      String @id @default(cuid())
+  name    String
+  account String
+  user    user   @relation(fields: [userId], references: [id])
+  userId  String
+}
+
+model product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal
+  stock       Int      @default(0)
+  image       String?
+  createdAt   DateTime @default(now())
+
+  orders order[]
+}
+
+model order {
+  id        String   @id @default(cuid())
+  quantity  Int
+  total     Decimal
+  createdAt DateTime @default(now())
+
+  // User who ordered
+  user   user   @relation(fields: [userId], references: [id])
+  userId String
+
+  // Product being ordered
+  product   product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model post {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+}
