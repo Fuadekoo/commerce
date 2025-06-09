@@ -1,58 +1,64 @@
-import NextAuth from "next-auth";
-import prisma from "./db";
+import NextAuth, { CredentialsSignin, NextAuthConfig } from "next-auth";
+import { DefaultJWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
+import bcryptjs from "bcryptjs";
+import prisma from "./db";
 import { loginSchema } from "./zodSchema";
+import { Role } from "@prisma/client";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+declare module "next-auth" {
+  interface User {
+    id?: string;
+    role: Role;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
+    id: string;
+    role: Role;
+  }
+}
+
+export class CustomError extends CredentialsSignin {
+  constructor(code: string) {
+    super();
+    this.code = code;
+  }
+}
+
+const authConfig = {
+  pages: {
+    signIn: "/signin",
+    signOut: "/signout",
+  },
+  callbacks: {
+    authorized: async () => {
+      return true;
+    },
+    jwt: async ({ token, user }) => {
+      return { ...token, ...user };
+    },
+    session: async ({ session, token }) => {
+      return { ...session, user: { ...session.user, ...token } };
+    },
+  },
   providers: [
     Credentials({
-      name: "Credentials",
-      credentials: {
-        phone: { label: "Phone", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
       async authorize(credentials) {
-        const result = loginSchema.safeParse(credentials);
-        if (!result.success) {
-          throw new Error("Invalid credentials");
-        }
-        // Find user by phone and password
-        const user = await prisma.user.findUnique({
-          where: {
-            phone: result.data.phone,
-            password: result.data.password,
-          },
+        const { phone, password } = await loginSchema.parseAsync(credentials);
+        const user = await prisma.user.findFirst({
+          where: { phone },
+          select: { id: true, role: true, password: true },
         });
-
-        if (!user) {
-          throw new Error("Invalid credentials");
-        }
-        // Only return id, phone, and email for session
-        return {
-          id: user.id,
-          phone: user.phone,
-          email: user.email,
-        };
+        if (!user) throw new CustomError("Invalid Phone Number");
+        if (!user.password) throw new CustomError("Password Not Set");
+        if (!(await bcryptjs.compare(password, user.password)))
+          throw new CustomError("Invalid Password");
+        return { id: user.id, role: user.role };
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        // token.phone = user.;
-        token.email = user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      session.user.id = token.id as string;
-      // session.user.phone = token.phone;
-      session.user.email = token.email ?? "";
-      return session;
-    },
-  },
-});
+} satisfies NextAuthConfig;
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

@@ -10,7 +10,7 @@ CREATE TABLE `user` (
     `account` VARCHAR(191) NOT NULL DEFAULT '',
     `isBlocked` BOOLEAN NOT NULL DEFAULT false,
     `invitationCode` VARCHAR(191) NOT NULL,
-    `myCode` VARCHAR(191) NOT NULL DEFAULT SUBSTRING(REPLACE(UUID(), '-', ''), 1, 7),
+    `myCode` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `transactionPassword` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -18,6 +18,7 @@ CREATE TABLE `user` (
 
     UNIQUE INDEX `user_phone_key`(`phone`),
     UNIQUE INDEX `user_email_key`(`email`),
+    UNIQUE INDEX `user_myCode_key`(`myCode`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

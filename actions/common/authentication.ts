@@ -19,9 +19,9 @@ export async function authenticate(
     return { message: "Invalid email or password" };
   }
   console.log("sign in successfully");
-  // refore redirect display a success message return
+  // before redirect display a success message return
 
-  redirect("/en/chat"); // Only called if login is successful
+  redirect("/en/admin/dashboard"); // Only called if login is successful
   return { message: "Login successful" };
 }
 

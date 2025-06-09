@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Providers from "./providers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -25,9 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-      // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="overflow-hidden"
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
