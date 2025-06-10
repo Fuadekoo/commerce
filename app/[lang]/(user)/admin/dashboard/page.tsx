@@ -3,6 +3,7 @@ import React from "react";
 import DataCard from "./data-card";
 import CustomerStat from "./customer-stat";
 import Progress from "./progress";
+import TopUsers from "./top-users";
 
 function Page() {
   return (
@@ -11,17 +12,20 @@ function Page() {
         Dashboard Overview
       </h1>
 
-      <div className="flex gap-8 flex-wrap">
-        <div className="w-full mb-8">
+      <div className="grid gap-8 grid-cols-1">
+        <div>
           <DataCard />
         </div>
-        <div className="flex w-full gap-8 h-4">
-          <div className="flex-2">
+        <div className="grid grid-cols-3 gap-8">
+          <div className="col-span-2">
             <CustomerStat />
           </div>
-          <div className="flex-1">
+          <div className="col-span-1">
             <Progress />
           </div>
+        </div>
+        <div className="mt-8">
+          <TopUsers />
         </div>
       </div>
     </div>

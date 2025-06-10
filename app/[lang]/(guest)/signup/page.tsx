@@ -9,8 +9,11 @@ import { z } from "zod";
 import { Input } from "@heroui/react";
 import Loading from "@/components/loading";
 import { addToast, Button, Progress } from "@heroui/react";
+import { useSearchParams } from "next/navigation";
 
 function Page() {
+  const searchParams = useSearchParams();
+  const invitationCodeFromUrl = searchParams.get("invitationCode") || "";
   const [step, setStep] = useState(1);
   const totalSteps = 2;
 
@@ -20,10 +23,21 @@ function Page() {
     formState: { errors },
     trigger,
     reset,
+    setValue, // <-- add setValue here
   } = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     mode: "onTouched",
+    defaultValues: {
+      invitationCode: invitationCodeFromUrl,
+    },
   });
+
+  // Update invitationCode if it changes in the URL
+  useEffect(() => {
+    if (invitationCodeFromUrl) {
+      setValue("invitationCode", invitationCodeFromUrl);
+    }
+  }, [invitationCodeFromUrl, setValue]);
 
   const [response, action, isLoading] = useAction(newUser, [
     ,
@@ -126,6 +140,15 @@ function Page() {
               >
                 Next
               </Button>
+              <div className="mt-4 text-center">
+                <span className="text-gray-600">Are you have a account? </span>
+                <a
+                  href="/en/login"
+                  className="text-green-600 font-semibold hover:underline"
+                >
+                  Login
+                </a>
+              </div>
             </>
           )}
 

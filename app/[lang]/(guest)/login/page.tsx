@@ -78,6 +78,15 @@ function Page() {
           >
             {loading ? <Loading size={24} /> : "Login"}
           </Button>
+          <div className="mt-4 text-center">
+            <span className="text-gray-600">Don't have an account? </span>
+            <a
+              href="/en/signup"
+              className="text-green-600 font-semibold hover:underline"
+            >
+              Sign Up
+            </a>
+          </div>
         </form>
       </div>
     </div>
