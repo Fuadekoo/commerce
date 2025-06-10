@@ -8,7 +8,8 @@ import { signupSchema } from "@/lib/zodSchema";
 import { z } from "zod";
 import { Input } from "@heroui/react";
 import Loading from "@/components/loading";
-import { addToast, Button, Progress } from "@heroui/react";
+import { Button, Progress } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { useSearchParams } from "next/navigation";
 
 function Page() {

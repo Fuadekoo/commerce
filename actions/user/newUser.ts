@@ -2,9 +2,8 @@
 import prisma from "@/lib/db";
 import { signupSchema } from "@/lib/zodSchema";
 import { z } from "zod";
-import { v4 as uuidv4 } from "uuid"; // Add this impo
+import { v4 as uuidv4 } from "uuid";
 import { auth } from "@/lib/auth";
-// const session = await auth();
 
 export async function newUser(data: z.infer<typeof signupSchema>) {
   try {
@@ -15,9 +14,21 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
       };
     }
 
-    //   check the password and confirm password is similar
+    // Check the password and confirm password is similar
     if (parsed.data.password !== parsed.data.confirmPassword) {
       return { message: "Password and confirm password do not match" };
+    }
+
+    // Check invitationCode is present in myCode of a user (if provided)
+    if (parsed.data.invitationCode) {
+      const inviter = await prisma.user.findUnique({
+        where: { myCode: parsed.data.invitationCode },
+        select: { id: true },
+      });
+      if (!inviter) {
+        console.log("Invalid invitation code:", parsed.data.invitationCode);
+        return { message: "Invalid invitation code" };
+      }
     }
 
     // Generate myCode
@@ -29,8 +40,8 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
         email: parsed.data.email,
         password: parsed.data.password,
         phone: parsed.data.phone,
-        invitationCode: parsed.data.invitationCode ?? "", // Provide a default or get from data
-        transactionPassword: parsed.data.transactionPassword ?? "", // Provide a default or get from data
+        invitationCode: parsed.data.invitationCode ?? "",
+        transactionPassword: parsed.data.transactionPassword ?? "",
         myCode,
       },
     });
@@ -39,7 +50,6 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
     console.error(error);
     return {
       message: "Error creating user",
-      //   error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
