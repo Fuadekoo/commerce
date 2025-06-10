@@ -29,6 +29,10 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  // if the login user is not admin then redirect to page is forbideen page or 404 page
+  if (!session || !session.user || session.user.role !== "ADMIN") {
+    redirect("/en/forbidden");
+  }
 
   const isManager = true;
 

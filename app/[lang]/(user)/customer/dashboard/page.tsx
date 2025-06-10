@@ -1,9 +1,17 @@
 import React from "react";
+import CardData from "./card-data";
+import UserStat from "./user-stat";
 
 function Page() {
   return (
-    <div>
-      <h1>this is a dashboard page</h1>
+    <div className="dashboard-grid">
+      <div>
+        <h1>Dashboard</h1>
+        <CardData />
+      </div>
+      <div>
+        <UserStat />
+      </div>
     </div>
   );
 }

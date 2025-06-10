@@ -36,7 +36,6 @@ export async function authenticate(
   }
 
   return { message: "Login successful" };
-  return { message: "Login successful" };
 }
 
 export async function logout() {
@@ -52,7 +51,7 @@ export async function logout() {
 export async function checkAuthentication() {
   const session = await signIn("credentials", { redirect: false });
   if (!session || !session.user) {
-    redirect("/en/guest/login");
+    redirect("/en/login");
   }
   return session;
 }

@@ -9,6 +9,7 @@ import {
   DropdownTrigger,
   Link,
 } from "@heroui/react";
+import Theme from "./theme";
 import { AlignLeft, ChevronLeft, ChevronRight, DoorOpen } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -162,7 +163,7 @@ function Header({
 function User({ sidebar }: { sidebar: boolean }) {
   const pathname = usePathname(),
     [, lang] = pathname.split("/"),
-    [data, datas, isLoading] = useAction(getUser, [true, () => {}]);
+    [data, refresh, isLoading] = useAction(getUser, [true, () => {}]);
 
   return (
     <Dropdown className="overflow-hidden">
