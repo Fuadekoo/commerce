@@ -3,6 +3,7 @@ import { signIn, signOut } from "../../lib/auth";
 import { z } from "zod";
 import { loginSchema } from "@/lib/zodSchema";
 import { redirect } from "next/navigation";
+import prisma from "@/lib/db";
 export async function authenticate(
   data?: z.infer<typeof loginSchema> | undefined
 ): Promise<{ message: string } | undefined> {
@@ -21,7 +22,20 @@ export async function authenticate(
   console.log("sign in successfully");
   // before redirect display a success message return
 
-  redirect("/en/admin/dashboard"); // Only called if login is successful
+  // Fetch user role from DB
+  const user = await prisma.user.findUnique({
+    where: { phone: data.phone },
+    select: { role: true },
+  });
+
+  // Redirect based on role
+  if (user?.role === "ADMIN") {
+    redirect("/en/admin/dashboard");
+  } else {
+    redirect("/en/customer/dashboard");
+  }
+
+  return { message: "Login successful" };
   return { message: "Login successful" };
 }
 

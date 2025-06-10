@@ -11,6 +11,8 @@ import Loading from "@/components/loading";
 import { Button, Progress } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { useSearchParams } from "next/navigation";
+import { authenticate } from "@/actions/common/authentication";
+import { useRouter } from "next/navigation";
 
 function Page() {
   const searchParams = useSearchParams();

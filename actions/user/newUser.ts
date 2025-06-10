@@ -4,6 +4,7 @@ import { signupSchema } from "@/lib/zodSchema";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { auth } from "@/lib/auth";
+import bcrypt from "bcryptjs";
 
 export async function newUser(data: z.infer<typeof signupSchema>) {
   try {
@@ -31,6 +32,16 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
       }
     }
 
+    // hash the password
+    const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
+    if (!parsed.data.transactionPassword) {
+      return { message: "Transaction password is required" };
+    }
+    const hashedTransactionPassword = await bcrypt.hash(
+      parsed.data.transactionPassword,
+      10
+    );
+
     // Generate myCode
     const myCode = uuidv4().replace(/-/g, "").substring(0, 7);
 
@@ -38,10 +49,10 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
       data: {
         username: parsed.data.username,
         email: parsed.data.email,
-        password: parsed.data.password,
+        password: hashedPassword,
         phone: parsed.data.phone,
         invitationCode: parsed.data.invitationCode ?? "",
-        transactionPassword: parsed.data.transactionPassword ?? "",
+        transactionPassword: hashedTransactionPassword,
         myCode,
       },
     });
