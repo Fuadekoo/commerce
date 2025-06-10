@@ -1,21 +1,26 @@
-// "use client";
 import React from "react";
 import { auth } from "@/lib/auth";
 import UserLayout from "@/components/userLayout";
 import { redirect } from "next/navigation";
+import {
+  Home,
+  User,
+  CreditCard,
+  Package,
+  ShoppingCart,
+  Folder,
+  Settings,
+} from "lucide-react";
 
 const menu = [
-  { label: "Dashboard", url: "dashboard", icon: <span>🏠</span> },
-  { label: "Customers", url: "customer", icon: <span>👤</span> },
-  { label: "Payments", url: "payment", icon: <span>💳</span> },
-  { label: "Orders", url: "order", icon: <span>📦</span> },
-  { label: "Product", url: "product", icon: <span>🛒</span> },
-  { label: "Categories", url: "categories", icon: <span>📂</span> },
-  // { label: "Customers", url: "customers", icon: <span>👥</span> },
-  { label: "Profile", url: "profile", icon: <span>👤</span> },
-  { label: "Settings", url: "settings", icon: <span>⚙️</span> },
-
-  // Add more menu items as needed
+  { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },
+  { label: "Customers", url: "customer", icon: <User size={18} /> },
+  { label: "Payments", url: "payment", icon: <CreditCard size={18} /> },
+  { label: "Orders", url: "order", icon: <Package size={18} /> },
+  { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
+  { label: "Categories", url: "categories", icon: <Folder size={18} /> },
+  { label: "Profile", url: "profile", icon: <User size={18} /> },
+  { label: "Settings", url: "settings", icon: <Settings size={18} /> },
 ];
 
 export default async function Layout({
@@ -24,7 +29,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-
 
   const isManager = true;
 

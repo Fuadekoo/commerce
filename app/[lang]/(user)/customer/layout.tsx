@@ -1,17 +1,23 @@
-// "use client";
 import React from "react";
 import { auth } from "@/lib/auth";
 import UserLayout from "@/components/userLayout";
 import { redirect } from "next/navigation";
+import {
+  Home,
+  ShoppingCart,
+  Package,
+  CreditCard,
+  User,
+  Settings,
+} from "lucide-react";
 
 const menu = [
-  { label: "Dashboard", url: "dashboard", icon: <span>🏠</span> },
-  { label: "Product", url: "product", icon: <span>🛒</span> },
-  { label: "Orders", url: "order", icon: <span>📦</span> },
-  { label: "Wallet", url: "wallet", icon: <span>💳</span> },
-  { label: "Profile", url: "profile", icon: <span>👤</span> },
-  { label: "Settings", url: "settings", icon: <span>⚙️</span> },
-
+  { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },
+  { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
+  { label: "Orders", url: "order", icon: <Package size={18} /> },
+  { label: "Wallet", url: "wallet", icon: <CreditCard size={18} /> },
+  { label: "Profile", url: "profile", icon: <User size={18} /> },
+  { label: "Settings", url: "settings", icon: <Settings size={18} /> },
   // Add more menu items as needed
 ];
 
