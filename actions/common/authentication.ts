@@ -1,4 +1,5 @@
 "use server";
+import { auth } from "@/lib/auth";
 import { signIn, signOut } from "../../lib/auth";
 import { z } from "zod";
 import { loginSchema } from "@/lib/zodSchema";
@@ -54,4 +55,28 @@ export async function checkAuthentication() {
     redirect("/en/login");
   }
   return session;
+}
+
+export async function isAuthenticated() {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    return false;
+  }
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (!user) {
+    return false;
+  }
+  return true;
+}
+
+export async function loginData() {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    return "Unauthorized";
+  }
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (!user) {
+    return "User not found";
+  }
+  return user;
 }
