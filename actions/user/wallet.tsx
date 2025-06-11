@@ -148,3 +148,19 @@ export async function WithdrawalHistory() {
 
   return history;
 }
+
+export async function getCompanyAccount() {
+  const companyAccounts = await prisma.campanyAccount.findMany({
+    select: {
+      id: true,
+      account: true,
+      name: true,
+    },
+    // orderBy: {
+    //   createdAt: "desc",
+    // },
+  });
+  if (companyAccounts.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * companyAccounts.length);
+  return companyAccounts[randomIndex];
+}
