@@ -1,5 +1,13 @@
 "use client";
 import React, { useState } from "react";
+import useAction from "@/hooks/useAction";
+import { getCompanyAccount, deposit } from "@/actions/user/wallet";
+import { z } from "zod";
+import { depositSchema } from "@/lib/zodSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addToast } from "@heroui/toast";
+
 const paymentMethods = [
   {
     value: "bank",
@@ -16,6 +24,34 @@ const paymentMethods = [
 ];
 
 function Deposit() {
+  const [data, action, isLoading] = useAction(getCompanyAccount, [
+    true,
+    () => {},
+  ]);
+  const [response, depositAction, depositLoading] = useAction(deposit, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Deposit",
+          description: response.message,
+        });
+      } else {
+        addToast({
+          title: "Deposit",
+          description: "Deposit successful!",
+        });
+      }
+    },
+  ]);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<z.infer<typeof depositSchema>>({
+    resolver: zodResolver(depositSchema),
+  });
+
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("");
