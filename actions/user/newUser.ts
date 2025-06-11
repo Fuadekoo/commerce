@@ -93,3 +93,7 @@ export async function getUser() {
     return { message: "Error fetching user" };
   }
 }
+
+export async function profileUpdate() {}
+
+export async function profilePhotoUpdate() {}
