@@ -2,7 +2,7 @@
 import prisma from "@/lib/db";
 // import { loginData } from "@/actions/common/authentication";
 import { depositSchema, withdrawSchema } from "@/lib/zodSchema";
-import { z } from "zod";
+import { string, z } from "zod";
 import { auth } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import path from "path";
@@ -137,7 +137,7 @@ export async function aproofDeposit(id:string){
 //   return { message: "Deposit successful" };
 // }
 
-export async function DepositHistory() {
+export async function DepositHistory(search?: string,page?:number,row?:number) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
