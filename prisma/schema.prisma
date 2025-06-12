@@ -51,7 +51,7 @@ model campanyAccount {
 model rechargeRecord {
   id        String   @id @default(cuid())
   amount    Decimal
-  photo     String?
+  photo     String   @db.LongText
   status    Status   @default(PENDING)
   createdAt DateTime @default(now())
 

@@ -44,7 +44,11 @@ export const createGroupSchema = z.object({
 export type CreateGroupType = z.infer<typeof createGroupSchema>;
 
 export const depositSchema = z.object({
-  amount: z.number().min(0, "Amount must be positive"),
+  amount: z.coerce // Use z.coerce.number()
+    .number({
+      required_error: "Amount is required.",
+      invalid_type_error: "Amount must be a number.",
+    }),
   photo: z.any().optional(), // Accept any file type, validation can be handled elsewhere
 });
 export type DepositType = z.infer<typeof depositSchema>;

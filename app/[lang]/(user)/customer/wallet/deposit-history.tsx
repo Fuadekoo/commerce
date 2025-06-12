@@ -1,4 +1,6 @@
 "use client";
+import useAction from "@/hooks/useAction";
+import { DepositHistory } from "@/actions/user/wallet";
 import React, { useState } from "react";
 import CustomTable from "@/components/custom-table";
 
@@ -83,7 +85,11 @@ const sampleRows = [
   },
 ];
 
-function DepositHistory() {
+function DepositHistorys() {
+  const [data, refresh, isloading] = useAction(DepositHistory, [
+    true,
+    (response) => {},
+  ]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
@@ -118,4 +124,4 @@ function DepositHistory() {
   );
 }
 
-export default DepositHistory;
+export default DepositHistorys;

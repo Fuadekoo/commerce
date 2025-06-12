@@ -8,6 +8,7 @@ import {
   Package,
   CreditCard,
   User,
+  Bell,
   Settings,
 } from "lucide-react";
 
@@ -17,6 +18,11 @@ const menu = [
   { label: "Orders", url: "order", icon: <Package size={18} /> },
   { label: "Wallet", url: "wallet", icon: <CreditCard size={18} /> },
   { label: "Profile", url: "profile", icon: <User size={18} /> },
+  {
+    label: "Notification",
+    url: "notification",
+    icon: <Bell size={18} />,
+  },
   { label: "Settings", url: "settings", icon: <Settings size={18} /> },
   // Add more menu items as needed
 ];
