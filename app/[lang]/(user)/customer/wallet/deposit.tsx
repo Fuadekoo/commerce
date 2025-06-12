@@ -21,8 +21,7 @@ interface CompanyAccount {
 }
 
 function Deposit() {
-  const [accountData, accountRefresh, isLoadingAccount] =
-    useAction<CompanyAccount | null>(getCompanyAccount, [true, () => {}]);
+  const [accountData, accountRefresh, isLoadingAccount] = useAction(getCompanyAccount, [true, () => {}]);
   const [response, depositAction, depositLoading] = useAction(deposits, [
     undefined, // initialValue for response
     (res) => {
@@ -43,7 +42,7 @@ function Deposit() {
         addToast({
           title: "Deposit",
           description: "Deposit request processed.", // Generic success
-          type: "success",
+          // type: "success",
         });
         // setOpen(false);
         // reset();
@@ -51,7 +50,7 @@ function Deposit() {
         addToast({
           title: "Deposit Error",
           description: "An unexpected error occurred.",
-          type: "error",
+          // type: "error",
         });
       }
     },
@@ -99,7 +98,7 @@ function Deposit() {
         addToast({
           title: "Image Error",
           description: "Could not process the file.",
-          type: "error",
+          // type: "error",
         });
         setValue("photo", "", { shouldValidate: true }); // Clear on error
       } finally {
@@ -122,7 +121,7 @@ function Deposit() {
       addToast({
         title: "Validation Error",
         description: "Payment proof photo is required.",
-        type: "error",
+        // type: "error",
       });
       return;
     }
@@ -161,7 +160,7 @@ function Deposit() {
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm relative">
             <Button
               variant="ghost"
-              size="icon"
+              // size="icon"
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
               onClick={handleCloseModal}
             >
