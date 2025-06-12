@@ -1,5 +1,15 @@
 "use client";
 import React, { useState } from "react";
+import useAction from "@/hooks/useAction";
+// import { deposit } from "@/actions/user/wallet";
+import { z } from "zod";
+import { withdrawSchema } from "@/lib/zodSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addToast } from "@heroui/toast";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
+import { withdraw } from "@/actions/user/wallet";
 
 const withdrawalMethods = [
   {
@@ -11,6 +21,29 @@ const withdrawalMethods = [
 ];
 
 function Withdraw() {
+  const [response, withdrawAction, withdrawLoading] = useAction(withdraw, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Withdraw",
+          description: response.message,
+        });
+      } else {
+        addToast({
+          title: "Withdraw",
+          description: "Withdrawal successful!",
+        });
+      }
+    },
+  ]);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<z.infer<typeof withdrawSchema>>({
+    resolver: zodResolver(withdrawSchema),
+  });
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("");
@@ -40,57 +73,37 @@ function Withdraw() {
             </h2>
             <form
               className="flex flex-col gap-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                // handle submit here
-                setOpen(false);
-              }}
+              onSubmit={handleSubmit(withdrawAction)}
             >
-              <input
+              <Input
                 type="number"
+                {...register("amount", {
+                  valueAsNumber: true,
+                })}
                 min={1}
                 placeholder="Enter amount"
                 className="border rounded px-3 py-2"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                // value={amount}
+                // onChange={(e) => setAmount(e.target.value)}
                 required
               />
 
-              <select
+              <Input
+                type="password"
+                {...register("transactionPassword")}
+                placeholder="Transaction password"
                 className="border rounded px-3 py-2"
-                value={method}
-                onChange={(e) => setMethod(e.target.value)}
                 required
-              >
-                <option value="">Select withdrawal method</option>
-                {withdrawalMethods.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
+              />
 
-              {selectedMethod && (
-                <div className="bg-gray-50 p-3 rounded border">
-                  <div>
-                    <span className="font-semibold">Bank:</span>{" "}
-                    {selectedMethod.bank}
-                  </div>
-                  <div>
-                    <span className="font-semibold">User Account:</span>{" "}
-                    {selectedMethod.account}
-                  </div>
-                </div>
-              )}
-
-              {selectedMethod && (
-                <button
+              {
+                <Button
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold mt-2"
                 >
                   Done
-                </button>
-              )}
+                </Button>
+              }
             </form>
           </div>
         </div>

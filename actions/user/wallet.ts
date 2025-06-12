@@ -5,45 +5,137 @@ import { depositSchema, withdrawSchema } from "@/lib/zodSchema";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import bcrypt from "bcryptjs";
+import path from "path";
+import fs from "fs/promises";
+import { randomUUID } from "crypto";
 
-export async function deposit(data: z.infer<typeof depositSchema>) {
+export async function deposits(data: z.infer<typeof depositSchema>) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
   }
   const userId = session.user.id;
-  const parsed = depositSchema.safeParse(data);
-  if (!parsed.success) {
-    return { message: "Validation failed" };
-  }
-  if (parsed.data.amount <= 0) {
+
+  // Validate input
+  if (!data.amount || data.amount <= 0) {
     return { message: "Amount must be greater than 0" };
   }
-  if (!parsed.data.photo) {
+  if (!data.photo) {
     return { message: "Photo is required" };
   }
 
-  // Use a transaction to update balance and create deposit record atomically
-  await prisma.$transaction([
-    prisma.rechargeRecord.create({
-      data: {
-        userId,
-        amount: parsed.data.amount,
-        photo: parsed.data.photo,
-      },
-    }),
-    prisma.user.update({
-      where: { id: userId },
-      data: {
-        balance: {
-          increment: parsed.data.amount,
-        },
-      },
-    }),
-  ]);
+  // Assume data.photo is a base64 string or a Buffer
+  // Generate unique filename
+  const ext = ".jpg"; // or parse from data.photo if you have mime info
+  const uniqueName = `${randomUUID()}${ext}`;
+  const filePath = path.join(process.cwd(), "filedata", uniqueName);
+
+  // Save file
+  let buffer: Buffer;
+  if (typeof data.photo === "string" && data.photo.startsWith("data:")) {
+    // base64 data URL
+    const base64 = data.photo.split(",")[1];
+    buffer = Buffer.from(base64, "base64");
+  } else if (typeof data.photo === "string") {
+    buffer = Buffer.from(data.photo, "base64");
+  } else {
+    buffer = data.photo;
+  }
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.writeFile(filePath, buffer);
+
+  // Save deposit record
+  await prisma.rechargeRecord.create({
+    data: {
+      userId,
+      amount: data.amount,
+      photo: uniqueName,
+    },
+  });
+
+  // Update user balance
+  // await prisma.user.update({
+  //   where: { id: userId },
+  //   data: {
+  //     balance: {
+  //       increment: data.amount,
+  //     },
+  //   },
+  // });
 
   return { message: "Deposit successful" };
 }
+
+export async function aproofDeposit(id:string){
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+  const userId = session.user.id;
+
+  // Fetch the deposit record
+  const depositRecord = await prisma.rechargeRecord.findUnique({
+    where: { id},
+    select: {
+      id: true,
+      amount: true,
+      photo: true,
+      userId: true,
+      createdAt: true,
+    },
+  });
+  if (!depositRecord) {
+    return { message: "Deposit record not found" };
+  }
+
+    // Update user balance
+  await prisma.user.update({
+    where: { id: depositRecord.userId },
+    data: {
+      balance: {
+        increment: depositRecord.amount,
+      },
+    },
+  });
+
+  return { message: "Deposit approved successfully" };
+}
+
+//     throw new Error("Unauthorized");
+//   }
+//   const userId = session.user.id;
+//   const parsed = depositSchema.safeParse(data);
+//   if (!parsed.success) {
+//     return { message: "Validation failed" };
+//   }
+//   if (parsed.data.amount <= 0) {
+//     return { message: "Amount must be greater than 0" };
+//   }
+//   if (!parsed.data.photo) {
+//     return { message: "Photo is required" };
+//   }
+
+//   // Use a transaction to update balance and create deposit record atomically
+//   await prisma.$transaction([
+//     prisma.rechargeRecord.create({
+//       data: {
+//         userId,
+//         amount: parsed.data.amount,
+//         photo: parsed.data.photo,
+//       },
+//     }),
+//     prisma.user.update({
+//       where: { id: userId },
+//       data: {
+//         balance: {
+//           increment: parsed.data.amount,
+//         },
+//       },
+//     }),
+//   ]);
+
+//   return { message: "Deposit successful" };
+// }
 
 export async function DepositHistory() {
   const session = await auth();
@@ -72,6 +164,8 @@ export async function withdraw(data: {
   amount: number;
   transactionPassword: string;
 }) {
+
+  console.log("withdraw data", data);
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");

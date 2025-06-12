@@ -42,14 +42,19 @@ export const createGroupSchema = z.object({
   isPublic: z.boolean(),
 });
 export type CreateGroupType = z.infer<typeof createGroupSchema>;
-
 export const depositSchema = z.object({
-  amount: z.coerce // Use z.coerce.number()
+  amount: z.coerce // Use z.coerce for string-to-number conversion from form input
     .number({
       required_error: "Amount is required.",
       invalid_type_error: "Amount must be a number.",
-    }),
-  photo: z.any().optional(), // Accept any file type, validation can be handled elsewhere
+    })
+    .positive({ message: "Amount must be greater than 0." }),
+  // method: z.string().min(1, "Payment method is required."), // Add this back if your backend uses it
+  photo: z
+    .string() // Expecting a raw Base64 string
+    .min(1, "Payment proof photo is required."),
+  // Optional: Add a regex or custom refinement to check if it's a valid Base64 string
+  // .regex(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/, "Invalid Base64 format")
 });
 export type DepositType = z.infer<typeof depositSchema>;
 
