@@ -21,7 +21,22 @@ interface CompanyAccount {
 }
 
 function Deposit() {
-  const [accountData, accountRefresh, isLoadingAccount] = useAction(getCompanyAccount, [true, () => {}]);
+  const [open, setOpen] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    watch,
+    setValue,
+    reset, // Added reset
+    formState: { errors, isValid }, // Added isValid
+  } = useForm<z.infer<typeof depositSchema>>({
+    resolver: zodResolver(depositSchema), // Schema expects photo as base64 string
+    mode: "onChange", // Validate on change
+  });
+  const [accountData, accountRefresh, isLoadingAccount] = useAction(
+    getCompanyAccount,
+    [true, () => {}]
+  );
   const [response, depositAction, depositLoading] = useAction(deposits, [
     undefined, // initialValue for response
     (res) => {
@@ -30,14 +45,12 @@ function Deposit() {
         addToast({
           title: "Deposit",
           description: res.message,
-          // Assuming your backend returns a success flag, e.g., res.success
-          // type: res.success ? "success" : "error",
+          // reset();
+          // close the popup
+            // setOpen(false); // Close the modal on success
+            // reset(); // Reset form fields
         });
-        // if (res.success) { // Only reset/close if backend confirms success
-        //   setOpen(false);
-        //   reset(); // Reset form
-        //   // No image preview to clear directly if photoValue is just a base64 string
-        // }
+        
       } else if (res) {
         addToast({
           title: "Deposit",
@@ -56,19 +69,9 @@ function Deposit() {
     },
   ]);
 
-  const {
-    handleSubmit,
-    register,
-    watch,
-    setValue,
-    reset, // Added reset
-    formState: { errors, isValid }, // Added isValid
-  } = useForm<z.infer<typeof depositSchema>>({
-    resolver: zodResolver(depositSchema), // Schema expects photo as base64 string
-    mode: "onChange", // Validate on change
-  });
 
-  const [open, setOpen] = useState(false);
+
+
   const [isConvertingImage, setIsConvertingImage] = useState(false); // For loading state during conversion
 
   // If your backend doesn't use 'method', you might not need this useEffect
@@ -184,22 +187,45 @@ function Deposit() {
             </h2>
 
             {/* Account Info Display - Keep if 'method' is used, otherwise can be simplified/removed */}
-            {/* <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-4">
               {isLoadingAccount ? (
-                <div className="flex items-center justify-center p-2"><Loader2 className="h-5 w-5 animate-spin text-green-600" /><span className="ml-2">Loading method...</span></div>
+                <div className="flex items-center justify-center p-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+                  <span className="ml-2">Loading method...</span>
+                </div>
               ) : accountData ? (
                 <div className="flex-1 bg-gray-50 p-3 rounded border text-sm">
-                  <div className="font-semibold">Account Info:</div>
-                  <div>{`${accountData.name} - ${accountData.account}`}</div>
-                  <Button type="button" size="sm" onClick={accountRefresh} className="ml-auto mt-1 text-xs" variant="outline">Refresh</Button>
+                  <div className="font-semibold">Bank Account Info:</div>
+                  <div>
+                    <span className="block">Bank Name: {accountData.name}</span>
+                    <span className="block">
+                      Account Number: {accountData.account}
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={accountRefresh}
+                    className="ml-auto mt-1 text-xs"
+                    variant="flat"
+                  >
+                    Refresh
+                  </Button>
                 </div>
               ) : (
                 <div className="text-center p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
-                  No payment method available.
-                  <Button variant="outline" size="sm" onClick={() => accountRefresh()} className="mt-1 text-xs">Try Refresh</Button>
+                  No bank account available.
+                  <Button
+                    variant="faded"
+                    size="sm"
+                    onClick={() => accountRefresh()}
+                    className="mt-1 text-xs"
+                  >
+                    Try Refresh
+                  </Button>
                 </div>
               )}
-            </div> */}
+            </div>
 
             <form
               onSubmit={handleSubmit(onSubmitWrapper)} // Use the wrapper

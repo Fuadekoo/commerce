@@ -66,7 +66,7 @@ export async function deposits(data: z.infer<typeof depositSchema>) {
   return { message: "Deposit successful" };
 }
 
-export async function aproofDeposit(id:string){
+export async function aproofDeposit(id: string) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
@@ -75,7 +75,7 @@ export async function aproofDeposit(id:string){
 
   // Fetch the deposit record
   const depositRecord = await prisma.rechargeRecord.findUnique({
-    where: { id},
+    where: { id },
     select: {
       id: true,
       amount: true,
@@ -88,7 +88,7 @@ export async function aproofDeposit(id:string){
     return { message: "Deposit record not found" };
   }
 
-    // Update user balance
+  // Update user balance
   await prisma.user.update({
     where: { id: depositRecord.userId },
     data: {
@@ -137,34 +137,77 @@ export async function aproofDeposit(id:string){
 //   return { message: "Deposit successful" };
 // }
 
-export async function DepositHistory(search?: string,page?:number,row?:number) {
+export async function DepositHistory(
+  searchTerm?: string,
+  currentPage?: number,
+  itemsPerPage?: number
+) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
   }
   const userId = session.user.id;
 
-  // Fetch deposit history for the user
-  const history = await prisma.rechargeRecord.findMany({
-    where: { userId },
+  // If searchTerm is provided, reset pagination
+  if (searchTerm) {
+    currentPage = 1;
+    itemsPerPage = 10;
+  }
+
+  const page = currentPage && currentPage > 0 ? currentPage : 1;
+  const take = itemsPerPage && itemsPerPage > 0 ? itemsPerPage : 10;
+  const skip = (page - 1) * take;
+
+  // Build where clause (add search logic if needed)
+  const whereClause: any = { userId };
+  // Example: if you want to filter by status or amount, add here
+
+  const totalRecords = await prisma.rechargeRecord.count({
+    where: whereClause,
+  });
+
+  const historyRaw = await prisma.rechargeRecord.findMany({
+    where: {
+      userId,
+    },
     orderBy: { createdAt: "desc" },
+    skip: skip,
+    take: take,
     select: {
       id: true,
-      amount: true,
+      amount: true, // Decimal
       photo: true,
+      status: true,
       createdAt: true,
-      // updatedAt: true,
     },
   });
 
-  return history;
+  // Convert Decimal 'amount' to number and 'createdAt' to string
+  const history = historyRaw.map((record) => ({
+    ...record,
+    amount: Number(record.amount),
+    createdAt: record.createdAt.toISOString(),
+  }));
+
+  const totalPages = Math.ceil(totalRecords / take);
+
+  return {
+    data: history,
+    pagination: {
+      currentPage: page,
+      totalPages: totalPages,
+      itemsPerPage: take,
+      totalRecords: totalRecords,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
 }
 
 export async function withdraw(data: {
   amount: number;
   transactionPassword: string;
 }) {
-
   console.log("withdraw data", data);
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
@@ -221,26 +264,66 @@ export async function withdraw(data: {
 
   return { message: "Withdrawal successful" };
 }
-export async function WithdrawalHistory() {
+export async function WithdrawalHistorys(
+  searchTerm?: string,
+  currentPage?: number,
+  itemsPerPage?: number
+) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
   }
   const userId = session.user.id;
 
-  // Fetch withdrawal history for the user
-  const history = await prisma.withdrewalRecord.findMany({
+  const page = currentPage && currentPage > 0 ? currentPage : 1;
+  const take = itemsPerPage && itemsPerPage > 0 ? itemsPerPage : 10;
+  const skip = (page - 1) * take;
+
+  // Build where clause (add search logic if needed)
+  const whereClause: any = { userId };
+  // Example: if you want to filter by status or amount, add here
+
+  const totalRecords = await prisma.rechargeRecord.count({
+    where: whereClause,
+  });
+
+  //   // Fetch withdrawal history for the user
+  const historys = await prisma.withdrewalRecord.findMany({
     where: { userId },
+    skip: skip,
+    take: take,
     select: {
       id: true,
       amount: true,
+      status: true,
       createdAt: true,
       //   updatedAt: true,
     },
     orderBy: { createdAt: "desc" },
   });
 
-  return history;
+  //   return history;
+  // }
+  // Convert Decimal 'amount' to number and 'createdAt' to string
+  const history = historys.map((record) => ({
+    ...record,
+    amount: Number(record.amount),
+    createdAt: record.createdAt.toISOString(),
+  }));
+
+  const totalPages = Math.ceil(totalRecords / take);
+
+  return {
+    data: history,
+    pagination: {
+      currentPage: page,
+      totalPages: totalPages,
+      itemsPerPage: take,
+      totalRecords: totalRecords,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
 }
 
 export async function getCompanyAccount() {

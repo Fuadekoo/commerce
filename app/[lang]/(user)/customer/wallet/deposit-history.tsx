@@ -4,124 +4,66 @@ import { DepositHistory } from "@/actions/user/wallet";
 import React, { useState } from "react";
 import CustomTable from "@/components/custom-table";
 
+interface DepositHistoryItem {
+  id: string;
+  amount: number;
+  photo: string;
+  createdAt: string;
+  status: string;
+}
+
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  totalRecords: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+interface DepositHistoryResponse {
+  data: DepositHistoryItem[];
+  pagination: PaginationInfo;
+}
+
 const columns = [
   { key: "id", label: "ID" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
-  { key: "photo", label: "Photo" },
-  { key: "date", label: "Date" },
+  { key: "photo", label: "photo" },
+  { key: "createdAt", label: "Created At" },
 ];
 
-const sampleRows = [
-  {
-    id: "1",
-    amount: "100.00",
-    status: "Completed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-01",
-  },
-  {
-    id: "2",
-    amount: "200.00",
-    status: "Pending",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-02",
-  },
-  {
-    id: "3",
-    amount: "150.00",
-    status: "Failed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-03",
-  },
-  {
-    id: "4",
-    amount: "300.00",
-    status: "Completed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-04",
-  },
-  {
-    id: "5",
-    amount: "250.00",
-    status: "Pending",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-05",
-  },
-  {
-    id: "6",
-    amount: "180.00",
-    status: "Failed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-06",
-  },
-  {
-    id: "7",
-    amount: "220.00",
-    status: "Completed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-07",
-  },
-  {
-    id: "8",
-    amount: "130.00",
-    status: "Pending",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-08",
-  },
-  {
-    id: "9",
-    amount: "170.00",
-    status: "Failed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-09",
-  },
-  {
-    id: "10",
-    amount: "90.00",
-    status: "Completed",
-    photo: "https://via.placeholder.com/50",
-    date: "2023-10-10",
-  },
-];
-
-function DepositHistorys() {
-  const [data, refresh, isloading] = useAction(DepositHistory, [
-    true,
-    (response) => {},
-  ]);
+function DepositHistoryPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
 
-  const filteredRows = sampleRows.filter((row) =>
-    row.status.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const paginatedRows = filteredRows.slice(
-    (page - 1) * pageSize,
-    page * pageSize
+  const [data, refresh, isLoading] = useAction(
+    DepositHistory,
+    [true, () => {}],
+    search,
+    page,
+    pageSize
   );
 
   return (
-    <div className="p-2">
-      <h1 className="text-2xl font-bold mb-2">Payments</h1>
-      <p className="text-gray-600 mb-6">
-        Manage your payment methods and view transaction history.
-      </p>
+    <div className="p-2 overflow-y-auto">
+      <h1 className="text-2xl font-bold mb-4">Deposit History</h1>
       <CustomTable
         columns={columns}
-        rows={paginatedRows}
-        totalRows={filteredRows.length}
+        rows={(data?.data || []).map((item) => ({ ...item, key: item.id }))}
+        totalRows={data?.pagination.totalRecords || 0}
         page={page}
         pageSize={pageSize}
         onPageChange={setPage}
         onPageSizeChange={setPageSize}
         searchValue={search}
         onSearch={setSearch}
+        // loading={isLoading}
       />
     </div>
   );
 }
 
-export default DepositHistorys;
+export default DepositHistoryPage;

@@ -11,24 +11,21 @@ function Page() {
   const balance = 5000;
 
   return (
-    <div className="flex w-full flex-col">
-      <div className="flex items-center gap-2 mb-1">
+    <div className="h-dvh gap-5 flex-col overflow-auto">
+      <div className="flex items-center gap-2 mb-1 overflow-hidden">
         <span className="text-2xl font-bold">Total Balance:</span>
         <span className="text-3xl font-extrabold text-blue-700">
           Br {balance.toLocaleString()}
         </span>
       </div>
+      {/* <div className="shrink-0 bg-green-500 h-dvh">here</div>
+      <div className="shrink-0 bg-red-500 h-dvh">here</div> */}
       <Tabs aria-label="Wallet Tabs" variant="light">
         <Tab key="deposit" title="Deposit">
           <Card>
             <CardBody>
-              <div className="flex justify-end">
-                <Deposit />
-              </div>
-
-              <div className="mt-1">
-                <DepositHistory />
-              </div>
+              <Deposit />
+              <DepositHistory />
             </CardBody>
           </Card>
         </Tab>
@@ -38,7 +35,7 @@ function Page() {
               <div className="flex justify-end">
                 <Withdraw />
               </div>
-              <div className="mt-1">
+              <div className="mt-1 overflow-hidden">
                 <WithdrawalHistory />
               </div>
             </CardBody>

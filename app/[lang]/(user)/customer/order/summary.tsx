@@ -18,7 +18,7 @@ function Summary() {
           Total: <span className="text-green-600">$467</span>
         </p>
         <button className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-          Proceed to Checkout
+          start(0/60)
         </button>
       </div>
     </div>

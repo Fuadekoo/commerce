@@ -35,7 +35,7 @@ export default function UserLayout({
   return (
     <div className="grid lg:grid-cols-[auto_1fr] overflow-hidden">
       <Sidebar {...{ sidebar, setSidebar, menu, isManager }} />
-      <div className="flex gap-2 flex-col overflow-hidden">
+      <div className="grid gap-2 grid-cols-[auto_1fr]  overflow-hidden">
         <Header sidebar={sidebar} setSidebar={setSidebar} />
         <div className="min-h-[calc(100dvh-3.6rem)] p-2 rounded-xl overflow-hidden grid">
           {children}

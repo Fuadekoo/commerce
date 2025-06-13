@@ -80,3 +80,28 @@ export const updateProfileSchema = z.object({
     .min(8, "Confirm password must be at least 8 characters long")
     .optional(),
 });
+
+export const depositHistorySchema = z.object({
+  searchTerm: z.string().optional(),
+  currentPage: z.coerce.number().int().positive().optional(),
+  row: z.coerce.number().int().positive().optional(),
+});
+export type DepositHistoryType = z.infer<typeof depositHistorySchema>;
+
+export const withdrawHistorySchema = z.object({
+  searchTerm: z.string().optional(),
+  currentPage: z.coerce.number().int().positive().optional(),
+  row: z.coerce.number().int().positive().optional(),
+});
+export type WithdrawHistoryType = z.infer<typeof withdrawHistorySchema>;
+
+export const productSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "Product name is required"),
+  description: z.string().optional(),
+  price: z.number().positive("Price must be a positive number"),
+  stock: z.number().int().min(0, "Stock cannot be negative"),
+  image: z.string().optional(),
+  createdAt: z.date(),
+});
+export type ProductType = z.infer<typeof productSchema>;
