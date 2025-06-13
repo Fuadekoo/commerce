@@ -43,7 +43,7 @@ function Page() {
         onPageSizeChange={setPageSize}
         searchValue={search}
         onSearch={setSearch}
-        loading={isLoading}
+        // loading={isLoading}
       />
     </div>
   );
