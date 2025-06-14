@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, ReactNode } from "react";
 import {
   Table,
   TableHeader,
@@ -9,13 +9,19 @@ import {
   TableCell,
   getKeyValue,
 } from "@heroui/react";
-import { X, Search } from "lucide-react"; // Import Search icon
+import { X, Search } from "lucide-react";
+
+interface ColumnDef {
+  key: string;
+  label: string;
+  renderCell?: (item: Record<string, any>) => ReactNode;
+}
 
 interface CustomTableProps {
   rows: Array<
     Record<string, any> & { key?: string | number; id?: string | number }
   >;
-  columns: Array<{ key: string; label: string }>;
+  columns: Array<ColumnDef>;
   totalRows: number;
   page: number;
   pageSize: number;
@@ -41,7 +47,6 @@ function CustomTable({
   isLoading = false,
 }: CustomTableProps) {
   const totalPages = Math.max(Math.ceil(totalRows / pageSize), 1);
-
   const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
 
   const handleImageClick = (imageUrl: string) => {
@@ -53,12 +58,10 @@ function CustomTable({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="">
       {/* Search and page size */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="relative flex items-center">
-          {" "}
-          {/* Wrapper for icon and input */}
           <Search
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
             aria-hidden="true"
@@ -68,7 +71,7 @@ function CustomTable({
             placeholder="Search..."
             value={searchValue}
             onChange={(e) => onSearch(e.target.value)}
-            className="border rounded px-3 py-2 pl-10 w-full sm:w-auto sm:min-w-[250px] text-sm" // Added pl-10 for padding left of icon
+            className="px-3 py-2 pl-10 w-full sm:w-auto sm:min-w-[250px] text-sm"
             disabled={isLoading}
           />
         </div>
@@ -77,7 +80,7 @@ function CustomTable({
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="border rounded px-3 py-2"
+            className="px-3 py-2"
             disabled={isLoading}
           >
             {PAGE_SIZES.map((size) => (
@@ -91,7 +94,7 @@ function CustomTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border rounded-md">
+      <div className="overflow-auto">
         <Table aria-label="Data table with dynamic content">
           <TableHeader columns={columns}>
             {(column) => (
@@ -114,45 +117,49 @@ function CustomTable({
                 key={item.key || item.id}
                 className="hover:bg-gray-50 border-b last:border-b-0"
               >
-                {(columnKey) => (
-                  <TableCell className="p-3 text-sm text-gray-700">
-                    {columnKey === "photo" &&
-                    typeof item.photo === "string" &&
-                    item.photo ? (
-                      <img
-                        src={`/api/filedata/${item.photo}`}
-                        alt={`Proof for ${item.id || item.key || "entry"}`}
-                        style={{
-                          width: "100px",
-                          height: "auto",
-                          borderRadius: "4px",
-                          objectFit: "cover",
-                          cursor: "pointer",
-                        }}
-                        onClick={() =>
-                          handleImageClick(`/api/filedata/${item.photo}`)
-                        }
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                          const parent = target.parentElement;
-                          if (
-                            parent &&
-                            !parent.querySelector(".no-preview-text")
-                          ) {
-                            const errorText = document.createElement("span");
-                            errorText.textContent = "No preview";
-                            errorText.className =
-                              "text-xs text-gray-400 no-preview-text";
-                            parent.appendChild(errorText);
+                {(columnKey) => {
+                  const column = columns.find((col) => col.key === columnKey);
+                  return (
+                    <TableCell className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {column && column.renderCell ? (
+                        column.renderCell(item)
+                      ) : columnKey === "photo" &&
+                        typeof item.photo === "string" &&
+                        item.photo ? (
+                        <img
+                          src={`/api/filedata/${item.photo}`}
+                          alt={`Proof for ${item.id || item.key || "entry"}`}
+                          style={{
+                            width: "100px",
+                            height: "auto",
+                            objectFit: "cover",
+                            cursor: "pointer",
+                          }}
+                          onClick={() =>
+                            handleImageClick(`/api/filedata/${item.photo}`)
                           }
-                        }}
-                      />
-                    ) : (
-                      getKeyValue(item, columnKey)
-                    )}
-                  </TableCell>
-                )}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (
+                              parent &&
+                              !parent.querySelector(".no-preview-text")
+                            ) {
+                              const errorText = document.createElement("span");
+                              errorText.textContent = "No preview";
+                              errorText.className =
+                                "text-xs text-gray-400 no-preview-text";
+                              parent.appendChild(errorText);
+                            }
+                          }}
+                        />
+                      ) : (
+                        getKeyValue(item, columnKey)
+                      )}
+                    </TableCell>
+                  );
+                }}
               </TableRow>
             )}
           </TableBody>
@@ -187,7 +194,7 @@ function CustomTable({
               <button
                 onClick={() => onPageChange(Math.max(1, page - 1))}
                 disabled={page === 1 || isLoading}
-                className="px-3 py-1.5 border rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5  bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -197,7 +204,7 @@ function CustomTable({
               <button
                 onClick={() => onPageChange(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages || isLoading}
-                className="px-3 py-1.5 border rounded-md bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5  bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -213,17 +220,17 @@ function CustomTable({
           onClick={handleCloseZoom}
         >
           <div
-            className="relative bg-white p-2 rounded-lg shadow-xl max-w-[90vw] max-h-[90vh]"
+            className="relative bg-white p-2 shadow-xl max-w-[90vw] max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={zoomedImageUrl}
               alt="Zoomed proof"
-              className="block max-w-full max-h-[calc(90vh-80px)] object-contain rounded"
+              className="block max-w-full max-h-[calc(90vh-80px)] object-contain"
             />
             <button
               onClick={handleCloseZoom}
-              className="absolute top-2 right-2 bg-gray-800 text-white rounded-full p-1.5 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white"
+              className="absolute top-2 right-2 bg-gray-800 text-white p-1.5 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Close zoomed image"
             >
               <X size={20} />

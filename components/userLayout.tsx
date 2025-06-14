@@ -9,6 +9,7 @@ import {
   DropdownTrigger,
   Link,
 } from "@heroui/react";
+import { ShareIcon } from "lucide-react";
 import Theme from "./theme";
 import { AlignLeft, ChevronLeft, ChevronRight, DoorOpen } from "lucide-react";
 import { useState } from "react";
@@ -35,7 +36,7 @@ export default function UserLayout({
   return (
     <div className="grid lg:grid-cols-[auto_1fr] overflow-hidden">
       <Sidebar {...{ sidebar, setSidebar, menu, isManager }} />
-      <div className="grid gap-2 grid-cols-[auto_1fr]  overflow-hidden">
+      <div className="flex flex-col gap-2 overflow-hidden">
         <Header sidebar={sidebar} setSidebar={setSidebar} />
         <div className="min-h-[calc(100dvh-3.6rem)] p-2 rounded-xl overflow-hidden grid">
           {children}
@@ -153,9 +154,11 @@ function Header({
       >
         <AlignLeft className="size-7" />
       </Button>
-      <div className="flex-1 "></div>
+      <div className="flex-1 ">myInvitation code:USR001 </div>
       {/* <Theme /> */}
-      <h1>fuad</h1>
+      <div className="text-primary-500">
+        <ShareIcon />
+      </div>
     </header>
   );
 }

@@ -47,10 +47,9 @@ function Deposit() {
           description: res.message,
           // reset();
           // close the popup
-            // setOpen(false); // Close the modal on success
-            // reset(); // Reset form fields
+          // setOpen(false); // Close the modal on success
+          // reset(); // Reset form fields
         });
-        
       } else if (res) {
         addToast({
           title: "Deposit",
@@ -68,9 +67,6 @@ function Deposit() {
       }
     },
   ]);
-
-
-
 
   const [isConvertingImage, setIsConvertingImage] = useState(false); // For loading state during conversion
 
@@ -191,15 +187,15 @@ function Deposit() {
               {isLoadingAccount ? (
                 <div className="flex items-center justify-center p-2">
                   <Loader2 className="h-5 w-5 animate-spin text-green-600" />
-                  <span className="ml-2">Loading method...</span>
+                  <span className="ml-2">Loading ...</span>
                 </div>
               ) : accountData ? (
                 <div className="flex-1 bg-gray-50 p-3 rounded border text-sm">
-                  <div className="font-semibold">Bank Account Info:</div>
+                  <div className="font-semibold">Wallat Information</div>
                   <div>
-                    <span className="block">Bank Name: {accountData.name}</span>
+                    <span className="block"> {accountData.name}</span>
                     <span className="block">
-                      Account Number: {accountData.account}
+                      Address: {accountData.account}
                     </span>
                   </div>
                   <Button
@@ -210,6 +206,22 @@ function Deposit() {
                     variant="flat"
                   >
                     Refresh
+                  </Button>
+                  {/* HElp me i went to add a copy icon when the butto nis click it copy the account number */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(accountData.account);
+                      addToast({
+                        title: "Copied",
+                        description: "Account number copied to clipboard.",
+                      });
+                    }}
+                    className="ml-2 mt-1 text-xs"
+                    variant="faded"
+                  >
+                    Copy Account
                   </Button>
                 </div>
               ) : (
