@@ -31,14 +31,14 @@ interface PaginationInfo {
   hasPreviousPage?: boolean;
 }
 
-const columns =[
+const columns = [
   { key: "id", label: "ID" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
   { key: "photo", label: "Proof" }, // Assuming CustomTable handles 'photo' key for image display
   { key: "createdAt", label: "Created At" },
   { key: "user.username", label: "User" }, // Nested user property
-]
+];
 
 interface GetPaymentResponse {
   data: PaymentItem[];
@@ -73,6 +73,25 @@ const handleApprovePayment = async (
   alert(
     `Payment ID: ${id} would be approved. Implement actual logic and uncomment above.`
   );
+  refreshCallback(); // Call refresh for consistency
+};
+
+const handleRejectPayment = async (
+  id: string | number,
+  refreshCallback: () => void
+) => {
+  console.log("Attempting to reject payment ID:", id);
+  // Implement actual reject logic here, similar to handleApprovePayment
+  // For example:
+  // try {
+  //   // const result = await rejectDepositAction(id.toString()); // Assuming a rejectDepositAction exists
+  //   // alert(result.message || "Rejection action completed.");
+  //   // refreshCallback();
+  // } catch (error) {
+  //   // console.error("Error rejecting deposit:", error);
+  //   // alert("Failed to reject deposit.");
+  // }
+  alert(`Payment ID: ${id} would be rejected. Implement actual logic.`);
   refreshCallback(); // Call refresh for consistency
 };
 
@@ -137,15 +156,25 @@ function PaymentListPage() {
           >
             View
           </Button>
-          {item.status === "PENDING" && ( // Adjust "PENDING" to your actual status value
-            <Button
-              size="sm"
-              color="success"
-              variant="flat"
-              onPress={() => handleApprovePayment(item.id, refresh)}
-            >
-              Approve
-            </Button>
+          {item.status === "PENDING" && (
+            <>
+              <Button
+                size="sm"
+                color="success"
+                variant="flat"
+                onPress={() => handleApprovePayment(item.id, refresh)}
+              >
+                Approve
+              </Button>
+              <Button
+                size="sm"
+                color="danger" // Changed from danger to primary as requested
+                variant="flat"
+                onPress={() => handleRejectPayment(item.id, refresh)}
+              >
+                Reject
+              </Button>
+            </>
           )}
         </div>
       ),

@@ -56,9 +56,14 @@ export async function getPayment(
         },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [
+      {
+        status: "asc",
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
     skip: (page - 1) * pageSize,
     take: pageSize,
   });

@@ -28,6 +28,7 @@ model user {
   balance             Decimal  @default(0.00)
   walletAddress       String?
   isBlocked           Boolean  @default(false)
+  isAdmin             Boolean  @default(false)
   invitationCode      String
   myCode              String   @unique
   remarks             String?
@@ -99,7 +100,6 @@ model post {
   message   String
   createdAt DateTime @default(now())
 }
-
 
 model message {
   id        String   @id @default(cuid())

@@ -19,7 +19,10 @@ export async function getUser(
   const skip = (page - 1) * take;
 
   // Build where clause for search
-  const whereClause: any = {};
+  const whereClause: any = {
+    role: "USER", // Assuming you want to filter by user role
+    // isBlocked: false, // Assuming you want to exclude blocked users
+  };
   if (searchTerm) {
     whereClause.OR = [
       { name: { contains: searchTerm, mode: "insensitive" } },

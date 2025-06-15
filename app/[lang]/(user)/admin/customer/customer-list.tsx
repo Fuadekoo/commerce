@@ -1,77 +1,282 @@
-"use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomTable from "@/components/custom-table";
 import useAction from "@/hooks/useAction";
-import { getUser } from "@/actions/admin/user";
-import { Button } from "@heroui/react"; // Assuming you use HeroUI buttons, adjust if not
+import {
+  getUser,
+  addRemarksUser,
+  setTask,
+  addprofitCard,
+} from "@/actions/admin/user";
+import { Button } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 
-// Define the type for a column, including the optional renderCell
 interface ColumnDef {
   key: string;
   label: string;
   renderCell?: (item: any) => React.ReactNode;
 }
 
-// Placeholder functions for button actions - implement their actual logic
-// These can remain outside the component if they don't need component-specific state
-// beyond what's passed to them.
-const handleAdd = (item: any) => {
-  console.log("Add action for item ID:", item.id);
-  console.log("Full item for Add:", item);
-  alert(`Add action for user ID: ${item.id}, Username: ${item.username}`);
-};
-
-const handleDelete = (itemId: string | number) => {
-  console.log("Delete item ID:", itemId);
-  if (
-    window.confirm(`Are you sure you want to delete item with ID ${itemId}?`)
-  ) {
-    alert(`Item with ID ${itemId} would be deleted.`);
-  }
-};
-
-const handleView = (item: any) => {
-  console.log("View item ID:", item.id);
-  console.log("Full item for View:", item);
-  alert(`Viewing details for user ID: ${item.id}, Username: ${item.username}`);
-};
-
 function CustomerPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  // Modal States
+  const [isRemarkModalOpen, setIsRemarkModalOpen] = useState(false);
+  const [currentRemarkItemId, setCurrentRemarkItemId] = useState<string | null>(
+    null
+  );
+  const [remarkText, setRemarkText] = useState("");
+
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [currentOrderItemId, setCurrentOrderItemId] = useState<string | null>(
+    null
+  );
+  const [orderNumberInput, setOrderNumberInput] = useState("");
+
+  const [isProfitModalOpen, setIsProfitModalOpen] = useState(false);
+  const [currentProfitItemId, setCurrentProfitItemId] = useState<string | null>(
+    null
+  );
+  const [profitOrderNumberInput, setProfitOrderNumberInput] = useState("");
+  const [profitAmountInput, setProfitAmountInput] = useState("");
+  const [priceDifferenceInput, setPriceDifferenceInput] = useState("");
+
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+
+  useEffect(() => {
+    setIsAnyModalOpen(
+      isRemarkModalOpen || isOrderModalOpen || isProfitModalOpen
+    );
+  }, [isRemarkModalOpen, isOrderModalOpen, isProfitModalOpen]);
+
   const [data, refresh, isLoading] = useAction(
     getUser,
-    [true, () => {}], // Initial call and callback
-    search,
+    [true, () => {}],
+    search, // Pass search, page, pageSize directly as per useAction typical usage
     page,
     pageSize
   );
 
-  // Define rows first, as columns definition might need it for index calculation
+  // --- Add Remark ---
+  const onRemarkAddedOrFailed = (response: {
+    message: string;
+    user?: any;
+    error?: string;
+  }) => {
+    if (response) {
+      if (response.error) {
+        alert(`Error: ${response.error}`); // TODO: Replace with toast
+      } else if (response.message) {
+        alert(response.message); // TODO: Replace with toast
+        if (response.user) {
+          refresh();
+          handleCloseRemarkModal();
+        }
+      }
+    } else {
+      alert("An unexpected response occurred while adding the remark."); // TODO: Replace with toast
+    }
+  };
+  const [remarkResponse, executeAddRemark, isLoadingRemark] = useAction(
+    addRemarksUser,
+    [
+      ,
+      (remarkResponse) => {
+        if (remarkResponse) {
+          addToast({
+            title: "Remark",
+            description: remarkResponse.message,
+          });
+        } else {
+          addToast({
+            title: "Remark",
+            description: "Remark Set successful!",
+          });
+        }
+      },
+    ]
+  );
+
+  const openRemarkModal = (itemId: string) => {
+    setCurrentRemarkItemId(itemId);
+    setRemarkText("");
+    setIsRemarkModalOpen(true);
+  };
+  const handleCloseRemarkModal = () => {
+    setIsRemarkModalOpen(false);
+    setCurrentRemarkItemId(null);
+    setRemarkText("");
+  };
+  const handleSubmitRemark = async () => {
+    if (!currentRemarkItemId || remarkText.trim() === "") {
+      alert("Item ID and remark text are required."); // TODO: Replace with toast
+      return;
+    }
+    await executeAddRemark(currentRemarkItemId, remarkText);
+  };
+
+  // --- Set Order (Set Task) ---
+  const onSetTaskCompleted = (response: {
+    message: string;
+    todayTask?: number;
+    error?: string;
+  }) => {
+    if (response) {
+      if (response.error) {
+        alert(`Error setting task: ${response.error}`); // TODO: Replace with toast
+      } else if (response.message) {
+        alert(response.message); // TODO: Replace with toast
+        refresh();
+        handleCloseOrderModal();
+      }
+    } else {
+      alert("An unexpected response occurred while setting the task."); // TODO: Replace with toast
+    }
+  };
+  const [taskResponse, executeSetTask, isLoadingSetTask] = useAction(setTask, [
+    ,
+    (taskResponse) => {
+      if (taskResponse) {
+        addToast({
+          title: "Task",
+          description: `${taskResponse.message}${
+            typeof taskResponse.todayTask !== "undefined"
+              ? ` (Today's Task: ${taskResponse.todayTask})`
+              : ""
+          }`,
+        });
+      } else {
+        addToast({
+          title: "Task",
+          description: "Task Set successful!",
+        });
+      }
+    },
+  ]);
+
+  const openOrderModal = (itemId: string) => {
+    setCurrentOrderItemId(itemId);
+    setOrderNumberInput("");
+    setIsOrderModalOpen(true);
+  };
+  const handleCloseOrderModal = () => {
+    setIsOrderModalOpen(false);
+    setCurrentOrderItemId(null);
+    setOrderNumberInput("");
+  };
+  const handleSubmitOrder = async () => {
+    if (!currentOrderItemId || orderNumberInput.trim() === "") {
+      alert("Item ID and order number are required."); // TODO: Replace with toast
+      return;
+    }
+    const orderNum = parseInt(orderNumberInput, 10);
+    if (isNaN(orderNum)) {
+      alert("Order number must be a valid number."); // TODO: Replace with toast
+      return;
+    }
+    await executeSetTask(currentOrderItemId, orderNum);
+  };
+
+  // --- Add Profit Card ---
+  const onAddProfitCardCompleted = (response: {
+    message: string;
+    profitCard?: any;
+    error?: string;
+  }) => {
+    if (response) {
+      if (response.error) {
+        alert(`Error adding profit card: ${response.error}`); // TODO: Replace with toast
+      } else if (response.message) {
+        alert(response.message); // TODO: Replace with toast
+        refresh();
+        handleCloseProfitModal();
+      }
+    } else {
+      alert("An unexpected response occurred while adding the profit card."); // TODO: Replace with toast
+    }
+  };
+  const [profitResponse, executeAddProfitCard, isLoadingAddProfitCard] =
+    useAction(addprofitCard, [
+      ,
+      () => {
+        if (profitResponse) {
+          addToast({
+            title: "Profit",
+            description: `${profitResponse.message}${
+              profitResponse?.profitCard?.orderNumber
+                ? ` (add at Order Number ${profitResponse.profitCard.orderNumber})`
+                : ""
+            }`,
+          });
+        } else {
+          addToast({
+            title: "Profit",
+            description: "Profit Set successful!",
+          });
+        }
+      },
+    ]);
+
+  const openProfitModal = (itemId: string) => {
+    setCurrentProfitItemId(itemId);
+    setProfitOrderNumberInput("");
+    setProfitAmountInput("");
+    setPriceDifferenceInput("");
+    setIsProfitModalOpen(true);
+  };
+  const handleCloseProfitModal = () => {
+    setIsProfitModalOpen(false);
+    setCurrentProfitItemId(null);
+    setProfitOrderNumberInput("");
+    setProfitAmountInput("");
+    setPriceDifferenceInput("");
+  };
+  const handleSubmitProfit = async () => {
+    if (
+      !currentProfitItemId ||
+      profitOrderNumberInput.trim() === "" ||
+      profitAmountInput.trim() === "" ||
+      priceDifferenceInput.trim() === ""
+    ) {
+      alert("All profit fields are required."); // TODO: Replace with toast
+      return;
+    }
+    const orderNum = parseInt(profitOrderNumberInput, 10);
+    const profit = parseFloat(profitAmountInput);
+    const priceDiff = parseFloat(priceDifferenceInput);
+
+    if (isNaN(orderNum) || isNaN(profit) || isNaN(priceDiff)) {
+      alert(
+        "Order number, profit, and price difference must be valid numbers."
+      ); // TODO: Replace with toast
+      return;
+    }
+    await executeAddProfitCard(
+      orderNum,
+      profit,
+      priceDiff,
+      currentProfitItemId
+    );
+  };
+
   const rows = (data?.data || []).map((user: any) => ({
     ...user,
-    key: user.id, // Ensure 'key' is set to the actual unique ID for findIndex
+    key: user.id,
     createdAt: user.createdAt
       ? new Date(user.createdAt).toLocaleDateString()
       : "N/A",
   }));
 
-  // Define columns inside the component to access 'page', 'pageSize', and 'rows'
   const columns: ColumnDef[] = [
     {
-      key: "id", // This key is used to access item.id if no renderCell, but renderCell overrides display
-      label: "#", // Changed label for sequential number
+      key: "id",
+      label: "#",
       renderCell: (item) => {
-        // Find the index of the current item within the 'rows' array for the current page
         const rowIndexOnPage = rows.findIndex((r) => r.key === item.key);
-        // Calculate the auto-incrementing number
-        if (rowIndexOnPage !== -1) {
-          return (page - 1) * pageSize + rowIndexOnPage + 1;
-        }
-        // Fallback, though item should always be found if rows is not empty
-        return item.id; // Or some placeholder if preferred
+        return rowIndexOnPage !== -1
+          ? (page - 1) * pageSize + rowIndexOnPage + 1
+          : item.id;
       },
     },
     { key: "username", label: "Username" },
@@ -93,7 +298,7 @@ function CustomerPage() {
             size="sm"
             color="success"
             variant="flat"
-            onPress={() => handleAdd(item)}
+            onPress={() => openOrderModal(item.id)}
           >
             Set Order
           </Button>
@@ -101,7 +306,7 @@ function CustomerPage() {
             size="sm"
             color="primary"
             variant="flat"
-            onPress={() => handleView(item)}
+            onPress={() => openProfitModal(item.id)}
           >
             Add profit
           </Button>
@@ -109,7 +314,7 @@ function CustomerPage() {
             size="sm"
             color="danger"
             variant="flat"
-            onPress={() => handleDelete(item.id)}
+            onPress={() => openRemarkModal(item.id)}
           >
             Add remark
           </Button>
@@ -119,16 +324,15 @@ function CustomerPage() {
   ];
 
   if (isLoading && !data?.data && page === 1) {
-    // Show loading only on initial load or when data is truly empty
     return (
       <div className="flex justify-center items-center h-full">
-        <div>Loading customers...</div>
+        Loading customers...
       </div>
     );
   }
 
   return (
-    <div className="p-2 md:p-4 lg:p-6 h-full flex flex-col">
+    <div className={`p-2 md:p-4 lg:p-6 h-full flex flex-col`}>
       <h1 className="text-2xl font-bold mb-6 text-slate-800">
         Customer Management
       </h1>
@@ -142,16 +346,138 @@ function CustomerPage() {
           onPageChange={setPage}
           onPageSizeChange={(newPageSize) => {
             setPageSize(newPageSize);
-            setPage(1); // Reset to first page when page size changes
+            setPage(1);
           }}
           searchValue={search}
           onSearch={(value) => {
             setSearch(value);
-            setPage(1); // Reset to first page when search query changes
+            setPage(1);
           }}
           isLoading={isLoading}
         />
       </div>
+
+      {/* Remark Modal */}
+      {isRemarkModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Add Remark</h2>
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              rows={4}
+              placeholder="Enter remark..."
+              value={remarkText}
+              onChange={(e) => setRemarkText(e.target.value)}
+              disabled={isLoadingRemark}
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="ghost"
+                onPress={handleCloseRemarkModal}
+                disabled={isLoadingRemark}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                onPress={handleSubmitRemark}
+                disabled={isLoadingRemark || remarkText.trim() === ""}
+              >
+                {isLoadingRemark ? "Submitting..." : "Submit Remark"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Set Order Modal */}
+      {isOrderModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Set Order Task</h2>
+            <input
+              type="number"
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter order number"
+              value={orderNumberInput}
+              onChange={(e) => setOrderNumberInput(e.target.value)}
+              disabled={isLoadingSetTask}
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="ghost"
+                onPress={handleCloseOrderModal}
+                disabled={isLoadingSetTask}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                onPress={handleSubmitOrder}
+                disabled={isLoadingSetTask || orderNumberInput.trim() === ""}
+              >
+                {isLoadingSetTask ? "Submitting..." : "Submit Order"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Profit Modal */}
+      {isProfitModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Add Profit Card</h2>
+            <input
+              type="number"
+              className="w-full p-2 border border-gray-300 rounded-md mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Order Number"
+              value={profitOrderNumberInput}
+              onChange={(e) => setProfitOrderNumberInput(e.target.value)}
+              disabled={isLoadingAddProfitCard}
+            />
+            <input
+              type="number"
+              step="0.01"
+              className="w-full p-2 border border-gray-300 rounded-md mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Profit Amount"
+              value={profitAmountInput}
+              onChange={(e) => setProfitAmountInput(e.target.value)}
+              disabled={isLoadingAddProfitCard}
+            />
+            <input
+              type="number"
+              step="0.01"
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Price Difference"
+              value={priceDifferenceInput}
+              onChange={(e) => setPriceDifferenceInput(e.target.value)}
+              disabled={isLoadingAddProfitCard}
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="ghost"
+                onPress={handleCloseProfitModal}
+                disabled={isLoadingAddProfitCard}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                onPress={handleSubmitProfit}
+                disabled={
+                  isLoadingAddProfitCard ||
+                  profitOrderNumberInput.trim() === "" ||
+                  profitAmountInput.trim() === "" ||
+                  priceDifferenceInput.trim() === ""
+                }
+              >
+                {isLoadingAddProfitCard ? "Submitting..." : "Submit Profit"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
