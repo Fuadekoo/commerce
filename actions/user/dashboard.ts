@@ -8,14 +8,17 @@ export async function dashboard() {
     throw new Error("Unauthorized");
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: { id: session.user.id },
     select: {
-      id: true,
-      phone: true,
+      // id: true,
+      // phone: true,
       myCode: true,
       balance: true,
-      invitationCode: true,
+      todayTask: true,
+      totalTask: true,
+      leftTask: true,
+      // invitationCode: true,
     },
   });
 
@@ -29,5 +32,11 @@ export async function dashboard() {
     throw new Error("User not found");
   }
 
-  return user;
+  // Convert Decimal 'balance' to number
+  const userWithNumberBalance = {
+    ...user,
+    balance: Number(user.balance),
+  };
+
+  return { user: userWithNumberBalance, totalInvited };
 }

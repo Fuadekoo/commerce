@@ -26,10 +26,14 @@ model user {
   photo               String?
   role                Role     @default(USER) // Only one admin will have ADMIN
   balance             Decimal  @default(0.00)
-  account             String   @default("")
+  walletAddress       String?
   isBlocked           Boolean  @default(false)
   invitationCode      String
   myCode              String   @unique
+  remarks             String?
+  todayTask           Int      @default(0)
+  totalTask           Int      @default(0)
+  leftTask            Int      @default(0)
   password            String
   transactionPassword String
   createdAt           DateTime @default(now())
@@ -38,10 +42,10 @@ model user {
   // Relations
   rechargeRecords   rechargeRecord[]
   withdrewalRecords withdrewalRecord[]
-  orders            order[]
   withdrewalAccount withdrewalAccount[]
 
-  profit profit[]
+  // profit     profit[]
+  profitCard profitCard[]
 }
 
 model campanyAccount {
@@ -84,29 +88,10 @@ model withdrewalAccount {
 model product {
   id          String   @id @default(cuid())
   name        String
-  description String?
   price       Decimal
   stock       Int      @default(0)
-  image       String?
+  orderNumber Int
   createdAt   DateTime @default(now())
-
-  orders order[]
-}
-
-model order {
-  id        String   @id @default(cuid())
-  quantity  Int
-  total     Decimal
-  createdAt DateTime @default(now())
-
-  // User who ordered
-  user   user   @relation(fields: [userId], references: [id])
-  userId String
-
-  // Product being ordered
-  product   product  @relation(fields: [productId], references: [id])
-  productId String
-  profit    profit[]
 }
 
 model post {
@@ -115,21 +100,20 @@ model post {
   createdAt DateTime @default(now())
 }
 
-model profit {
-  id              String   @id @default(cuid())
-  totalOrder      Int
-  profit          Decimal
-  priceDeffirence Decimal
-  createdAt       DateTime @default(now())
-  userId          String
-  user            user     @relation(fields: [userId], references: [id])
-  orderId         String
-  order           order    @relation(fields: [orderId], references: [id])
-  status          Status   @default(PENDING)
-}
 
 model message {
   id        String   @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
+}
+
+model profitCard {
+  id              String   @id @default(cuid())
+  orderNumber     Int
+  profit          Int
+  priceDifference Int
+  status          Status   @default(PENDING)
+  createdAt       DateTime @default(now())
+  userId          String
+  user            user     @relation(fields: [userId], references: [id])
 }

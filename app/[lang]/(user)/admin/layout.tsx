@@ -16,9 +16,10 @@ const menu = [
   { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },
   { label: "Customers", url: "customer", icon: <User size={18} /> },
   { label: "Payments", url: "payment", icon: <CreditCard size={18} /> },
-  { label: "Orders", url: "order", icon: <Package size={18} /> },
+  // { label: "Orders", url: "order", icon: <Package size={18} /> },
+  { label: "Profit Cards", url: "profit", icon: <Package size={18} /> },
   { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
-  { label: "Categories", url: "categories", icon: <Folder size={18} /> },
+  // { label: "Categories", url: "categories", icon: <Folder size={18} /> },
   { label: "Profile", url: "profile", icon: <User size={18} /> },
   { label: "Settings", url: "settings", icon: <Settings size={18} /> },
 ];

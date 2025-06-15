@@ -18,6 +18,7 @@ import useAction from "@/hooks/useAction";
 import { getUser } from "../actions/user/newUser"; // Adjust the import path as necessary
 import Image from "next/image";
 import { div } from "framer-motion/client";
+import { addToast } from "@heroui/toast";
 
 export default function UserLayout({
   children,
@@ -143,6 +144,7 @@ function Header({
   sidebar: boolean;
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const [data, refresh, isLoading] = useAction(getUser, [true, () => {}]);
   return (
     <header className="z-30 h-12 p-2 flex gap-4 items-center max-lg:shadow-sm bg-gray-500/10">
       <Button
@@ -154,11 +156,28 @@ function Header({
       >
         <AlignLeft className="size-7" />
       </Button>
-      <div className="flex-1 ">myInvitation code:USR001 </div>
-      {/* <Theme /> */}
-      <div className="text-primary-500">
-        <ShareIcon />
+      <div className="flex-1 text-foreground-500/80 text-sm">
+        My Invitation code: {data && data.user?.myCode}
       </div>
+      {/* <Theme /> */}
+      <button
+        className="text-primary-500"
+        onClick={async () => {
+          if (data && data.user?.myCode) {
+            const url = `http://localhost:3000/en/signup?verificationcode=${data.user.myCode}`;
+            await navigator.clipboard.writeText(url);
+            addToast({
+              title: "Copied!",
+              description: "Invitation link copied to clipboard.",
+              // status: "success",
+            });
+          }
+        }}
+        title="Copy invitation link"
+        type="button"
+      >
+        <ShareIcon />
+      </button>
     </header>
   );
 }

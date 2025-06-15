@@ -14,7 +14,7 @@ import {
 
 const menu = [
   { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },
-  { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
+  // { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
   { label: "Orders", url: "order", icon: <Package size={18} /> },
   { label: "Wallet", url: "wallet", icon: <CreditCard size={18} /> },
   { label: "Profile", url: "profile", icon: <User size={18} /> },

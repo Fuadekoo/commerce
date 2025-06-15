@@ -75,13 +75,15 @@ function CustomerPage() {
       },
     },
     { key: "username", label: "Username" },
+    { key: "phone", label: "Phone" },
     { key: "email", label: "Email" },
-    { key: "todayTasks", label: "Today Tasks" },
-    { key: "totalTasks", label: "Total Tasks" },
-    { key: "doneTasks", label: "Done Tasks" },
+    { key: "todayTask", label: "Today Tasks" },
+    { key: "totalTask", label: "Total Tasks" },
+    { key: "leftTask", label: "Left Tasks" },
     { key: "balance", label: "Balance" },
+    { key: "remarks", label: "Remarks" },
     { key: "createdAt", label: "Joined Date" },
-    { key: "status", label: "Status" },
+    { key: "isBlocked", label: "isBlocked" },
     {
       key: "action",
       label: "Action",
@@ -93,7 +95,7 @@ function CustomerPage() {
             variant="flat"
             onPress={() => handleAdd(item)}
           >
-            Add
+            Set Order
           </Button>
           <Button
             size="sm"
@@ -101,7 +103,7 @@ function CustomerPage() {
             variant="flat"
             onPress={() => handleView(item)}
           >
-            View
+            Add profit
           </Button>
           <Button
             size="sm"
@@ -109,7 +111,7 @@ function CustomerPage() {
             variant="flat"
             onPress={() => handleDelete(item.id)}
           >
-            Delete
+            Add remark
           </Button>
         </div>
       ),

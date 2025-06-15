@@ -66,40 +66,7 @@ export async function deposits(data: z.infer<typeof depositSchema>) {
   return { message: "Deposit successful" };
 }
 
-export async function aproofDeposit(id: string) {
-  const session = await auth();
-  if (!session || !session.user || !session.user.id) {
-    throw new Error("Unauthorized");
-  }
-  const userId = session.user.id;
 
-  // Fetch the deposit record
-  const depositRecord = await prisma.rechargeRecord.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      amount: true,
-      photo: true,
-      userId: true,
-      createdAt: true,
-    },
-  });
-  if (!depositRecord) {
-    return { message: "Deposit record not found" };
-  }
-
-  // Update user balance
-  await prisma.user.update({
-    where: { id: depositRecord.userId },
-    data: {
-      balance: {
-        increment: depositRecord.amount,
-      },
-    },
-  });
-
-  return { message: "Deposit approved successfully" };
-}
 
 //     throw new Error("Unauthorized");
 //   }

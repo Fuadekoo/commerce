@@ -40,6 +40,10 @@ export async function getUser(
       username: true,
       email: true,
       balance: true, // Decimal
+      todayTask: true,
+      totalTask: true,
+      leftTask: true,
+      remarks: true,
       phone: true,
       invitationCode: true,
       isBlocked: true,
@@ -136,5 +140,70 @@ export async function unblockUser(id: string) {
 
   return {
     message: "User unblocked successfully",
+  };
+}
+
+export async function addRemarksUser(id: string, remarks: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Optionally, check if the user is an admin here
+
+  const user = await prisma.user.update({
+    where: { id },
+    data: { remarks },
+  });
+
+  return {
+    message: "Remarks added successfully",
+    user,
+  };
+}
+export async function addprofitCard(
+  orderNumber: number,
+  profit: number,
+  priceDifference: number,
+  userId: string
+) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Optionally, check if the user is an admin here
+
+  const profitCard = await prisma.profitCard.create({
+    data: {
+      orderNumber,
+      profit,
+      priceDifference,
+      user: {
+        connect: { id: userId },
+      },
+    },
+  });
+
+  return {
+    message: "Profit card added successfully",
+    profitCard,
+  };
+}
+
+export async function setTask(id: string, order: number) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const task = await prisma.user.update({
+    where: { id },
+    data: { todayTask: order },
+  });
+
+  return {
+    message: "Task Added successfully",
+    todayTask: task.todayTask,
   };
 }
