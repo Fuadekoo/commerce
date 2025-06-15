@@ -31,15 +31,6 @@ interface PaginationInfo {
   hasPreviousPage?: boolean;
 }
 
-const columns = [
-  { key: "id", label: "ID" },
-  { key: "amount", label: "Amount" },
-  { key: "status", label: "Status" },
-  { key: "photo", label: "Proof" }, // Assuming CustomTable handles 'photo' key for image display
-  { key: "createdAt", label: "Created At" },
-  { key: "user.username", label: "User" }, // Nested user property
-];
-
 interface GetPaymentResponse {
   data: PaymentItem[];
   pagination: PaginationInfo;
@@ -114,7 +105,7 @@ function PaymentListPage() {
     key: payment.id,
   }));
 
-  const columns = [
+  const columns: ColumnDef[] = [
     {
       key: "autoId",
       label: "#",
