@@ -4,9 +4,77 @@ import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { productSchema } from "@/lib/zodSchema";
 
-export async function getProduct() {}
+export async function getProduct(
+  searchTerm?: string,
+  currentPage?: number,
+  itemsPerPage?: number
+) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
 
-export async function postProduct(data: z.infer<typeof productSchema>) {
+  const page = currentPage && currentPage > 0 ? currentPage : 1;
+  const take = itemsPerPage && itemsPerPage > 0 ? itemsPerPage : 10;
+  const skip = (page - 1) * take;
+
+  const whereClause: any = {};
+  if (searchTerm) {
+    whereClause.OR = [
+      { name: { contains: searchTerm, mode: "insensitive" } },
+      { description: { contains: searchTerm, mode: "insensitive" } },
+    ];
+  }
+
+  const totalRecords = await prisma.product.count({
+    where: whereClause,
+  });
+
+  const productsFromDb = await prisma.product.findMany({
+    where: whereClause,
+    skip: skip,
+    take: take,
+    orderBy: { orderNumber: "asc" },
+    // You can add a select clause here if you only want specific fields
+    // select: {
+    //   id: true,
+    //   name: true,
+    //   description: true,
+    //   price: true,
+    //   stock: true,
+    //   orderNumber: true,
+    //   image: true,
+    //   createdAt: true,
+    //   updatedAt: true,
+    // }
+  });
+
+  // Assuming your Product model has createdAt and price (as Decimal)
+  // Adjust transformations based on your actual Prisma model schema
+  const data = productsFromDb.map((product) => ({
+    ...product,
+    price: Number(product.price), // Convert Decimal to number
+    // Convert Date fields to ISO strings if they exist and are needed as strings
+    // createdAt: product.createdAt.toISOString(),
+    // updatedAt: product.updatedAt.toISOString(),
+  }));
+
+  const totalPages = Math.ceil(totalRecords / take);
+
+  return {
+    data,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      itemsPerPage: take,
+      totalRecords,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
+
+export async function createProduct(data: z.infer<typeof productSchema>) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
@@ -17,11 +85,24 @@ export async function postProduct(data: z.infer<typeof productSchema>) {
     throw new Error("Invalid product data");
   }
 
-  const product = await prisma.product.create({
-    data: parsed.data,
+  // Get the current max orderNumber from the database
+  const lastProduct = await prisma.product.findFirst({
+    orderBy: { orderNumber: "desc" },
+    select: { orderNumber: true },
   });
 
-  return product;
+  const nextOrderNumber = lastProduct?.orderNumber
+    ? lastProduct.orderNumber + 1
+    : 1;
+
+  const product = await prisma.product.create({
+    data: {
+      ...parsed.data,
+      orderNumber: nextOrderNumber,
+    },
+  });
+
+  return { message: "Product created successfully", product };
 }
 
 export async function deleteProduct(id: string) {
@@ -34,9 +115,12 @@ export async function deleteProduct(id: string) {
     where: { id },
   });
 
-  return product;
+  return { message: "Product deleted successfully" };
 }
-export async function updateProduct(id: string, data: z.infer<typeof productSchema>) {
+export async function updateProduct(
+  id: string,
+  data: z.infer<typeof productSchema>
+) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");

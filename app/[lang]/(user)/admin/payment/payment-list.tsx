@@ -6,7 +6,9 @@ import { getPayment } from "@/actions/admin/payment";
 // Make sure to import aproofDeposit if you implement the approval logic
 // import { aproofDeposit } from "@/actions/admin/payment";
 import { Button } from "@heroui/react";
-
+import { aProofDeposit } from "@/actions/admin/payment"; // Assuming you have an action for approving deposits
+import { rejectDeposit } from "@/actions/admin/payment"; // Assuming you have an action for rejecting deposits
+import { addToast } from "@heroui/toast";
 // Define the structure of a single payment item based on getPayment action
 interface PaymentItem {
   id: string | number;
@@ -48,48 +50,16 @@ const handleViewPayment = (item: PaymentItem) => {
   // Implement actual view logic (e.g., open modal)
 };
 
-const handleApprovePayment = async (
-  id: string | number,
-  refreshCallback: () => void
-) => {
-  console.log("Attempting to approve payment ID:", id);
-  // try {
-  //   // const result = await aproofDeposit(id.toString()); // Ensure aproofDeposit is imported
-  //   // alert(result.message || "Approval action completed.");
-  //   // refreshCallback(); // Refresh the table data
-  // } catch (error) {
-  //   // console.error("Error approving deposit:", error);
-  //   // alert("Failed to approve deposit.");
-  // }
-  alert(
-    `Payment ID: ${id} would be approved. Implement actual logic and uncomment above.`
-  );
-  refreshCallback(); // Call refresh for consistency
-};
-
-const handleRejectPayment = async (
-  id: string | number,
-  refreshCallback: () => void
-) => {
-  console.log("Attempting to reject payment ID:", id);
-  // Implement actual reject logic here, similar to handleApprovePayment
-  // For example:
-  // try {
-  //   // const result = await rejectDepositAction(id.toString()); // Assuming a rejectDepositAction exists
-  //   // alert(result.message || "Rejection action completed.");
-  //   // refreshCallback();
-  // } catch (error) {
-  //   // console.error("Error rejecting deposit:", error);
-  //   // alert("Failed to reject deposit.");
-  // }
-  alert(`Payment ID: ${id} would be rejected. Implement actual logic.`);
-  refreshCallback(); // Call refresh for consistency
-};
-
 function PaymentListPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [processingApproveId, setProcessingApproveId] = useState<
+    string | number | null
+  >(null);
+  const [processingRejectId, setProcessingRejectId] = useState<
+    string | number | null
+  >(null);
 
   // Corrected useAction usage
   const [data, refresh, isLoading] = useAction(
@@ -98,6 +68,66 @@ function PaymentListPage() {
     search,
     page,
     pageSize
+  );
+
+  const [proofResponse, proofAction, isLoadingProof] = useAction(
+    aProofDeposit,
+    [
+      ,
+      // Initial data or config, can be null or an empty object if not needed
+      (response) => {
+        setProcessingApproveId(null); // Clear processing ID
+        refresh(); // Refresh data after action execution
+        // Callback function after action execution
+        if (response) {
+          addToast({
+            title: "Approve Payment",
+            description: response.message,
+            // status: response.error ? "error" : "success",
+          });
+          // The refresh() call was moved up, no need for this conditional refresh
+          // if (!response.error) { // Check for error before refreshing
+          //   refresh(); // Refresh data on success
+          // }
+        } else {
+          addToast({
+            title: "Approve Payment",
+            description: "An unexpected error occurred.",
+            // status: "error",
+          });
+        }
+      },
+    ]
+  );
+
+  const [rejectResponse, rejectAction, isLoadingReject] = useAction(
+    rejectDeposit,
+    [
+      ,
+      // Initial data or config
+      (response) => {
+        setProcessingRejectId(null); // Clear processing ID
+        refresh(); // Refresh data after action execution
+        // Callback function after action execution
+        if (response) {
+          addToast({
+            title: "Reject Payment",
+            description: response.message,
+            // status: response.error ? "error" : "success",
+          });
+          // The refresh() call was moved up, no need for this conditional refresh
+          // if (!response.error) { // Check for error before refreshing
+          //   refresh(); // Refresh data on success
+          // }
+        } else {
+          addToast({
+            title: "Reject Payment",
+            description: "An unexpected error occurred.",
+            // status: "error",
+          });
+        }
+      },
+    ]
   );
 
   const rows = (data?.data || []).map((payment) => ({
@@ -153,15 +183,23 @@ function PaymentListPage() {
                 size="sm"
                 color="success"
                 variant="flat"
-                onPress={() => handleApprovePayment(item.id, refresh)}
+                onPress={() => {
+                  setProcessingApproveId(item.id);
+                  proofAction(String(item.id));
+                }}
+                isLoading={isLoadingProof && processingApproveId === item.id}
               >
                 Approve
               </Button>
               <Button
                 size="sm"
-                color="danger" // Changed from danger to primary as requested
+                color="danger"
                 variant="flat"
-                onPress={() => handleRejectPayment(item.id, refresh)}
+                onPress={() => {
+                  setProcessingRejectId(item.id);
+                  rejectAction(String(item.id));
+                }}
+                isLoading={isLoadingReject && processingRejectId === item.id}
               >
                 Reject
               </Button>

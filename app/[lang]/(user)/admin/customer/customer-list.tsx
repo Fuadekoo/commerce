@@ -6,8 +6,20 @@ import {
   addRemarksUser,
   setTask,
   addprofitCard,
+  resetPassword,
+  resetTransactionPassword,
+  blockUser,
+  unblockUser,
 } from "@/actions/admin/user";
-import { Button } from "@heroui/react";
+import { Lock, Unlock } from "lucide-react";
+import {
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@heroui/react";
 import { addToast } from "@heroui/toast";
 
 interface ColumnDef {
@@ -57,6 +69,103 @@ function CustomerPage() {
     page,
     pageSize
   );
+
+  const [blockResponse, executeBlockUser, isLoadingBlock] = useAction(
+    blockUser,
+    [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Block User",
+            description: response.message,
+            // status: response.error ? "error" : "success",
+          });
+        } else {
+          // This case might not be hit if your action always returns a response object
+          addToast({
+            // title: "Block User",
+            description: "User status updated.",
+            // status: "success",
+          });
+        }
+        if (response ) {
+          refresh();
+        }
+      },
+    ]
+  );
+
+  const [unblockResponse, executeUnblockUser, isLoadingUnblock] = useAction(
+    unblockUser,
+    [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Unblock User",
+            description: response.message,
+            // status: response.error ? "error" : "success",
+          });
+        } else {
+          // This case might not be hit if your action always returns a response object
+          addToast({
+            title: "Unblock User",
+            description: "User status updated.",
+            // status: "success",
+          });
+        }
+        if (response ) {
+          refresh();
+        }
+      },
+    ]
+  );
+
+  const [resetPasswordResponse, executeResetPassword, isLoadingResetPassword] =
+    useAction(resetPassword, [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Reset Password",
+            description: response.message,
+            // status: response.error ? "error" : "success",
+          });
+        } else {
+          addToast({
+            title: "Reset Password",
+            description: "Password reset successfully!",
+            // status: "success",
+          });
+        }
+      },
+    ]);
+
+  const [
+    resetTransactionPasswordResponse,
+    executeResetTransactionPassword,
+    isLoadingResetTransactionPassword,
+  ] = useAction(resetTransactionPassword, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Reset Transaction Password",
+          description: response.message,
+          // status: response.error ? "error" : "success",
+        });
+      } else {
+        addToast({
+          title: "Reset Transaction Password",
+          description: "Transaction password reset successfully!",
+          // status: "success",
+        });
+      }
+      // Optionally call refresh() if this action should update table data
+      // refresh();
+    },
+  ]);
 
   // --- Add Remark ---
   const onRemarkAddedOrFailed = (response: {
@@ -288,12 +397,64 @@ function CustomerPage() {
     { key: "balance", label: "Balance" },
     { key: "remarks", label: "Remarks" },
     { key: "createdAt", label: "Joined Date" },
-    { key: "isBlocked", label: "isBlocked" },
+    // { key: "invitationCode", label: "Invitation Code" },
+    { key: "myCode", label: "My Code" },
+    {
+      key: "isBlocked",
+      label: "Status",
+      renderCell: (item) => (
+        <Button
+          size="sm"
+          variant="flat"
+          color={item.isBlocked ? "danger" : "success"}
+          onPress={() => {
+            if (item.isBlocked) {
+              executeUnblockUser(item.id);
+            } else {
+              executeBlockUser(item.id);
+            }
+          }}
+          isLoading={isLoadingBlock || isLoadingUnblock}
+          startContent={
+            item.isBlocked ? (
+              <Unlock className="size-4" />
+            ) : (
+              <Lock className="size-4" />
+            )
+          }
+        >
+          {item.isBlocked ? "Blocked" : "Active"}
+        </Button>
+      ),
+    },
     {
       key: "action",
       label: "Action",
       renderCell: (item) => (
         <div className="flex items-center gap-2">
+          <Dropdown>
+            <DropdownTrigger>
+              <Button size="sm" color="warning" variant="flat">
+                Reset
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Reset Actions">
+              <DropdownItem
+                key="resetPassword"
+                onPress={() => executeResetPassword(item.id)}
+                isDisabled={isLoadingResetPassword}
+              >
+                Password
+              </DropdownItem>
+              <DropdownItem
+                key="resetTransactionPassword"
+                onPress={() => executeResetTransactionPassword(item.id)}
+                isDisabled={isLoadingResetTransactionPassword}
+              >
+                Transaction Password
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
           <Button
             size="sm"
             color="success"

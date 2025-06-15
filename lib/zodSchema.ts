@@ -96,12 +96,13 @@ export const withdrawHistorySchema = z.object({
 export type WithdrawHistoryType = z.infer<typeof withdrawHistorySchema>;
 
 export const productSchema = z.object({
-  id: z.string(),
+  // id: z.string(),
   name: z.string().min(1, "Product name is required"),
-  description: z.string().optional(),
   price: z.number().positive("Price must be a positive number"),
   stock: z.number().int().min(0, "Stock cannot be negative"),
-  image: z.string().optional(),
-  createdAt: z.date(),
+  orderNumber: z
+    .number()
+    .int()
+    .min(1, "Order number must be a positive integer"),
 });
 export type ProductType = z.infer<typeof productSchema>;

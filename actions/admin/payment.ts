@@ -92,13 +92,11 @@ export async function getPayment(
     },
   };
 }
-
-export async function aproofDeposit(id: string) {
+export async function aProofDeposit(id: string) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     throw new Error("Unauthorized");
   }
-  const userId = session.user.id;
 
   // Fetch the deposit record
   const depositRecord = await prisma.rechargeRecord.findUnique({
@@ -109,21 +107,69 @@ export async function aproofDeposit(id: string) {
       photo: true,
       userId: true,
       createdAt: true,
+      status: true,
     },
   });
   if (!depositRecord) {
     return { message: "Deposit record not found" };
   }
+  if (depositRecord.status === "APPROVED") {
+    return { message: "Deposit already approved" };
+  }
 
-  // Update user balance
-  await prisma.user.update({
-    where: { id: depositRecord.userId },
-    data: {
-      balance: {
-        increment: depositRecord.amount,
+  // Use a transaction to update both user balance and deposit status
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: depositRecord.userId },
+      data: {
+        balance: {
+          increment: depositRecord.amount,
+        },
       },
+    }),
+    prisma.rechargeRecord.update({
+      where: { id: depositRecord.id },
+      data: {
+        status: "APPROVED",
+      },
+    }),
+  ]);
+
+  return { message: "Deposit approved successfully" };
+}
+
+export async function rejectDeposit(id: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Fetch the deposit record
+  const depositRecord = await prisma.rechargeRecord.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      amount: true,
+      photo: true,
+      userId: true,
+      createdAt: true,
+      status: true,
+    },
+  });
+  if (!depositRecord) {
+    return { message: "Deposit record not found" };
+  }
+  if (depositRecord.status === "REJECTED") {
+    return { message: "Deposit already rejected" };
+  }
+
+  // Update the deposit status to REJECTED
+  await prisma.rechargeRecord.update({
+    where: { id: depositRecord.id },
+    data: {
+      status: "REJECTED",
     },
   });
 
-  return { message: "Deposit approved successfully" };
+  return { message: "Deposit rejected successfully" };
 }

@@ -49,6 +49,7 @@ export async function getUser(
       remarks: true,
       phone: true,
       invitationCode: true,
+      myCode: true,
       isBlocked: true,
       createdAt: true,
       // add more fields as needed
@@ -210,3 +211,79 @@ export async function setTask(id: string, order: number) {
     todayTask: task.todayTask,
   };
 }
+
+export async function resetPassword(id: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Optionally, check if the user is an admin here
+
+  // gate the user mycode
+  const userCode = await prisma.user.findUnique({
+    where: { id },
+    select: { myCode: true },
+  });
+
+  const user = await prisma.user.update({
+    where: { id },
+    data: { password: userCode?.myCode }, // Set a new password
+  });
+
+  return {
+    message: "Password reset successfully",
+  };
+}
+
+export async function resetTransactionPassword(id: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Optionally, check if the user is an admin here
+
+  // gate the user mycode
+  const userCode = await prisma.user.findUnique({
+    where: { id },
+    select: { myCode: true },
+  });
+
+  const user = await prisma.user.update({
+    where: { id },
+    data: { transactionPassword: userCode?.myCode }, // Set a new transaction password
+  });
+
+  return {
+    message: "Transaction password reset successfully",
+  };
+}
+
+// export async function resetAllPassword() {
+//   const session = await auth();
+//   if (!session || !session.user || !session.user.id) {
+//     throw new Error("Unauthorized");
+//   }
+
+//   // Optionally, check if the user is an admin here
+
+//   const users = await prisma.user.findMany({
+//     where: { role: "USER" }, // Assuming you want to reset passwords for all users
+//     select: { id: true, myCode: true },
+//   });
+
+//   const updatedUsers = await Promise.all(
+//     users.map((user) =>
+//       prisma.user.update({
+//         where: { id: user.id },
+//         data: { password: user.myCode }, // Set a new password
+//       })
+//     )
+//   );
+
+//   return {
+//     message: "All user passwords reset successfully",
+//     users: updatedUsers,
+//   };
+// }
