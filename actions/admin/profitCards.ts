@@ -29,17 +29,42 @@ export async function getProfitCards(
     where: whereClause,
   });
 
-  const profitCards = await prisma.profitCard.findMany({
+  const profitCardsFromDb = await prisma.profitCard.findMany({
     where: whereClause,
+    select: {
+      id: true,
+      orderNumber: true,
+      profit: true,
+      priceDifference: true,
+      createdAt: true,
+      status: true,
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
     skip: skip,
     take: take,
     orderBy: { createdAt: "desc" },
   });
 
+  const data = profitCardsFromDb.map((card) => ({
+    ...card,
+
+  }));
+
+  const totalPages = Math.ceil(totalRecords / take);
+
   return {
-    profitCards,
-    totalRecords,
-    currentPage: page,
-    totalPages: Math.ceil(totalRecords / take),
+    data,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      itemsPerPage: take,
+      totalRecords,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
   };
 }

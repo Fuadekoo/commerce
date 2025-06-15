@@ -1,47 +1,117 @@
 "use server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+import * as bcrypt from "bcryptjs";
 
-export async function changePassword(newPassword: string) {
-  const session = await auth();
-  if (!session || !session.user) throw new Error("Unauthorized");
+export async function changePassword(oldPassword: string, newPassword: string) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      return { error: "Unauthorized" };
+    }
 
-  const user = await prisma.user.update({
-    where: { id: session.user.id },
-    data: { password: newPassword },
-  });
-  return { message: "Password updated successfully" };
-}
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        password: true,
+      },
+    });
 
-export async function changeTransactionPassword(newPassword: string) {
-  const session = await auth();
-  if (!session || !session.user) throw new Error("Unauthorized");
+    if (!user) {
+      return { error: "User not found." };
+    }
 
-  const user = await prisma.user.update({
-    where: { id: session.user.id },
-    data: { transactionPassword: newPassword },
-  });
-  return { message: "Transaction password updated successfully" };
-}
+    if (!user.password) {
+      return { error: "Password not set for this user." };
+    }
 
-// this is a admin work when user is lost it transanction password admin can reset it
-export async function resetTransactionPassword(userId: string) {
-  const session = await auth();
-  if (!session || !session.user) {
-    throw new Error("Unauthorized");
+    const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordValid) {
+      return { error: "Incorrect old password." };
+    }
+
+    if (newPassword.length < 6) {
+      // Example: Enforce minimum password length
+      return { error: "New password must be at least 6 characters long." };
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { password: hashedNewPassword },
+    });
+
+    return { message: "Password updated successfully." };
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return { error: "Failed to update password. Please try again." };
   }
+}
 
-  // Generate a new transaction password (for example, a random string)
-  const newTransactionPassword = Math.random().toString(36).slice(-8);
+export async function changeTransactionPassword(
+  oldPassword: string,
+  newPassword: string
+) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      return { error: "Unauthorized" };
+    }
 
-  // Update the user's transaction password
-  await prisma.user.update({
-    where: { id: userId },
-    data: { transactionPassword: newTransactionPassword },
-  });
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        transactionPassword: true,
+      },
+    });
 
-  return {
-    message: "Transaction password reset successfully",
-    newTransactionPassword,
-  };
+    if (!user) {
+      return { error: "User not found." };
+    }
+
+    // If transaction password can be initially null and set later,
+    // this logic might need adjustment. Assuming here it's being changed.
+    if (!user.transactionPassword) {
+      // If allowing to set for the first time and oldPassword is empty
+      if (oldPassword === "" || oldPassword === null) {
+        // This means user is setting it for the first time
+      } else {
+        return {
+          error: "Transaction password not set. Cannot verify old password.",
+        };
+      }
+    } else {
+      const isOldPasswordValid = await bcrypt.compare(
+        oldPassword,
+        user.transactionPassword
+      );
+      if (!isOldPasswordValid) {
+        return { error: "Incorrect old transaction password." };
+      }
+    }
+
+    if (newPassword.length < 6) {
+      // Example: Enforce minimum password length
+      return {
+        error: "New transaction password must be at least 6 characters long.",
+      };
+    }
+
+    const hashedNewTransactionPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { transactionPassword: hashedNewTransactionPassword },
+    });
+
+    return { message: "Transaction password updated successfully." };
+  } catch (error) {
+    console.error("Error changing transaction password:", error);
+    return {
+      error: "Failed to update transaction password. Please try again.",
+    };
+  }
 }
