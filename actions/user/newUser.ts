@@ -43,7 +43,7 @@ export async function newUser(data: z.infer<typeof signupSchema>) {
     );
 
     // Generate myCode
-    const myCode = uuidv4().replace(/-/g, "").substring(0, 7);
+    const myCode = uuidv4().replace(/-/g, "").substring(0, 9);
 
     await prisma.user.create({
       data: {

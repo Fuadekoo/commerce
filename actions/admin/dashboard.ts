@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+
 export async function adminDashboard() {
   const session = await auth();
   if (!session) {
@@ -8,37 +9,36 @@ export async function adminDashboard() {
   }
 
   const totalUsers = await prisma.user.count({
-    where: {
-      role: "USER",
-    },
-  });
-  const totalUserBalance = await prisma.user.aggregate({
-    _sum: {
-      balance: true,
-    },
-  });
-  const products = await prisma.product.count();
-  const TopBalanceUsers = await prisma.user.findMany({
-    orderBy: {
-      balance: "desc",
-    },
-    take: 1,
-    select: {
-      balance: true,
-    },
+    where: { role: "USER" },
   });
 
-  const totalProfitCard = await prisma.profitCard.count({
-    where: {
-      status: "PENDING",
-    },
+  const totalUserBalance = await prisma.user.aggregate({
+    _sum: { balance: true },
+  });
+
+  const totalProducts = await prisma.product.count();
+
+  const topBalanceUser = await prisma.user.findFirst({
+    orderBy: { balance: "desc" },
+    take: 1,
+    select: { balance: true },
+  });
+
+  const pendingProfitCards = await prisma.profitCard.count({
+    where: { status: "PENDING" },
   });
 
   return {
-    totalUsers,
-    totalUserBalance,
-    products,
-    TopBalanceUsers,
-    totalProfitCard,
+    users: {
+      total: totalUsers,
+      totalBalance: totalUserBalance._sum.balance || 0,
+      topBalanceUser,
+    },
+    products: {
+      total: totalProducts,
+    },
+    profitCards: {
+      pending: pendingProfitCards,
+    },
   };
 }
