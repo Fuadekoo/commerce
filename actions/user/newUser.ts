@@ -94,6 +94,4 @@ export async function getUser() {
   }
 }
 
-export async function profileUpdate() {}
 
-export async function profilePhotoUpdate() {}

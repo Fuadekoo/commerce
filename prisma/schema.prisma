@@ -47,6 +47,7 @@ model user {
 
   // profit     profit[]
   profitCard profitCard[]
+  messages   message[]
 }
 
 model campanyAccount {
@@ -104,6 +105,8 @@ model post {
 model message {
   id        String   @id @default(cuid())
   content   String
+  userId    String?
+  user      user?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
