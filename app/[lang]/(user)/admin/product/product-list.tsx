@@ -8,8 +8,20 @@ import {
   updateProduct,
 } from "@/actions/admin/product";
 import CustomTable from "@/components/custom-table";
-import { Button } from "@heroui/react";
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
+  Textarea,
+} from "@heroui/react";
 import { addToast } from "@heroui/toast";
+import { z } from "zod";
+import { productSchema } from "@/lib/zodSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface ProductItem {
   id: string | number;
@@ -43,14 +55,19 @@ interface ColumnDef {
   renderCell?: (item: ProductItem) => React.ReactNode;
 }
 
-const handleEditProduct = (item: ProductItem) => {
-  addToast({
-    title: "Edit Action",
-    description: `Editing product ID: ${item.id}`,
-  });
-};
-
 function ProductList() {
+  const [showModal, setShowModal] = useState(false);
+  const [editProduct, setEditProduct] = useState<ProductItem | null>(null);
+
+  const {
+    handleSubmit,
+    register,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<z.infer<typeof productSchema>>({
+    resolver: zodResolver(productSchema),
+  });
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -73,6 +90,7 @@ function ProductList() {
           addToast({
             title: "Success",
             description: (response as any)?.message || "Product deleted.",
+            // status: "success",
           });
           refreshProducts();
         } else {
@@ -80,6 +98,7 @@ function ProductList() {
             title: "Error",
             description:
               (response as any)?.error || "Failed to delete product.",
+            // status: "error",
           });
         }
       },
@@ -88,15 +107,83 @@ function ProductList() {
 
   const [createProductResponse, productAction, isLoadingCreate] = useAction(
     createProduct,
-    [, () => {}]
+    [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Success",
+            description: (response as any)?.message || "Product created.",
+            // status: "success",
+          });
+          setShowModal(false);
+          reset();
+          refreshProducts();
+        } else {
+          addToast({
+            title: "Error",
+            description:
+              (response as any)?.error || "Failed to create product.",
+            // status: "error",
+          });
+        }
+      },
+    ]
   );
 
   const [updateProductResponse, updateProductAction, isLoadingUpdate] =
-    useAction(updateProduct, [, () => {}]);
+    useAction(updateProduct, [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Success",
+            description: response?.message || "Product updated.",
+            // status: "success",
+          });
+          setShowModal(false);
+          setEditProduct(null);
+          reset();
+          refreshProducts();
+        } else {
+          addToast({
+            title: "Error",
+            description:
+              (response as any)?.error || "Failed to update product.",
+            // status: "error",
+          });
+        }
+      },
+    ]);
 
   const handleDeleteProduct = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       await executeDeleteProduct(id.toString());
+    }
+  };
+
+  const handleEditProduct = (item: ProductItem) => {
+    setEditProduct(item);
+    setShowModal(true);
+    // Pre-fill form
+    setValue("name", item.name);
+    // setValue("description", item.description || "");
+    setValue("price", item.price);
+    setValue("stock", item.stock ?? 0);
+    setValue("orderNumber", item.orderNumber ?? 0);
+  };
+
+  const handleAddProduct = () => {
+    setEditProduct(null);
+    reset();
+    setShowModal(true);
+  };
+
+  const onSubmit = async (data: z.infer<typeof productSchema>) => {
+    if (editProduct) {
+      await updateProductAction({ ...data, id: editProduct.id });
+    } else {
+      await productAction(data);
     }
   };
 
@@ -174,15 +261,7 @@ function ProductList() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-end">
-        <Button
-          color="primary"
-          onPress={() =>
-            addToast({
-              title: "Add Product",
-              description: "Add product action triggered.",
-            })
-          }
-        >
+        <Button color="primary" onPress={handleAddProduct}>
           Add Product
         </Button>
       </div>
@@ -196,6 +275,78 @@ function ProductList() {
           onPageChange: setPage,
         }}
       />
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setEditProduct(null);
+        }}
+      >
+        <ModalHeader>
+          {editProduct ? "Edit Product" : "Add Product"}
+        </ModalHeader>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ModalBody>
+            <div className="flex flex-col gap-4">
+              <Input
+                label="Name"
+                {...register("name")}
+                // error={!!errors.name}
+                // helperText={errors.name?.message}
+              />
+              {/* <Textarea
+                label="Description"
+                {...register("description")}
+                // error={!!errors.description}
+                // helperText={errors.description?.message}
+              /> */}
+              <Input
+                label="Price"
+                type="number"
+                step="0.01"
+                {...register("price", { valueAsNumber: true })}
+                // error={!!errors.price}
+                // helperText={errors.price?.message}
+              />
+              <Input
+                label="Stock"
+                type="number"
+                {...register("stock", { valueAsNumber: true })}
+                // error={!!errors.stock}
+                // helperText={errors.stock?.message}
+              />
+              <Input
+                label="Order Number"
+                type="number"
+                {...register("orderNumber", { valueAsNumber: true })}
+                // error={!!errors.orderNumber}
+                // helperText={errors.orderNumber?.message}
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="flat"
+              type="button"
+              onPress={() => {
+                setShowModal(false);
+                setEditProduct(null);
+                reset();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              type="submit"
+              isLoading={editProduct ? isLoadingUpdate : isLoadingCreate}
+              disabled={editProduct ? isLoadingUpdate : isLoadingCreate}
+            >
+              {editProduct ? "Update" : "Add"}
+            </Button>
+          </ModalFooter>
+        </form>
+      </Modal>
     </div>
   );
 }

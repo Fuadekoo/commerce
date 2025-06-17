@@ -112,3 +112,11 @@ export const companyAccountSchema = z.object({
   account: z.string().min(1, "Account is required"),
 });
 export type companyAccountType = z.infer<typeof companyAccountSchema>;
+
+export const profitCardSchema = z.object({
+  orderNumber: z.number().min(1, ""),
+  profit: z.number().min(1, ""),
+  priceDifference: z.number().min(1, ""),
+});
+
+export type profitCardType = z.infer<typeof profitCardSchema>;

@@ -1,10 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { getProfitCards } from "@/actions/admin/profitCards";
+import {
+  getProfitCards,
+  addProfit,
+  approveProfit,
+  deleteProfit,
+} from "@/actions/admin/profitCards";
 import useAction from "@/hooks/useAction";
 import CustomTable from "@/components/custom-table";
-import { Button } from "@heroui/react"; // Import Button
-import { addToast } from "@heroui/toast"; // For potential toast messages
+import { Button } from "@heroui/react";
+import { addToast } from "@heroui/toast";
+import { z } from "zod";
+import { profitCardSchema } from "@/lib/zodSchema";
 
 interface ProfitCardItem {
   id: string | number;
@@ -25,32 +32,16 @@ interface ColumnDef {
   renderCell?: (item: ProfitCardItem) => React.ReactNode;
 }
 
-// Placeholder for delete action
-const handleDeleteProfitCard = async (id: string | number, refreshCallback: () => void) => {
-  console.log("Attempting to delete profit card ID:", id);
-  // TODO: Implement actual delete logic using useAction
-  // Example:
-  // const [deleteResponse, deleteAction, isLoadingDelete] = useAction(deleteProfitCardAction, [, (response) => { ... refresh(); ... }]);
-  // await deleteAction(id);
-  addToast({ title: "Delete Action", description: `Profit card ID: ${id} would be deleted. Implement actual logic.`, status: "info" });
-  refreshCallback(); // Call refresh for consistency if the action is mocked or successful
-};
-
-// Placeholder for approve action
-const handleApproveProfitCard = async (id: string | number, refreshCallback: () => void) => {
-  console.log("Attempting to approve profit card ID:", id);
-  // TODO: Implement actual approve logic using useAction
-  // Example:
-  // const [approveResponse, approveAction, isLoadingApprove] = useAction(approveProfitCardAction, [, (response) => { ... refresh(); ... }]);
-  // await approveAction(id);
-  addToast({ title: "Approve Action", description: `Profit card ID: ${id} would be approved. Implement actual logic.`, status: "info" });
-  refreshCallback(); // Call refresh for consistency
-};
-
 function ProfitCard() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [loadingDeleteId, setLoadingDeleteId] = useState<
+    string | number | null
+  >(null);
+  const [loadingApproveId, setLoadingApproveId] = useState<
+    string | number | null
+  >(null);
 
   const [apiResponse, refresh, isLoading] = useAction(
     getProfitCards,
@@ -59,6 +50,53 @@ function ProfitCard() {
     page,
     pageSize
   );
+
+  const [addresponse, addAction, isLoadingCreate] = useAction(addProfit, [
+    ,
+    () => {},
+  ]);
+
+  const [approveResponse, approveAction] = useAction(approveProfit, [
+    ,
+    (response) => {
+      setLoadingApproveId(null);
+      if (response) {
+        addToast({
+          title: "Success",
+          description: response?.message || "Profit approved successfully.",
+          // status: "success",
+        });
+        refresh();
+      } else {
+        addToast({
+          title: "Error",
+          description: response || "Failed to approve profit.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
+
+  const [deleteResponse, deleteAction] = useAction(deleteProfit, [
+    ,
+    (response) => {
+      setLoadingDeleteId(null);
+      if (response) {
+        addToast({
+          title: "Success",
+          description: response?.message || "Profit deleted successfully.",
+          // status: "success",
+        });
+        refresh();
+      } else {
+        addToast({
+          title: "Error",
+          description: response || "Failed to delete profit.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
   const rows = (apiResponse?.data || []).map((card: any) => ({
     ...card,
@@ -114,21 +152,28 @@ function ProfitCard() {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            color="warning" // Or "danger" if more appropriate for delete
+            color="warning"
             variant="flat"
-            onPress={() => handleDeleteProfitCard(item.id, refresh)}
-            // TODO: Add isLoading state from a useAction hook for delete
+            onPress={async () => {
+              setLoadingDeleteId(item.id);
+              await deleteAction(String(item.id));
+            }}
+            isLoading={loadingDeleteId === item.id}
+            disabled={loadingDeleteId === item.id}
           >
             Delete
           </Button>
-          {/* Conditionally show Approve button, e.g., if status is PENDING */}
-          {item.status === "PENDING" && ( // Adjust "PENDING" to your actual status value
+          {item.status === "PENDING" && (
             <Button
               size="sm"
               color="success"
               variant="flat"
-              onPress={() => handleApproveProfitCard(item.id, refresh)}
-              // TODO: Add isLoading state from a useAction hook for approve
+              onPress={async () => {
+                setLoadingApproveId(item.id);
+                await approveAction(String(item.id));
+              }}
+              isLoading={loadingApproveId === item.id}
+              disabled={loadingApproveId === item.id}
             >
               Approve
             </Button>
