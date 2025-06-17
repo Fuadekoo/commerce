@@ -20,6 +20,7 @@ const menu = [
   { label: "Profit Cards", url: "profit", icon: <Package size={18} /> },
   { label: "Product", url: "product", icon: <ShoppingCart size={18} /> },
   // { label: "Categories", url: "categories", icon: <Folder size={18} /> },
+  { label: "Notifications", url: "notification", icon: <Folder size={18} /> },
   { label: "Profile", url: "profile", icon: <User size={18} /> },
   { label: "Settings", url: "settings", icon: <Settings size={18} /> },
 ];

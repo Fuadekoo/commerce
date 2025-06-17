@@ -94,16 +94,12 @@ export const withdrawHistorySchema = z.object({
   row: z.coerce.number().int().positive().optional(),
 });
 export type WithdrawHistoryType = z.infer<typeof withdrawHistorySchema>;
-
 export const productSchema = z.object({
   // id: z.string(),
   name: z.string().min(1, "Product name is required"),
-  price: z.number().positive("Price must be a positive number"),
-  stock: z.number().int().min(0, "Stock cannot be negative"),
-  orderNumber: z
-    .number()
-    .int()
-    .min(1, "Order number must be a positive integer"),
+  price: z.coerce.number(),
+  stock: z.coerce.number(),
+  orderNumber: z.coerce.number(),
 });
 export type ProductType = z.infer<typeof productSchema>;
 
@@ -111,12 +107,11 @@ export const companyAccountSchema = z.object({
   name: z.string().min(1, "Name is required"),
   account: z.string().min(1, "Account is required"),
 });
-export type companyAccountType = z.infer<typeof companyAccountSchema>;
+export type CompanyAccountType = z.infer<typeof companyAccountSchema>;
 
 export const profitCardSchema = z.object({
-  orderNumber: z.number().min(1, ""),
-  profit: z.number().min(1, ""),
-  priceDifference: z.number().min(1, ""),
+  orderNumber: z.number().min(1, "Order number must be at least 1"),
+  profit: z.number().min(1, "Profit must be at least 1"),
+  priceDifference: z.number().min(1, "Price difference must be at least 1"),
 });
-
-export type profitCardType = z.infer<typeof profitCardSchema>;
+export type ProfitCardType = z.infer<typeof profitCardSchema>;

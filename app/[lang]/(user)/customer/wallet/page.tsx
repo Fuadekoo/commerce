@@ -5,10 +5,16 @@ import DepositHistory from "./deposit-history";
 import Withdraw from "./withdrew";
 import WithdrawalHistory from "./withdrewal-history";
 import { Tabs, Tab, Card, CardBody } from "@heroui/react";
+import useAction from "@/hooks/useAction";
+import { viewProfile } from "@/actions/common/profile";
 
 function Page() {
+  const [profile, setProfile, isLoading] = useAction(viewProfile, [
+    true,
+    () => {},
+  ]);
   // Example balance, replace with your actual balance source
-  const balance = 5000;
+  const balance = profile?.balance || 0;
 
   return (
     <div className="h-dvh gap-5 flex-col overflow-auto">

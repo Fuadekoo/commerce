@@ -12,6 +12,7 @@
     "@heroui/card": "^2.2.20",
     "@heroui/dropdown": "^2.3.21-beta.0",
     "@heroui/input": "^2.4.21-beta.0",
+    "@heroui/modal": "^2.2.18",
     "@heroui/react": "^2.8.0-beta.7",
     "@heroui/table": "^2.2.20",
     "@heroui/tabs": "^2.2.18",

@@ -8,15 +8,7 @@ import {
   updateProduct,
 } from "@/actions/admin/product";
 import CustomTable from "@/components/custom-table";
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Input,
-  Textarea,
-} from "@heroui/react";
+import { Button, Input, Textarea } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { z } from "zod";
 import { productSchema } from "@/lib/zodSchema";
@@ -84,7 +76,6 @@ function ProductList() {
     deleteProduct,
     [
       ,
-      // Don't execute immediately
       (response) => {
         if (response) {
           addToast({
@@ -138,7 +129,7 @@ function ProductList() {
         if (response) {
           addToast({
             title: "Success",
-            description: response?.message || "Product updated.",
+            description: (response as any)?.message || "Product updated.",
             // status: "success",
           });
           setShowModal(false);
@@ -165,9 +156,7 @@ function ProductList() {
   const handleEditProduct = (item: ProductItem) => {
     setEditProduct(item);
     setShowModal(true);
-    // Pre-fill form
     setValue("name", item.name);
-    // setValue("description", item.description || "");
     setValue("price", item.price);
     setValue("stock", item.stock ?? 0);
     setValue("orderNumber", item.orderNumber ?? 0);
@@ -181,9 +170,9 @@ function ProductList() {
 
   const onSubmit = async (data: z.infer<typeof productSchema>) => {
     if (editProduct) {
-      await updateProductAction({ ...data, id: editProduct.id });
+      updateProductAction({ ...data, id: editProduct.id }, undefined);
     } else {
-      await productAction(data);
+      productAction(data);
     }
   };
 
@@ -274,79 +263,93 @@ function ProductList() {
           totalPages: productData?.pagination.totalPages || 1,
           onPageChange: setPage,
         }}
+        // onSearch={(value) => setSearch(value)}
       />
-      <Modal
-        isOpen={showModal}
-        onClose={() => {
-          setShowModal(false);
-          setEditProduct(null);
-        }}
-      >
-        <ModalHeader>
-          {editProduct ? "Edit Product" : "Add Product"}
-        </ModalHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <div className="flex flex-col gap-4">
-              <Input
-                label="Name"
-                {...register("name")}
-                // error={!!errors.name}
-                // helperText={errors.name?.message}
-              />
-              {/* <Textarea
-                label="Description"
-                {...register("description")}
-                // error={!!errors.description}
-                // helperText={errors.description?.message}
-              /> */}
-              <Input
-                label="Price"
-                type="number"
-                step="0.01"
-                {...register("price", { valueAsNumber: true })}
-                // error={!!errors.price}
-                // helperText={errors.price?.message}
-              />
-              <Input
-                label="Stock"
-                type="number"
-                {...register("stock", { valueAsNumber: true })}
-                // error={!!errors.stock}
-                // helperText={errors.stock?.message}
-              />
-              <Input
-                label="Order Number"
-                type="number"
-                {...register("orderNumber", { valueAsNumber: true })}
-                // error={!!errors.orderNumber}
-                // helperText={errors.orderNumber?.message}
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="flat"
-              type="button"
-              onPress={() => {
-                setShowModal(false);
-                setEditProduct(null);
-                reset();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              type="submit"
-              isLoading={editProduct ? isLoadingUpdate : isLoadingCreate}
-              disabled={editProduct ? isLoadingUpdate : isLoadingCreate}
-            >
-              {editProduct ? "Update" : "Add"}
-            </Button>
-          </ModalFooter>
-        </form>
-      </Modal>
+      {/* Custom Modal for Add/Edit Product */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">
+              {editProduct ? "Edit Product" : "Add Product"}
+            </h2>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-4">
+                <input
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Name"
+                  {...register("name")}
+                  disabled={isLoadingCreate || isLoadingUpdate}
+                />
+                {errors.name && (
+                  <span className="text-red-500 text-xs">
+                    {errors.name.message}
+                  </span>
+                )}
+
+                <input
+                  type="number"
+                  step="0.01"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Price"
+                  {...register("price", { valueAsNumber: true })}
+                  disabled={isLoadingCreate || isLoadingUpdate}
+                />
+                {errors.price && (
+                  <span className="text-red-500 text-xs">
+                    {errors.price.message}
+                  </span>
+                )}
+                <input
+                  type="number"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Stock"
+                  {...register("stock", { valueAsNumber: true })}
+                  disabled={isLoadingCreate || isLoadingUpdate}
+                />
+                {errors.stock && (
+                  <span className="text-red-500 text-xs">
+                    {errors.stock.message}
+                  </span>
+                )}
+                <input
+                  type="number"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Order Number"
+                  {...register("orderNumber", { valueAsNumber: true })}
+                  disabled={isLoadingCreate || isLoadingUpdate}
+                />
+                {errors.orderNumber && (
+                  <span className="text-red-500 text-xs">
+                    {errors.orderNumber.message}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onPress={() => {
+                    setShowModal(false);
+                    setEditProduct(null);
+                    reset();
+                  }}
+                  disabled={isLoadingCreate || isLoadingUpdate}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  type="submit"
+                  isLoading={editProduct ? isLoadingUpdate : isLoadingCreate}
+                  disabled={editProduct ? isLoadingUpdate : isLoadingCreate}
+                >
+                  {editProduct ? "Update" : "Add"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

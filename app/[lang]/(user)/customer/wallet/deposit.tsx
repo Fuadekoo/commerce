@@ -147,12 +147,14 @@ function Deposit() {
 
   return (
     <div className="flex justify-center mt-10">
-      <Button
-        className="px-6 py-2 bg-green-600 text-white rounded-lg font-bold"
-        onClick={handleOpenModal}
-      >
-        Deposit
-      </Button>
+      <div className="flex justify-end w-full">
+        <Button
+          className="px-6 py-2 bg-green-600 text-white rounded-lg font-bold"
+          onClick={handleOpenModal}
+        >
+          Deposit
+        </Button>
+      </div>
 
       {open && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">

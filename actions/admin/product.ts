@@ -135,10 +135,12 @@ export async function updateProduct(
   if (!parsed.success) {
     throw new Error("Invalid product data");
   }
+  // Remove id from data if present
+  // const { id: _id, ...updateData } = parsed.data;
 
-  const product = await prisma.product.update({
+  await prisma.product.update({
     where: { id },
-    data: parsed.data,
+    data: { ...parsed.data },
   });
 
   return { message: "product update successfully" };

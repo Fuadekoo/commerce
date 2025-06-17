@@ -23,6 +23,7 @@ export async function viewProfile() {
       email: true,
       phone: true,
       photo: true,
+      balance: true,
       createdAt: true,
       updatedAt: true,
     },
