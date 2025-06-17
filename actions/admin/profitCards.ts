@@ -51,7 +51,6 @@ export async function getProfitCards(
 
   const data = profitCardsFromDb.map((card) => ({
     ...card,
-
   }));
 
   const totalPages = Math.ceil(totalRecords / take);
@@ -67,4 +66,57 @@ export async function getProfitCards(
       hasPreviousPage: page > 1,
     },
   };
+}
+
+export async function addProfit(data: {
+  orderNumber: string;
+  profit: number;
+  priceDifference: number;
+  status: string;
+  userId: string;
+  description?: string;
+  name?: string;
+}) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const profitCard = await prisma.profitCard.create({
+    data: {
+      orderNumber: Number(data.orderNumber),
+      profit: data.profit,
+      priceDifference: data.priceDifference,
+      userId: data.userId,
+    },
+  });
+
+  return { message: "Profit card created successfully" };
+}
+
+export async function deleteProfit(id: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  await prisma.profitCard.delete({
+    where: { id },
+  });
+
+  return { message: "Profit card deleted successfully" };
+}
+
+export async function approveProfit(id: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const profitCard = await prisma.profitCard.update({
+    where: { id },
+    data: { status: "APPROVED" },
+  });
+
+  return { message: "profit approved successfully" };
 }

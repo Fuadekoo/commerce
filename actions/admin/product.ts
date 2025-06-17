@@ -85,20 +85,25 @@ export async function createProduct(data: z.infer<typeof productSchema>) {
     throw new Error("Invalid product data");
   }
 
-  // Get the current max orderNumber from the database
-  const lastProduct = await prisma.product.findFirst({
-    orderBy: { orderNumber: "desc" },
-    select: { orderNumber: true },
-  });
-
-  const nextOrderNumber = lastProduct?.orderNumber
-    ? lastProduct.orderNumber + 1
-    : 1;
+  // Check if orderNumber exists in the input data
+  if (
+    parsed.data.orderNumber !== undefined &&
+    parsed.data.orderNumber !== null
+  ) {
+    const existingProduct = await prisma.product.findUnique({
+      where: { orderNumber: parsed.data.orderNumber },
+      select: { id: true },
+    });
+    if (existingProduct) {
+      throw new Error(
+        `Product already exists with orderNumber ${parsed.data.orderNumber}`
+      );
+    }
+  }
 
   const product = await prisma.product.create({
     data: {
       ...parsed.data,
-      orderNumber: nextOrderNumber,
     },
   });
 
@@ -136,7 +141,7 @@ export async function updateProduct(
     data: parsed.data,
   });
 
-  return product;
+  return { message: "product update successfully" };
 }
 
 // export async function aproveOrder(id: string) {

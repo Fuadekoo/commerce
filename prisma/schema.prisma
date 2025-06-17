@@ -92,7 +92,7 @@ model product {
   name        String
   price       Decimal
   stock       Int      @default(0)
-  orderNumber Int
+  orderNumber Int      @unique
   createdAt   DateTime @default(now())
 }
 
@@ -106,6 +106,7 @@ model message {
   id        String   @id @default(cuid())
   content   String
   userId    String?
+  isRead    Boolean  @default(false)
   user      user?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -119,4 +120,6 @@ model profitCard {
   createdAt       DateTime @default(now())
   userId          String
   user            user     @relation(fields: [userId], references: [id])
+
+  @@unique([orderNumber, userId])
 }

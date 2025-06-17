@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   phone: z.string().min(9, "phone number is too short"),
-  password: z.string().min(8,"Password must be at least 8 characters long"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 export type LoginType = z.infer<typeof loginSchema>;
 
@@ -107,4 +107,8 @@ export const productSchema = z.object({
 });
 export type ProductType = z.infer<typeof productSchema>;
 
-
+export const companyAccountSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  account: z.string().min(1, "Account is required"),
+});
+export type companyAccountType = z.infer<typeof companyAccountSchema>;
