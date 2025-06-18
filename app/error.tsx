@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@heroui/react"; // Import Button from HeroUI
+import Link from "next/link";
 
 function Error({
   error,
@@ -38,7 +39,7 @@ function Error({
           Something went wrong!
         </h1>
         <p className="text-md md:text-lg mb-6">
-          An unexpected error occurred. We're sorry for the inconvenience.
+          An unexpected error occurred. We&apos;re sorry for the inconvenience.
         </p>
         {/* Optional: Display error message in development or if needed */}
         {/* {process.env.NODE_ENV === 'development' && error?.message && (

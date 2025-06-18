@@ -10,6 +10,7 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/react";
 import Loading from "@/components/loading";
 import { addToast } from "@heroui/toast";
+import Link from "next/link";
 
 function Page() {
   const {
@@ -19,7 +20,7 @@ function Page() {
   } = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
   });
-  const [response, action, loading] = useAction(authenticate, [
+  const [, action, loading] = useAction(authenticate, [
     ,
     (response) => {
       if (response) {
@@ -79,13 +80,13 @@ function Page() {
             {loading ? <Loading size={24} /> : "Login"}
           </Button>
           <div className="mt-4 text-center">
-            <span className="text-gray-600">Don't have an account? </span>
-            <a
+            <span className="text-gray-600">Don&apos;t have an account? </span>
+            <Link
               href="/en/signup"
               className="text-green-600 font-semibold hover:underline"
             >
               Sign Up
-            </a>
+            </Link>
           </div>
         </form>
       </div>

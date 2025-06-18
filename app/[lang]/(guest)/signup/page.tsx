@@ -11,8 +11,7 @@ import Loading from "@/components/loading";
 import { Button, Progress } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { useSearchParams } from "next/navigation";
-import { authenticate } from "@/actions/common/authentication";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function Page() {
   const searchParams = useSearchParams();
@@ -145,12 +144,12 @@ function Page() {
               </Button>
               <div className="mt-4 text-center">
                 <span className="text-gray-600">Are you have a account? </span>
-                <a
+                <Link
                   href="/en/login"
                   className="text-green-600 font-semibold hover:underline"
                 >
                   Login
-                </a>
+                </Link>
               </div>
             </>
           )}
