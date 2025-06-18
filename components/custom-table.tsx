@@ -9,7 +9,7 @@ import {
   TableCell,
   getKeyValue,
 } from "@heroui/react";
-import { X, Search } from "lucide-react";
+import { X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 interface ColumnDef {
@@ -33,7 +33,7 @@ interface CustomTableProps {
   isLoading?: boolean;
 }
 
-const PAGE_SIZES = [10, 20, 50, 100];
+const PAGE_SIZES = [1, 20, 50, 100];
 
 function CustomTable({
   rows,
@@ -130,6 +130,8 @@ function CustomTable({
                         <Image
                           src={`/api/filedata/${item.photo}`}
                           alt={`Proof for ${item.id || item.key || "entry"}`}
+                          width={100}
+                          height={60}
                           style={{
                             width: "100px",
                             height: "auto",
@@ -195,19 +197,39 @@ function CustomTable({
               <button
                 onClick={() => onPageChange(Math.max(1, page - 1))}
                 disabled={page === 1 || isLoading}
-                className="px-3 py-1.5  bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                aria-label="Previous page"
               >
-                Previous
+                <ChevronLeft size={18} />
               </button>
-              <span className="px-2">
-                Page {page} of {totalPages}
-              </span>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((pg) => {
+                  if (totalPages <= 3) return true;
+                  if (page <= 2) return pg <= 3;
+                  if (page >= totalPages - 1) return pg >= totalPages - 2;
+                  return Math.abs(pg - page) <= 1;
+                })
+                .map((pg) => (
+                  <button
+                    key={pg}
+                    onClick={() => onPageChange(pg)}
+                    disabled={pg === page || isLoading}
+                    className={`px-3 py-1.5 rounded ${
+                      pg === page
+                        ? "bg-blue-600 text-white font-bold"
+                        : "bg-white hover:bg-gray-50"
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {pg}
+                  </button>
+                ))}
               <button
                 onClick={() => onPageChange(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages || isLoading}
-                className="px-3 py-1.5  bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                aria-label="Next page"
               >
-                Next
+                <ChevronRight size={18} />
               </button>
             </div>
           )}
@@ -228,6 +250,8 @@ function CustomTable({
               src={zoomedImageUrl}
               alt="Zoomed proof"
               className="block max-w-full max-h-[calc(90vh-80px)] object-contain"
+              width={100}
+              height={60}
             />
             <button
               onClick={handleCloseZoom}

@@ -20,10 +20,7 @@ export async function getProduct(
 
   const whereClause: any = {};
   if (searchTerm) {
-    whereClause.OR = [
-      { name: { contains: searchTerm, mode: "insensitive" } },
-      { description: { contains: searchTerm, mode: "insensitive" } },
-    ];
+    whereClause.name = { contains: searchTerm };
   }
 
   const totalRecords = await prisma.product.count({

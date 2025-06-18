@@ -10,8 +10,6 @@ import useAction from "@/hooks/useAction";
 import CustomTable from "@/components/custom-table";
 import { Button } from "@heroui/react";
 import { addToast } from "@heroui/toast";
-// import { z } from "zod";
-// import { profitCardSchema } from "@/lib/zodSchema";
 
 interface ProfitCardItem {
   id: string | number;

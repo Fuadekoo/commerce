@@ -254,13 +254,14 @@ function ProductList() {
       <CustomTable
         columns={columns}
         rows={rows}
-        loading={isLoadingProducts}
-        pagination={{
-          currentPage: productData?.pagination.currentPage || 1,
-          totalPages: productData?.pagination.totalPages || 1,
-          onPageChange: setPage,
-        }}
-        onSearch={(value) => setSearch(value)}
+        totalRows={productData?.pagination.totalRecords || 0}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+        searchValue={search}
+        onSearch={setSearch}
+        isLoading={isLoadingProducts}
       />
       {/* Custom Modal for Add/Edit Product */}
       {showModal && (

@@ -23,16 +23,19 @@ export async function getPayment(
     page = 1;
   }
 
-  // Build where clause for search
-  const where = search
-    ? {
-        OR: [
-          { user: { username: { contains: search, mode: "insensitive" } } },
-          { user: { email: { contains: search, mode: "insensitive" } } },
-          { user: { phone: { contains: search, mode: "insensitive" } } },
-        ],
-      }
-    : {};
+  // Only search by username
+  let where = {};
+  if (search) {
+    // Find user IDs matching the username search
+    const users = await prisma.user.findMany({
+      where: {
+        username: { contains: search },
+      },
+      select: { id: true },
+    });
+    const userIds = users.map((u) => u.id);
+    where = { userId: { in: userIds } };
+  }
 
   // Get total count for pagination
   const totalRows = await prisma.rechargeRecord.count({

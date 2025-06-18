@@ -24,10 +24,7 @@ export async function getUser(
     // isBlocked: false, // Assuming you want to exclude blocked users
   };
   if (searchTerm) {
-    whereClause.OR = [
-      { name: { contains: searchTerm, mode: "insensitive" } },
-      { email: { contains: searchTerm, mode: "insensitive" } },
-    ];
+    whereClause.username = { contains: searchTerm, mode: "insensitive" };
   }
 
   const totalRecords = await prisma.user.count({
