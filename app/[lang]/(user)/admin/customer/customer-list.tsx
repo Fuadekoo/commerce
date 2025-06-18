@@ -134,6 +134,7 @@ function CustomerPage() {
             // status: "success",
           });
         }
+        refresh();
       },
     ]
   );
@@ -156,7 +157,7 @@ function CustomerPage() {
           });
         }
         // Optionally call refresh() if this action should update table data
-        // refresh();
+        refresh();
       },
     ]);
 
@@ -194,6 +195,7 @@ function CustomerPage() {
           description: "Remark Set successful!",
         });
       }
+      refresh();
     },
   ]);
 
