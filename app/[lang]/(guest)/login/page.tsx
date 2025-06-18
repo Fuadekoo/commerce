@@ -11,8 +11,10 @@ import { Button } from "@heroui/react";
 import Loading from "@/components/loading";
 import { addToast } from "@heroui/toast";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-function Page() {
+async function Page() {
   const {
     handleSubmit,
     register,
@@ -36,6 +38,13 @@ function Page() {
       }
     },
   ]);
+  const session = await auth();
+
+  if (session?.user?.role === "ADMIN") {
+    redirect("/en/admin/dashboard");
+  } else if (session?.user?.role) {
+    redirect("/en/customer/dashboard");
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

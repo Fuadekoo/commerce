@@ -1,11 +1,15 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 function Home() {
-  return (
-    <div>
-      <h1>this is a home page </h1>
-    </div>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/en/login");
+  }, [router]);
+
+  return null;
 }
 
 export default Home;

@@ -28,11 +28,16 @@ export async function adminDashboard() {
     where: { status: "PENDING" },
   });
 
+  // Convert Decimal to number for client compatibility
   return {
     users: {
       total: totalUsers,
-      totalBalance: totalUserBalance._sum.balance || 0,
-      topBalanceUser,
+      totalBalance: totalUserBalance._sum.balance
+        ? Number(totalUserBalance._sum.balance)
+        : 0,
+      topBalanceUser: topBalanceUser
+        ? { balance: Number(topBalanceUser.balance) }
+        : null,
     },
     products: {
       total: totalProducts,
