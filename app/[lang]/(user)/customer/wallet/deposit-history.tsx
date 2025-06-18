@@ -30,7 +30,7 @@ const columns = [
   { key: "id", label: "ID" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
-  { key: "photo", label: "photo" },
+  // { key: "photo", label: "photo" },
   { key: "createdAt", label: "Created At" },
 ];
 
