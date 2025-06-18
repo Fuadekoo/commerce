@@ -20,11 +20,11 @@ export async function getUser(
 
   // Build where clause for search
   const whereClause: any = {
-    role: "USER", // Assuming you want to filter by user role
-    // isBlocked: false, // Assuming you want to exclude blocked users
+    role: "USER",
+    // isBlocked: false,
   };
   if (searchTerm) {
-    whereClause.username = { contains: searchTerm, mode: "insensitive" };
+    whereClause.username = { contains: searchTerm };
   }
 
   const totalRecords = await prisma.user.count({

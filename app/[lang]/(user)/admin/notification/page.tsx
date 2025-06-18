@@ -7,7 +7,7 @@ import {
   deleteNotification,
   updateNotification,
 } from "@/actions/admin/notification";
-import { Button,  Textarea } from "@heroui/react";
+import { Button, Textarea } from "@heroui/react";
 import { Loader2, Trash2, Edit2, Save, X } from "lucide-react";
 import { addToast } from "@heroui/toast";
 // import { productSchema } from "@/lib/zodSchema";
@@ -21,48 +21,39 @@ function Page() {
     [true, () => {}]
   );
 
-  const [createResponse, createAction, ] = useAction(
-    createNotification,
-    [
-      ,
-      (res) => {
-        addToast({
-          title: res?.message ? "Posted" : "Error",
-          description: res?.message || "Post failed",
-        });
-        setShowModal(false);
-        setNewMessage("");
-        refreshNotifications();
-      },
-    ]
-  );
-  const [, deleteAction, ] = useAction(
-    deleteNotification,
-    [
-      ,
-      (res) => {
-        addToast({
-          title: res?.message ? "Deleted" : "Error",
-          description: res?.message || "Delete failed",
-        });
-        refreshNotifications();
-      },
-    ]
-  );
-  const [, updateAction, ] = useAction(
-    updateNotification,
-    [
-      ,
-      (res) => {
-        addToast({
-          title: res?.message ? "Updated" : "Error",
-          description: res?.message || "Update failed",
-        });
-        setEditId(null);
-        refreshNotifications();
-      },
-    ]
-  );
+  const [createResponse, createAction] = useAction(createNotification, [
+    ,
+    (res) => {
+      addToast({
+        title: res?.message ? "Posted" : "Error",
+        description: res?.message || "Post failed",
+      });
+      setShowModal(false);
+      setNewMessage("");
+      refreshNotifications();
+    },
+  ]);
+  const [, deleteAction] = useAction(deleteNotification, [
+    ,
+    (res) => {
+      addToast({
+        title: res?.message ? "Deleted" : "Error",
+        description: res?.message || "Delete failed",
+      });
+      refreshNotifications();
+    },
+  ]);
+  const [, updateAction] = useAction(updateNotification, [
+    ,
+    (res) => {
+      addToast({
+        title: res?.message ? "Updated" : "Error",
+        description: res?.message || "Update failed",
+      });
+      setEditId(null);
+      refreshNotifications();
+    },
+  ]);
 
   const [editId, setEditId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>("");
@@ -87,7 +78,7 @@ function Page() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-4 md:mt-10 bg-white p-3 md:p-6 rounded-xl shadow h-screen md:h-auto overflow-auto">
+    <div className="w-full max-w-2xl mx-auto mt-4 md:mt-10 bg-white p-3 md:p-6 rounded-xl shadow h-svh md:h-auto overflow-auto">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
         <h1 className="text-xl md:text-2xl font-bold text-gray-800">
           Post Messages
