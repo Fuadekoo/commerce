@@ -40,8 +40,15 @@ export async function viewProfile() {
   };
 }
 
-export async function profileUpdate(data: z.infer<typeof updateProfileSchema>) {
-  const parsed = updateProfileSchema.safeParse(data);
+export async function profileUpdate(
+  username: string,
+  phone: string,
+  email: string
+) {
+  const parsed = updateProfileSchema.safeParse({
+    username,
+    phone,
+  });
   if (!parsed.success) {
     throw new Error("Invalid data");
   }
@@ -51,19 +58,18 @@ export async function profileUpdate(data: z.infer<typeof updateProfileSchema>) {
   }
 
   // Only update allowed fields, including phone
-  const { name, email, phone } = parsed.data;
+  const { name: parsedName, phone: parsedPhone } = parsed.data;
 
   const updateUser = await prisma.user.update({
     where: { id: session.user.id },
     data: {
-      ...(name && { name }),
-      ...(phone && { phone }),
+      ...(parsedName && { username: parsedName }),
+      ...(parsedPhone && { phone: parsedPhone }),
     },
   });
 
   return {
     message: "Profile updated successfully",
-    user: updateUser,
   };
 }
 export async function profilePhotoUpdate(file: File) {
@@ -101,5 +107,97 @@ export async function profilePhotoUpdate(file: File) {
 
   return {
     message: "Profile photo updated successfully",
+  };
+}
+
+export async function mydata() {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      phone: true,
+      photo: true,
+      balance: true,
+      walletAddress: true,
+      myCode: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  // total invited user by this user mycode
+  const totalInvitedUsers = await prisma.user.count({
+    where: {
+      invitationCode: user?.myCode,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return {
+    totalInvitedUsers,
+    walletAddress: user.walletAddress,
+    balance: user.balance ? Number(user.balance) : 0,
+  };
+}
+export async function myAccount() {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      walletAddress: true,
+      balance: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return {
+    ...user,
+    balance: user.balance ? Number(user.balance) : 0,
+  };
+}
+
+export async function setMyAccount(walletAddress: string) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: {
+      walletAddress,
+    },
+  });
+
+  return {
+    message: "Wallet address updated successfully",
   };
 }

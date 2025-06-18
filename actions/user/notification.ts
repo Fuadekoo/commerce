@@ -12,9 +12,9 @@ export async function getNotification() {
 
   const notifications = await prisma.message.findMany({
     where: {
-      createdAt: {
-        gte: todayStart,
-      },
+      // createdAt: {
+      //   gte: todayStart,
+      // },
       OR: [{ userId: session.user.id }, { userId: null }],
     },
     orderBy: { createdAt: "desc" },

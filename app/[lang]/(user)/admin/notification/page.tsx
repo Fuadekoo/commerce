@@ -10,10 +10,6 @@ import {
 import { Button, Textarea } from "@heroui/react";
 import { Loader2, Trash2, Edit2, Save, X } from "lucide-react";
 import { addToast } from "@heroui/toast";
-// import { productSchema } from "@/lib/zodSchema";
-// import { useForm } from "react-hook-form";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { z } from "zod";
 
 function Page() {
   const [notifications, refreshNotifications, isLoading] = useAction(
@@ -122,7 +118,6 @@ function Page() {
                 <Button
                   color="primary"
                   type="submit"
-                  // loading={isCreating}
                   disabled={!newMessage.trim()}
                   className="w-full md:w-auto"
                 >
@@ -154,7 +149,6 @@ function Page() {
                       size="sm"
                       variant="flat"
                       color="danger"
-                      // loading={isDeleting}
                       onClick={() => deleteAction(n.id)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -165,7 +159,6 @@ function Page() {
                           size="sm"
                           variant="flat"
                           color="primary"
-                          // loading={isUpdating}
                           onClick={() => handleUpdate(n.id)}
                         >
                           <Save className="w-4 h-4" />

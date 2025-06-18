@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import CustomTable from "@/components/custom-table";
 import useAction from "@/hooks/useAction";
-import { getPayment } from "@/actions/admin/payment";
-// Make sure to import aproofDeposit if you implement the approval logic
-// import { aproofDeposit } from "@/actions/admin/payment";
 import { Button } from "@heroui/react";
-import { aProofDeposit } from "@/actions/admin/payment"; // Assuming you have an action for approving deposits
-import { rejectDeposit } from "@/actions/admin/payment"; // Assuming you have an action for rejecting deposits
+import {
+  getPayment,
+  aProofDeposit,
+  rejectDeposit,
+} from "@/actions/admin/payment"; // Assuming you have an action for approving deposits
 import { addToast } from "@heroui/toast";
 // Define the structure of a single payment item based on getPayment action
 interface PaymentItem {

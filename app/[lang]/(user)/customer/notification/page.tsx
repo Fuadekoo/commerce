@@ -1,72 +1,68 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { getNotification } from "@/actions/user/notification";
 import useAction from "@/hooks/useAction";
-type Notification = {
-  id: number;
-  title: string;
-  message: string;
-  date: string;
-  read: boolean;
-};
 
 function Page() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchNotifications() {
-      setLoading(true);
-      try {
-        const data = await getNotification();
-        setNotifications(data);
-      } catch (error) {
-        // handle error if needed
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchNotifications();
-  }, []);
+  const [notificationData, refresh, isLoadingNotification] = useAction(
+    getNotification,
+    [true, () => {}]
+  );
 
   return (
-    <div className="w-auto mx-auto py-8 px-4 overflow-y-auto h-dvh">
-      <h2 className="text-2xl font-bold mb-6">Notifications</h2>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="space-y-4">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`rounded-lg shadow-md p-4 border transition
-                ${
-                  notif.read
-                    ? "bg-white border-gray-200"
-                    : "bg-blue-50 border-blue-400"
-                }
-              `}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span
-                  className={`text-lg font-semibold ${
-                    notif.read ? "text-gray-800" : "text-blue-700"
+    <div className="w-full max-w-2xl mx-auto py-6 px-2 md:px-6 h-dvh bg-gray-50">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 text-center">
+        Notifications
+      </h2>
+      <div className="overflow-y-auto max-h-[80vh]">
+        {isLoadingNotification ? (
+          <div className="flex justify-center items-center py-10 text-gray-500">
+            Loading...
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {notificationData && notificationData.length > 0 ? (
+              notificationData.map((notif) => (
+                <div
+                  key={notif.id}
+                  className={`rounded-xl shadow p-4 border transition-all ${
+                    notif.isRead
+                      ? "bg-white border-gray-200"
+                      : "bg-blue-50 border-blue-400"
                   }`}
                 >
-                  {notif.title}
-                </span>
-                {!notif.read && (
-                  <span className="inline-block bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
-                    New
-                  </span>
-                )}
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 gap-2">
+                    <span
+                      className={`text-base md:text-lg font-semibold ${
+                        notif.isRead ? "text-gray-800" : "text-blue-700"
+                      }`}
+                    >
+                      Notification
+                    </span>
+                    {!notif.isRead && (
+                      <span className="inline-block bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        New
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-gray-600 mb-2 break-words">
+                    {notif.content}
+                  </div>
+                  <div className="text-xs text-gray-400 text-right">
+                    {notif.createdAt
+                      ? new Date(notif.createdAt).toLocaleString()
+                      : ""}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-400 py-10">
+                No notifications found.
               </div>
-              <div className="text-gray-600 mb-2">{notif.message}</div>
-              <div className="text-xs text-gray-400">{notif.date}</div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
