@@ -8,7 +8,7 @@ import {
   updateProduct,
 } from "@/actions/admin/product";
 import CustomTable from "@/components/custom-table";
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { z } from "zod";
 import { productSchema } from "@/lib/zodSchema";
@@ -36,10 +36,10 @@ interface PaginationInfo {
   hasPreviousPage?: boolean;
 }
 
-interface GetProductResponse {
-  data: ProductItem[];
-  pagination: PaginationInfo;
-}
+// interface GetProductResponse {
+//   data: ProductItem[];
+//   pagination: PaginationInfo;
+// }
 
 interface ColumnDef {
   key: string;
@@ -104,7 +104,7 @@ function ProductList() {
         if (response) {
           addToast({
             title: "Success",
-            description: (response as any)?.message || "Product created.",
+            description: response?.message || "Product created.",
             // status: "success",
           });
           setShowModal(false);
@@ -113,8 +113,7 @@ function ProductList() {
         } else {
           addToast({
             title: "Error",
-            description:
-              (response as any)?.error || "Failed to create product.",
+            description: response || "Failed to create product.",
             // status: "error",
           });
         }
@@ -122,30 +121,28 @@ function ProductList() {
     ]
   );
 
-  const [updateProductResponse, updateProductAction, isLoadingUpdate] =
-    useAction(updateProduct, [
-      ,
-      (response) => {
-        if (response) {
-          addToast({
-            title: "Success",
-            description: (response as any)?.message || "Product updated.",
-            // status: "success",
-          });
-          setShowModal(false);
-          setEditProduct(null);
-          reset();
-          refreshProducts();
-        } else {
-          addToast({
-            title: "Error",
-            description:
-              (response as any)?.error || "Failed to update product.",
-            // status: "error",
-          });
-        }
-      },
-    ]);
+  const [, updateProductAction, isLoadingUpdate] = useAction(updateProduct, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Success",
+          description: response?.message || "Product updated.",
+          // status: "success",
+        });
+        setShowModal(false);
+        setEditProduct(null);
+        reset();
+        refreshProducts();
+      } else {
+        addToast({
+          title: "Error",
+          description: response || "Failed to update product.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
   const handleDeleteProduct = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -263,7 +260,7 @@ function ProductList() {
           totalPages: productData?.pagination.totalPages || 1,
           onPageChange: setPage,
         }}
-        // onSearch={(value) => setSearch(value)}
+        onSearch={(value) => setSearch(value)}
       />
       {/* Custom Modal for Add/Edit Product */}
       {showModal && (

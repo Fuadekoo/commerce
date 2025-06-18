@@ -1,6 +1,7 @@
 "use client";
 // import { Button } from "@heroui/react";
 import React from "react";
+import Link from "next/link";
 
 function Forbidden() {
   return (
@@ -46,12 +47,12 @@ function Forbidden() {
         <p className="text-gray-600 mb-6">
           You do not have permission to access this resource.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     </div>
   );

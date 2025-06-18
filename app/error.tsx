@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@heroui/react"; // Import Button from HeroUI
-import Link from "next/link";
+// import Link from "next/link";
 
 function Error({
   error,

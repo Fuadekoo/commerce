@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import CustomTable from "../../../../../components/custom-table";
 import useAction from "@/hooks/useAction";
-import { addToast } from "@heroui/toast";
-import { WithdrawalHistorys } from "@/actions/user/wallet"; // Adjust the import path as necessary
+// import { addToast } from "@heroui/toast";
+import { WithdrawalHistorys } from "@/actions/user/wallet"; // Ensure this does NOT use server-only APIs like `headers` or `cookies` in its implementation
 import { z } from "zod";
 
 // Define table columns
@@ -18,7 +18,7 @@ function WithdrawalHistory() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-  const [withdrawalHistory, refresh, isLoading] = useAction(
+  const [withdrawalHistory, ,] = useAction(
     WithdrawalHistorys,
     [true, () => {}],
     search,

@@ -33,10 +33,10 @@ interface PaginationInfo {
   hasPreviousPage?: boolean;
 }
 
-interface GetPaymentResponse {
-  data: PaymentItem[];
-  pagination: PaginationInfo;
-}
+// interface GetPaymentResponse {
+//   data: PaymentItem[];
+//   pagination: PaginationInfo;
+// }
 
 interface ColumnDef {
   key: string;
@@ -70,7 +70,7 @@ function PaymentListPage() {
     pageSize
   );
 
-  const [proofResponse, proofAction, isLoadingProof] = useAction(
+  const [, proofAction, isLoadingProof] = useAction(
     aProofDeposit,
     [
       ,
@@ -100,7 +100,7 @@ function PaymentListPage() {
     ]
   );
 
-  const [rejectResponse, rejectAction, isLoadingReject] = useAction(
+  const [, rejectAction, isLoadingReject] = useAction(
     rejectDeposit,
     [
       ,

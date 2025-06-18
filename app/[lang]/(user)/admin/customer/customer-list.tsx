@@ -17,7 +17,6 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownSection,
   DropdownItem,
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
@@ -25,6 +24,7 @@ import { addToast } from "@heroui/toast";
 interface ColumnDef {
   key: string;
   label: string;
+
   renderCell?: (item: any) => React.ReactNode;
 }
 
@@ -54,7 +54,7 @@ function CustomerPage() {
   const [profitAmountInput, setProfitAmountInput] = useState("");
   const [priceDifferenceInput, setPriceDifferenceInput] = useState("");
 
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+  const [, setIsAnyModalOpen] = useState(false);
 
   useEffect(() => {
     setIsAnyModalOpen(
@@ -70,60 +70,55 @@ function CustomerPage() {
     pageSize
   );
 
-  const [blockResponse, executeBlockUser, isLoadingBlock] = useAction(
-    blockUser,
-    [
-      ,
-      (response) => {
-        if (response) {
-          addToast({
-            title: "Block User",
-            description: response.message,
-            // status: response.error ? "error" : "success",
-          });
-        } else {
-          // This case might not be hit if your action always returns a response object
-          addToast({
-            // title: "Block User",
-            description: "User status updated.",
-            // status: "success",
-          });
-        }
-        if (response ) {
-          refresh();
-        }
-      },
-    ]
-  );
+  const [, executeBlockUser, isLoadingBlock] = useAction(blockUser, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Block User",
+          description: response.message,
+          // status: response.error ? "error" : "success",
+        });
+      } else {
+        // This case might not be hit if your action always returns a response object
+        addToast({
+          // title: "Block User",
+          description: "User status updated.",
+          // status: "success",
+        });
+      }
+      if (response) {
+        refresh();
+      }
+    },
+  ]);
 
-  const [unblockResponse, executeUnblockUser, isLoadingUnblock] = useAction(
-    unblockUser,
-    [
-      ,
-      (response) => {
-        if (response) {
-          addToast({
-            title: "Unblock User",
-            description: response.message,
-            // status: response.error ? "error" : "success",
-          });
-        } else {
-          // This case might not be hit if your action always returns a response object
-          addToast({
-            title: "Unblock User",
-            description: "User status updated.",
-            // status: "success",
-          });
-        }
-        if (response ) {
-          refresh();
-        }
-      },
-    ]
-  );
+  const [, executeUnblockUser, isLoadingUnblock] = useAction(unblockUser, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Unblock User",
+          description: response.message,
+          // status: response.error ? "error" : "success",
+        });
+      } else {
+        // This case might not be hit if your action always returns a response object
+        addToast({
+          title: "Unblock User",
+          description: "User status updated.",
+          // status: "success",
+        });
+      }
+      if (response) {
+        refresh();
+      }
+    },
+  ]);
 
-  const [resetPasswordResponse, executeResetPassword, isLoadingResetPassword] =
-    useAction(resetPassword, [
+  const [, executeResetPassword, isLoadingResetPassword] = useAction(
+    resetPassword,
+    [
       ,
       (response) => {
         if (response) {
@@ -140,72 +135,67 @@ function CustomerPage() {
           });
         }
       },
-    ]);
+    ]
+  );
 
-  const [
-    resetTransactionPasswordResponse,
-    executeResetTransactionPassword,
-    isLoadingResetTransactionPassword,
-  ] = useAction(resetTransactionPassword, [
-    ,
-    (response) => {
-      if (response) {
-        addToast({
-          title: "Reset Transaction Password",
-          description: response.message,
-          // status: response.error ? "error" : "success",
-        });
-      } else {
-        addToast({
-          title: "Reset Transaction Password",
-          description: "Transaction password reset successfully!",
-          // status: "success",
-        });
-      }
-      // Optionally call refresh() if this action should update table data
-      // refresh();
-    },
-  ]);
-
-  // --- Add Remark ---
-  const onRemarkAddedOrFailed = (response: {
-    message: string;
-    user?: any;
-    error?: string;
-  }) => {
-    if (response) {
-      if (response.error) {
-        alert(`Error: ${response.error}`); // TODO: Replace with toast
-      } else if (response.message) {
-        alert(response.message); // TODO: Replace with toast
-        if (response.user) {
-          refresh();
-          handleCloseRemarkModal();
-        }
-      }
-    } else {
-      alert("An unexpected response occurred while adding the remark."); // TODO: Replace with toast
-    }
-  };
-  const [remarkResponse, executeAddRemark, isLoadingRemark] = useAction(
-    addRemarksUser,
-    [
+  const [, executeResetTransactionPassword, isLoadingResetTransactionPassword] =
+    useAction(resetTransactionPassword, [
       ,
-      (remarkResponse) => {
-        if (remarkResponse) {
+      (response) => {
+        if (response) {
           addToast({
-            title: "Remark",
-            description: remarkResponse.message,
+            title: "Reset Transaction Password",
+            description: response.message,
+            // status: response.error ? "error" : "success",
           });
         } else {
           addToast({
-            title: "Remark",
-            description: "Remark Set successful!",
+            title: "Reset Transaction Password",
+            description: "Transaction password reset successfully!",
+            // status: "success",
           });
         }
+        // Optionally call refresh() if this action should update table data
+        // refresh();
       },
-    ]
-  );
+    ]);
+
+  // --- Add Remark ---
+  // const onRemarkAddedOrFailed = (response: {
+  //   message: string;
+  //   user?: any;
+  //   error?: string;
+  // }) => {
+  //   if (response) {
+  //     if (response.error) {
+  //       alert(`Error: ${response.error}`); // TODO: Replace with toast
+  //     } else if (response.message) {
+  //       alert(response.message); // TODO: Replace with toast
+  //       if (response.user) {
+  //         refresh();
+  //         handleCloseRemarkModal();
+  //       }
+  //     }
+  //   } else {
+  //     alert("An unexpected response occurred while adding the remark."); // TODO: Replace with toast
+  //   }
+  // };
+  const [, executeAddRemark, isLoadingRemark] = useAction(addRemarksUser, [
+    ,
+    (remarkResponse) => {
+      if (remarkResponse) {
+        addToast({
+          title: "Remark",
+          description: remarkResponse.message,
+        });
+      } else {
+        addToast({
+          title: "Remark",
+          description: "Remark Set successful!",
+        });
+      }
+    },
+  ]);
 
   const openRemarkModal = (itemId: string) => {
     setCurrentRemarkItemId(itemId);
@@ -243,7 +233,7 @@ function CustomerPage() {
       alert("An unexpected response occurred while setting the task."); // TODO: Replace with toast
     }
   };
-  const [taskResponse, executeSetTask, isLoadingSetTask] = useAction(setTask, [
+  const [, executeSetTask, isLoadingSetTask] = useAction(setTask, [
     ,
     (taskResponse) => {
       if (taskResponse) {
@@ -288,23 +278,23 @@ function CustomerPage() {
   };
 
   // --- Add Profit Card ---
-  const onAddProfitCardCompleted = (response: {
-    message: string;
-    profitCard?: any;
-    error?: string;
-  }) => {
-    if (response) {
-      if (response.error) {
-        alert(`Error adding profit card: ${response.error}`); // TODO: Replace with toast
-      } else if (response.message) {
-        alert(response.message); // TODO: Replace with toast
-        refresh();
-        handleCloseProfitModal();
-      }
-    } else {
-      alert("An unexpected response occurred while adding the profit card."); // TODO: Replace with toast
-    }
-  };
+  // const onAddProfitCardCompleted = (response: {
+  //   message: string;
+  //   profitCard?: any;
+  //   error?: string;
+  // }) => {
+  //   if (response) {
+  //     if (response.error) {
+  //       alert(`Error adding profit card: ${response.error}`); // TODO: Replace with toast
+  //     } else if (response.message) {
+  //       alert(response.message); // TODO: Replace with toast
+  //       refresh();
+  //       handleCloseProfitModal();
+  //     }
+  //   } else {
+  //     alert("An unexpected response occurred while adding the profit card."); // TODO: Replace with toast
+  //   }
+  // };
   const [profitResponse, executeAddProfitCard, isLoadingAddProfitCard] =
     useAction(addprofitCard, [
       ,

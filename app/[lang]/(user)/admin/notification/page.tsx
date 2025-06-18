@@ -7,13 +7,13 @@ import {
   deleteNotification,
   updateNotification,
 } from "@/actions/admin/notification";
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button,  Textarea } from "@heroui/react";
 import { Loader2, Trash2, Edit2, Save, X } from "lucide-react";
 import { addToast } from "@heroui/toast";
-import { productSchema } from "@/lib/zodSchema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+// import { productSchema } from "@/lib/zodSchema";
+// import { useForm } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { z } from "zod";
 
 function Page() {
   const [notifications, refreshNotifications, isLoading] = useAction(
@@ -21,7 +21,7 @@ function Page() {
     [true, () => {}]
   );
 
-  const [createResponse, createAction, isCreating] = useAction(
+  const [createResponse, createAction, ] = useAction(
     createNotification,
     [
       ,
@@ -36,7 +36,7 @@ function Page() {
       },
     ]
   );
-  const [deleteResponse, deleteAction, isDeleting] = useAction(
+  const [, deleteAction, ] = useAction(
     deleteNotification,
     [
       ,
@@ -49,7 +49,7 @@ function Page() {
       },
     ]
   );
-  const [updateResponse, updateAction, isUpdating] = useAction(
+  const [, updateAction, ] = useAction(
     updateNotification,
     [
       ,
@@ -149,7 +149,7 @@ function Page() {
       ) : (
         <div className="space-y-4 md:space-y-6">
           {notifications && notifications.length > 0 ? (
-            notifications.map((n: any) => (
+            notifications.map((n) => (
               <div
                 key={n.id}
                 className="border rounded-lg p-3 md:p-4 flex flex-col gap-2 bg-gray-50"

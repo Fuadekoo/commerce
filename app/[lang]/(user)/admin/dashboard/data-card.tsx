@@ -27,24 +27,24 @@ type DataCardItem = {
 };
 
 // Expected structure from adminDashboard action
-interface AdminDashboardResponse {
-  users?: {
-    // Optional chaining for safety
-    total: number;
-    totalBalance: number | Decimal;
-    topBalanceUser: {
-      balance: Decimal;
-      username?: string; // Optional: if you want to display username
-    } | null;
-  };
-  products?: {
-    total: number;
-  };
-  profitCards?: {
-    pending: number;
-  };
-  // Add other properties your dashboard action returns
-}
+// interface AdminDashboardResponse {
+//   users?: {
+//     // Optional chaining for safety
+//     total: number;
+//     totalBalance: number | Decimal;
+//     topBalanceUser: {
+//       balance: Decimal;
+//       username?: string; // Optional: if you want to display username
+//     } | null;
+//   };
+//   products?: {
+//     total: number;
+//   };
+//   profitCards?: {
+//     pending: number;
+//   };
+//   // Add other properties your dashboard action returns
+// }
 
 // Helper to convert Decimal to number
 const toNumber = (value: number | Decimal | undefined | null): number => {
@@ -56,7 +56,7 @@ const toNumber = (value: number | Decimal | undefined | null): number => {
 };
 
 function DataCard() {
-  const [dashboardData, refresh, isLoading] = useAction(adminDashboard, [
+  const [dashboardData, , isLoading] = useAction(adminDashboard, [
     true,
     () => {},
   ]);

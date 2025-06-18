@@ -11,10 +11,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 function Page() {
-  const [user, setUser, isLoading] = useAction(viewProfile, [true, () => {}]);
+  const [user, setUser] = useAction(viewProfile, [true, () => {}]);
   const [showModal, setShowModal] = useState(false);
 
-  const [updateResponse, updateAction, isUpdating] = useAction(profileUpdate, [
+  const [, updateAction] = useAction(profileUpdate, [
     ,
     (res) => {
       addToast({
@@ -27,12 +27,7 @@ function Page() {
     },
   ]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, reset } = useForm({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       name: "",
@@ -53,7 +48,11 @@ function Page() {
 
   const onSubmit = (data: any) => {
     // Use correct property names as expected by the backend
-    updateAction({ name: data.name, phone: data.phone, email: user?.email || "" });
+    updateAction({
+      name: data.name,
+      phone: data.phone,
+      email: user?.email || "",
+    });
   };
 
   return (

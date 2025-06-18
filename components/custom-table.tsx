@@ -10,6 +10,7 @@ import {
   getKeyValue,
 } from "@heroui/react";
 import { X, Search } from "lucide-react";
+import Image from "next/image";
 
 interface ColumnDef {
   key: string;
@@ -126,7 +127,7 @@ function CustomTable({
                       ) : columnKey === "photo" &&
                         typeof item.photo === "string" &&
                         item.photo ? (
-                        <img
+                        <Image
                           src={`/api/filedata/${item.photo}`}
                           alt={`Proof for ${item.id || item.key || "entry"}`}
                           style={{
@@ -223,7 +224,7 @@ function CustomTable({
             className="relative bg-white p-2 shadow-xl max-w-[90vw] max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <Image
               src={zoomedImageUrl}
               alt="Zoomed proof"
               className="block max-w-full max-h-[calc(90vh-80px)] object-contain"

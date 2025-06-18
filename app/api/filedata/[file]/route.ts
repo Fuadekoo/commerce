@@ -79,8 +79,13 @@ export async function GET(
         // "Content-Disposition": `inline; filename="${filename}"`, // Use 'inline' for display
       },
     });
-  } catch (error: any) {
-    if (error.code === "ENOENT") {
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "ENOENT"
+    ) {
       return new NextResponse(JSON.stringify({ error: "File not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },

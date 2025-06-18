@@ -10,14 +10,14 @@ import {
   Link,
 } from "@heroui/react";
 import { ShareIcon } from "lucide-react";
-import Theme from "./theme";
+// import Theme from "./theme";
 import { AlignLeft, ChevronLeft, ChevronRight, DoorOpen } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import useAction from "@/hooks/useAction";
 import { getUser } from "../actions/user/newUser"; // Adjust the import path as necessary
 import Image from "next/image";
-import { div } from "framer-motion/client";
+// import { div } from "framer-motion/client";
 import { addToast } from "@heroui/toast";
 
 export default function UserLayout({
@@ -51,8 +51,8 @@ function Sidebar({
   sidebar,
   setSidebar,
   menu,
-  isManager,
-}: {
+}: // isManager,
+{
   sidebar: boolean;
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   menu: {
@@ -138,13 +138,13 @@ function Sidebar({
 }
 
 function Header({
-  sidebar,
+  // sidebar,
   setSidebar,
 }: {
   sidebar: boolean;
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [data, refresh, isLoading] = useAction(getUser, [true, () => {}]);
+  const [data, ,] = useAction(getUser, [true, () => {}]);
   return (
     <header className="z-30 h-12 p-2 flex gap-4 items-center max-lg:shadow-sm bg-gray-500/10">
       <Button
@@ -185,7 +185,7 @@ function Header({
 function User({ sidebar }: { sidebar: boolean }) {
   const pathname = usePathname(),
     [, lang] = pathname.split("/"),
-    [data, refresh, isLoading] = useAction(getUser, [true, () => {}]);
+    [data, , isLoading] = useAction(getUser, [true, () => {}]);
 
   return (
     <Dropdown className="overflow-hidden">
