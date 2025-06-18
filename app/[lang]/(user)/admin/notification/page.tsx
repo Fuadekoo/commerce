@@ -78,8 +78,8 @@ function Page() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-4 md:mt-10 bg-white p-3 md:p-6 rounded-xl shadow h-svh md:h-auto overflow-auto">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
+    <div className="w-full max-w-2xl mx-auto mt-2 md:mt-4 bg-white p-3 md:p-6 rounded-xl shadow h-svh md:h-auto overflow-y-auto">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-2">
         <h1 className="text-xl md:text-2xl font-bold text-gray-800">
           Post Messages
         </h1>
@@ -138,7 +138,7 @@ function Page() {
           <Loader2 className="animate-spin mr-2" /> Loading...
         </div>
       ) : (
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-6 overflow-y-auto max-h-[70vh]">
           {notifications && notifications.length > 0 ? (
             notifications.map((n) => (
               <div

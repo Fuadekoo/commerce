@@ -90,6 +90,18 @@ function LoginPage() {
               Sign Up
             </Link>
           </div>
+          <div className="mt-2 text-center">
+            <span className="text-gray-500 text-sm">
+              If any problem in the system, please{" "}
+              <Link
+                href="/en/contact"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                contact assistance
+              </Link>
+              .
+            </span>
+          </div>
         </form>
       </div>
     </div>

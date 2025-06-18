@@ -33,7 +33,7 @@ interface CustomTableProps {
   isLoading?: boolean;
 }
 
-const PAGE_SIZES = [1, 20, 50, 100];
+const PAGE_SIZES = [1, 2, 50, 100];
 
 function CustomTable({
   rows,
@@ -177,64 +177,62 @@ function CustomTable({
       )}
 
       {/* Pagination */}
-      {totalRows > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-4 mt-4 p-2 text-sm">
-          <div>
-            Showing{" "}
-            <span className="font-medium">
-              {rows.length > 0
-                ? Math.min((page - 1) * pageSize + 1, totalRows)
-                : 0}
-            </span>{" "}
-            to{" "}
-            <span className="font-medium">
-              {Math.min(page * pageSize, totalRows)}
-            </span>{" "}
-            of <span className="font-medium">{totalRows}</span> results
-          </div>
-          {totalPages > 1 && (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onPageChange(Math.max(1, page - 1))}
-                disabled={page === 1 || isLoading}
-                className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-                aria-label="Previous page"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter((pg) => {
-                  if (totalPages <= 3) return true;
-                  if (page <= 2) return pg <= 3;
-                  if (page >= totalPages - 1) return pg >= totalPages - 2;
-                  return Math.abs(pg - page) <= 1;
-                })
-                .map((pg) => (
-                  <button
-                    key={pg}
-                    onClick={() => onPageChange(pg)}
-                    disabled={pg === page || isLoading}
-                    className={`px-3 py-1.5 rounded ${
-                      pg === page
-                        ? "bg-blue-600 text-white font-bold"
-                        : "bg-white hover:bg-gray-50"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    {pg}
-                  </button>
-                ))}
-              <button
-                onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-                disabled={page === totalPages || isLoading}
-                className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-                aria-label="Next page"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          )}
+      <div className="flex flex-wrap items-center justify-between gap-4 mt-4 p-2 text-sm">
+        <div>
+          Showing{" "}
+          <span className="font-medium">
+            {rows.length > 0
+              ? Math.min((page - 1) * pageSize + 1, totalRows)
+              : 0}
+          </span>{" "}
+          to{" "}
+          <span className="font-medium">
+            {Math.min(page * pageSize, totalRows)}
+          </span>{" "}
+          of <span className="font-medium">{totalRows}</span> results
         </div>
-      )}
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onPageChange(Math.max(1, page - 1))}
+              disabled={page === 1 || isLoading}
+              className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              aria-label="Previous page"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((pg) => {
+                if (totalPages <= 3) return true;
+                if (page <= 2) return pg <= 3;
+                if (page >= totalPages - 1) return pg >= totalPages - 2;
+                return Math.abs(pg - page) <= 1;
+              })
+              .map((pg) => (
+                <button
+                  key={pg}
+                  onClick={() => onPageChange(pg)}
+                  disabled={pg === page || isLoading}
+                  className={`px-3 py-1.5 rounded ${
+                    pg === page
+                      ? "bg-blue-600 text-white font-bold"
+                      : "bg-white hover:bg-gray-50"
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {pg}
+                </button>
+              ))}
+            <button
+              onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages || isLoading}
+              className="px-2 py-1.5 bg-white hover:bg-gray-50 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              aria-label="Next page"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Image Zoom Modal */}
       {zoomedImageUrl && (

@@ -115,9 +115,15 @@ export const profitCardSchema = z.object({
   priceDifference: z.number().min(1, "Price difference must be at least 1"),
 });
 export type ProfitCardType = z.infer<typeof profitCardSchema>;
- 
+
 // export const companyAccountSchema = z.object({
 //   name: z.string().min(1, "Company name is required"),
 //   account: z.string().min(1, "Account number is required"),
 // });
 // export type CompanyAccountType = z.infer<typeof companyAccountSchema>;
+
+export const contactSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  phone: z.string().min(9, "Phone number is too short"),
+  description: z.string().min(1, "Description is required"),
+});

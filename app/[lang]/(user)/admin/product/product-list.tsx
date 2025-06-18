@@ -14,6 +14,7 @@ import { z } from "zod";
 import { productSchema } from "@/lib/zodSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 
 interface ProductItem {
   id: string | number;
@@ -167,7 +168,7 @@ function ProductList() {
 
   const onSubmit = async (data: z.infer<typeof productSchema>) => {
     if (editProduct) {
-      updateProductAction({ ...data, id: editProduct.id }, undefined);
+      updateProductAction(editProduct.id.toString(), data);
     } else {
       productAction(data);
     }
@@ -265,7 +266,7 @@ function ProductList() {
       />
       {/* Custom Modal for Add/Edit Product */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+        <div className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 backdrop-blur-sm flex justify-center items-center p-4 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4">
               {editProduct ? "Edit Product" : "Add Product"}
@@ -341,6 +342,9 @@ function ProductList() {
                   isLoading={editProduct ? isLoadingUpdate : isLoadingCreate}
                   disabled={editProduct ? isLoadingUpdate : isLoadingCreate}
                 >
+                  {(editProduct ? isLoadingUpdate : isLoadingCreate) ? (
+                    <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
+                  ) : null}
                   {editProduct ? "Update" : "Add"}
                 </Button>
               </div>

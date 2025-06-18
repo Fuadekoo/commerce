@@ -48,6 +48,7 @@ model user {
   // profit     profit[]
   profitCard profitCard[]
   messages   message[]
+  contact    contact[]
 }
 
 model campanyAccount {
@@ -122,4 +123,15 @@ model profitCard {
   user            user     @relation(fields: [userId], references: [id])
 
   @@unique([orderNumber, userId])
+}
+
+model contact {
+  id          String   @id @default(cuid())
+  username    String
+  phone       Int
+  status      Status   @default(PENDING)
+  userId     String
+  user       user     @relation(fields: [userId], references: [id])
+  description String
+  createdAt   DateTime @default(now())
 }
