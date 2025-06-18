@@ -15,6 +15,11 @@ import {
 const menu = [
   { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },
   { label: "Customers", url: "customer", icon: <User size={18} /> },
+  {
+    label: "Customer Support",
+    url: "support",
+    icon: <User size={18} />,
+  },
   { label: "Payments", url: "payment", icon: <CreditCard size={18} /> },
   // { label: "Orders", url: "order", icon: <Package size={18} /> },
   { label: "Profit Cards", url: "profit", icon: <Package size={18} /> },
