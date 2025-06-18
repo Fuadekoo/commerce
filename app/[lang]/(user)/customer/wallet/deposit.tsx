@@ -20,7 +20,11 @@ interface CompanyAccount {
   account: string;
 }
 
-function Deposit() {
+interface DepositProps {
+  onDepositSuccess?: () => void;
+}
+
+function Deposit({ onDepositSuccess }: DepositProps) {
   const [open, setOpen] = useState(false);
   const {
     handleSubmit,
@@ -38,31 +42,30 @@ function Deposit() {
     [true, () => {}]
   );
   const [response, depositAction, depositLoading] = useAction(deposits, [
-    undefined, // initialValue for response
+    ,
+    // initialValue for response
     (res) => {
       // Changed variable name from response to res
       if (res && res.message) {
         addToast({
           title: "Deposit",
           description: res.message,
-          // reset();
-          // close the popup
-          // setOpen(false); // Close the modal on success
-          // reset(); // Reset form fields
         });
+        if (onDepositSuccess) onDepositSuccess();
+        setOpen(false);
+        reset();
       } else if (res) {
         addToast({
           title: "Deposit",
           description: "Deposit request processed.", // Generic success
-          // type: "success",
         });
-        // setOpen(false);
-        // reset();
+        if (onDepositSuccess) onDepositSuccess();
+        setOpen(false);
+        reset();
       } else {
         addToast({
           title: "Deposit Error",
           description: "An unexpected error occurred.",
-          // type: "error",
         });
       }
     },
@@ -97,7 +100,6 @@ function Deposit() {
         addToast({
           title: "Image Error",
           description: "Could not process the file.",
-          // type: "error",
         });
         setValue("photo", "", { shouldValidate: true }); // Clear on error
       } finally {
@@ -120,7 +122,6 @@ function Deposit() {
       addToast({
         title: "Validation Error",
         description: "Payment proof photo is required.",
-        // type: "error",
       });
       return;
     }
@@ -157,8 +158,8 @@ function Deposit() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm relative">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm relative max-h-[90vh] overflow-y-auto">
             <Button
               variant="ghost"
               // size="icon"
@@ -266,7 +267,7 @@ function Deposit() {
                   <p className="text-red-500 text-sm mt-1">
                     {errors.method.message}
                   </p>
-              )} */}
+              } */}
 
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
