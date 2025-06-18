@@ -27,7 +27,7 @@ interface DepositHistoryResponse {
 }
 
 const columns = [
-  { key: "id", label: "ID" },
+  { key: "id", label: "Transaction ID" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
   // { key: "photo", label: "photo" },

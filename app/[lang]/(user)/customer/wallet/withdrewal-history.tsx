@@ -8,7 +8,7 @@ import { z } from "zod";
 
 // Define table columns
 const columns = [
-  { key: "id", label: "ID" },
+  { key: "id", label: "Transaction ID" },
   { key: "createdAt", label: "Date" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
