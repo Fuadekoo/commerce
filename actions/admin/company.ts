@@ -30,7 +30,6 @@ export async function getCompanyAccount() {
 
   return companyAccount;
 }
-
 export async function updateCompanyAccount(
   id: string,
   data: Partial<z.infer<typeof companyAccountSchema>>
@@ -40,23 +39,23 @@ export async function updateCompanyAccount(
     throw new Error("Unauthorized");
   }
 
-  const companyAccount = await prisma.campanyAccount.update({
+  await prisma.campanyAccount.update({
     where: { id },
     data,
   });
 
-  return companyAccount;
+  return { message: "account is updated successfully" };
 }
 
 export async function deleteCompanyAccount(id: string) {
-    const session = await auth();
-    if (!session || !session.user || !session.user.id) {
-        throw new Error("Unauthorized");
-    }
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized");
+  }
 
-    await prisma.campanyAccount.delete({
-        where: { id },
-    });
+  await prisma.campanyAccount.delete({
+    where: { id },
+  });
 
-    return { message: "account is deleted successfully" };
+  return { message: "account is deleted successfully" };
 }

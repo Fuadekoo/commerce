@@ -33,7 +33,11 @@ export async function viewProfile() {
     throw new Error("User not found");
   }
 
-  return user;
+  // Convert Decimal fields to number or string
+  return {
+    ...user,
+    balance: user.balance ? Number(user.balance) : 0,
+  };
 }
 
 export async function profileUpdate(data: z.infer<typeof updateProfileSchema>) {
@@ -53,7 +57,6 @@ export async function profileUpdate(data: z.infer<typeof updateProfileSchema>) {
     where: { id: session.user.id },
     data: {
       ...(name && { name }),
-      ...(email && { email }),
       ...(phone && { phone }),
     },
   });

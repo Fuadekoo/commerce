@@ -24,13 +24,11 @@ function ChangePassword() {
           addToast({
             title: "Error",
             description: response.error,
-            status: "error",
           });
         } else if (response.message) {
           addToast({
             title: "Success",
             description: response.message,
-            status: "success",
           });
           reset(); // Reset form fields on success
         }
@@ -38,7 +36,6 @@ function ChangePassword() {
         addToast({
           title: "Error",
           description: "An unexpected error occurred.",
-          status: "error",
         });
       }
     },
@@ -81,7 +78,6 @@ function ChangePassword() {
             type="password"
             label="Current Password"
             {...register("currentPassword")}
-            error={errors.currentPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -89,7 +85,6 @@ function ChangePassword() {
             type="password"
             label="New Password"
             {...register("newPassword")}
-            error={errors.newPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -97,7 +92,6 @@ function ChangePassword() {
             type="password"
             label="Confirm New Password"
             {...register("confirmPassword")}
-            error={errors.confirmPassword?.message}
           />
         </div>
         <Button

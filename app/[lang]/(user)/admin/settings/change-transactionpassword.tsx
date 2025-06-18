@@ -23,13 +23,13 @@ function ChangeTransactionPassword() {
           addToast({
             title: "Error",
             description: response.error,
-            status: "error",
+            // status: "error",
           });
         } else if (response.message) {
           addToast({
             title: "Success",
             description: response.message,
-            status: "success",
+            // status: "success",
           });
           reset(); // Reset form fields on success
         }
@@ -37,7 +37,7 @@ function ChangeTransactionPassword() {
         addToast({
           title: "Error",
           description: "An unexpected error occurred.",
-          status: "error",
+          // status: "error",
         });
       }
     },
@@ -82,8 +82,8 @@ function ChangeTransactionPassword() {
             type="password"
             label="Current Transaction Password"
             {...register("currentPassword")}
-            error={errors.currentPassword?.message}
-            placeholder="Leave empty if setting for the first time"
+            // error={errors.currentPassword?.message}
+            placeholder="enter the last transaction password if you have one"
           />
         </div>
         <div className="mb-4">
@@ -91,7 +91,7 @@ function ChangeTransactionPassword() {
             type="password"
             label="New Transaction Password"
             {...register("newPassword")}
-            error={errors.newPassword?.message}
+            // error={errors.newPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -99,7 +99,7 @@ function ChangeTransactionPassword() {
             type="password"
             label="Confirm New Transaction Password"
             {...register("confirmPassword")}
-            error={errors.confirmPassword?.message}
+            // error={errors.confirmPassword?.message}
           />
         </div>
         <Button
