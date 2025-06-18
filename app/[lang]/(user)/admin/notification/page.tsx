@@ -102,7 +102,7 @@ function Page() {
       </div>
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-2 overflow-auto">
           <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md">
             <h2 className="text-base md:text-lg font-semibold mb-4">
               New Message

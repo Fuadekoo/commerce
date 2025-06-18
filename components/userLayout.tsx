@@ -93,7 +93,7 @@ function Sidebar({
             <ChevronRight className="size-4" />
           )}
         </Button>
-        <div className="flex items-center gap-3 px-5 pt-6 pb-2">
+        <div className="flex items-center gap-3 px-5 pt-4 pb-2">
           <Image
             src="/cart.png" // Place your logo in public/company-logo.png
             alt="Company Logo"
@@ -103,12 +103,12 @@ function Sidebar({
           />
           {sidebar && (
             <span className="font-bold text-lg text-primary whitespace-nowrap">
-              MyCompany
+              Wallmart
             </span>
           )}
         </div>
         {/* <Logo sidebar={sidebar} /> */}
-        <div className="max-xl:lg:px-2 px-5 pt-10 grid gap-2 auto-rows-min overflow-auto">
+        <div className="max-xl:lg:px-2 px-5 pt-3 grid gap-2 auto-rows-min overflow-auto">
           {menu.map(({ label, url, icon }, i) => (
             <Button
               key={i + ""}

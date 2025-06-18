@@ -52,8 +52,8 @@ function Page() {
   const openModal = () => setShowModal(true);
 
   const onSubmit = (data: any) => {
-    // Map "name" to "username" for backend compatibility
-    updateAction({ username: data.name, phone: data.phone });
+    // Use correct property names as expected by the backend
+    updateAction({ name: data.name, phone: data.phone, email: user?.email || "" });
   };
 
   return (
