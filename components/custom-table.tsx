@@ -130,8 +130,8 @@ function CustomTable({
                         <Image
                           src={`/api/filedata/${item.photo}`}
                           alt={`Proof for ${item.id || item.key || "entry"}`}
-                          width={100}
-                          height={60}
+                          width={300}
+                          height={300}
                           style={{
                             width: "100px",
                             height: "auto",
@@ -237,18 +237,18 @@ function CustomTable({
       {/* Image Zoom Modal */}
       {zoomedImageUrl && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-white/30 backdrop-blur-md flex items-center justify-center z-50 p-4"
           onClick={handleCloseZoom}
         >
           <div
-            className="relative bg-white p-2 shadow-xl max-w-[90vw] max-h-[90vh]"
+            className="relative bg-white p-2 shadow-xl max-w-[95vw] max-h-[95vh] flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={zoomedImageUrl}
               alt="Zoomed proof"
-              className="block max-w-full max-h-[calc(90vh-80px)] object-contain"
-              width={100}
+              className="block max-w-[90vw] max-h-[80vh] object-contain"
+              width={300}
               height={60}
             />
             <button

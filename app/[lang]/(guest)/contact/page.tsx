@@ -8,6 +8,7 @@ import { contactSchema } from "@/lib/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import useAction from "@/hooks/useAction";
+import Link from "next/link";
 
 function Page() {
   const {
@@ -79,8 +80,19 @@ function Page() {
           disabled={isLoadingCreate}
           className="w-full"
         >
-          Submit
+          Submit Report
         </Button>
+        <div className="mt-2 text-center">
+          <span className="text-gray-500 text-sm">
+            Go back to{" "}
+            <Link
+              href="/en/login"
+              className="text-blue-600 font-semibold hover:underline"
+            >
+              Login
+            </Link>
+          </span>
+        </div>
       </form>
     </div>
   );

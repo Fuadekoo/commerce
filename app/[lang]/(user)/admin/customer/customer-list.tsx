@@ -253,6 +253,7 @@ function CustomerPage() {
           description: "Task Set successful!",
         });
       }
+      refresh();
     },
   ]);
 

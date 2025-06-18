@@ -70,65 +70,59 @@ function PaymentListPage() {
     pageSize
   );
 
-  const [, proofAction, isLoadingProof] = useAction(
-    aProofDeposit,
-    [
-      ,
-      // Initial data or config, can be null or an empty object if not needed
-      (response) => {
-        setProcessingApproveId(null); // Clear processing ID
-        refresh(); // Refresh data after action execution
-        // Callback function after action execution
-        if (response) {
-          addToast({
-            title: "Approve Payment",
-            description: response.message,
-            // status: response.error ? "error" : "success",
-          });
-          // The refresh() call was moved up, no need for this conditional refresh
-          // if (!response.error) { // Check for error before refreshing
-          //   refresh(); // Refresh data on success
-          // }
-        } else {
-          addToast({
-            title: "Approve Payment",
-            description: "An unexpected error occurred.",
-            // status: "error",
-          });
-        }
-      },
-    ]
-  );
+  const [, proofAction, isLoadingProof] = useAction(aProofDeposit, [
+    ,
+    // Initial data or config, can be null or an empty object if not needed
+    (response) => {
+      setProcessingApproveId(null); // Clear processing ID
+      refresh(); // Refresh data after action execution
+      // Callback function after action execution
+      if (response) {
+        addToast({
+          title: "Approve Payment",
+          description: response.message,
+          // status: response.error ? "error" : "success",
+        });
+        // The refresh() call was moved up, no need for this conditional refresh
+        // if (!response.error) { // Check for error before refreshing
+        //   refresh(); // Refresh data on success
+        // }
+      } else {
+        addToast({
+          title: "Approve Payment",
+          description: "An unexpected error occurred.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
-  const [, rejectAction, isLoadingReject] = useAction(
-    rejectDeposit,
-    [
-      ,
-      // Initial data or config
-      (response) => {
-        setProcessingRejectId(null); // Clear processing ID
-        refresh(); // Refresh data after action execution
-        // Callback function after action execution
-        if (response) {
-          addToast({
-            title: "Reject Payment",
-            description: response.message,
-            // status: response.error ? "error" : "success",
-          });
-          // The refresh() call was moved up, no need for this conditional refresh
-          // if (!response.error) { // Check for error before refreshing
-          //   refresh(); // Refresh data on success
-          // }
-        } else {
-          addToast({
-            title: "Reject Payment",
-            description: "An unexpected error occurred.",
-            // status: "error",
-          });
-        }
-      },
-    ]
-  );
+  const [, rejectAction, isLoadingReject] = useAction(rejectDeposit, [
+    ,
+    // Initial data or config
+    (response) => {
+      setProcessingRejectId(null); // Clear processing ID
+      refresh(); // Refresh data after action execution
+      // Callback function after action execution
+      if (response) {
+        addToast({
+          title: "Reject Payment",
+          description: response.message,
+          // status: response.error ? "error" : "success",
+        });
+        // The refresh() call was moved up, no need for this conditional refresh
+        // if (!response.error) { // Check for error before refreshing
+        //   refresh(); // Refresh data on success
+        // }
+      } else {
+        addToast({
+          title: "Reject Payment",
+          description: "An unexpected error occurred.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
   const rows = (data?.data || []).map((payment) => ({
     ...payment,
@@ -169,14 +163,6 @@ function PaymentListPage() {
       label: "Actions",
       renderCell: (item) => (
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            color="primary"
-            variant="flat"
-            onPress={() => handleViewPayment(item)}
-          >
-            View
-          </Button>
           {item.status === "PENDING" && (
             <>
               <Button
