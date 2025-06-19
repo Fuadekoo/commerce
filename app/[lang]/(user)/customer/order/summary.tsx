@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
-// import { Button } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { madeOrder } from "@/actions/user/order";
 
@@ -22,11 +21,23 @@ function Summary() {
       }
     },
   ]);
-  const [showResult, setShowResult] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showProfitModal, setShowProfitModal] = useState(false);
 
   const handleStart = async () => {
     await orderAction();
-    setShowResult(true);
+    setShowProductModal(true);
+  };
+
+  const handleCloseProductModal = () => {
+    setShowProductModal(false);
+    if (orderResponse && orderResponse.profitCard) {
+      setShowProfitModal(true);
+    }
+  };
+
+  const handleCloseProfitModal = () => {
+    setShowProfitModal(false);
   };
 
   return (
@@ -53,13 +64,19 @@ function Summary() {
           start(0/60)
         </button>
       </div>
-      {/* Display products and profit card after start */}
-      {showResult && orderResponse && (
-        <div className="mt-8 space-y-6">
-          {/* Products List */}
-          {orderResponse.products && orderResponse.products.length > 0 && (
-            <div>
-              <h4 className="text-lg font-semibold mb-3">Products</h4>
+
+      {/* Products Modal */}
+      {showProductModal && orderResponse && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              onClick={handleCloseProductModal}
+            >
+              <span className="text-2xl">&times;</span>
+            </button>
+            <h4 className="text-lg font-semibold mb-3 text-center">Products</h4>
+            {orderResponse.products && orderResponse.products.length > 0 ? (
               <div className="grid gap-3">
                 {orderResponse.products.map((product: any) => (
                   <div
@@ -72,25 +89,39 @@ function Summary() {
                         Order Number: {product.orderNumber}
                       </div>
                     </div>
-                    {/* Add more product fields as needed */}
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-          {/* Profit Card */}
-          {orderResponse.profitCard && (
-            <div className="mt-6">
-              <h4 className="text-lg font-semibold mb-3">Profit Card</h4>
-              <div className="border rounded-lg p-4 bg-green-50 shadow">
-                <div>
-                  <span className="font-bold">Order Number:</span>{" "}
-                  {orderResponse.profitCard.orderNumber}
-                </div>
-                {/* Add more profit card fields as needed */}
+            ) : (
+              <div className="text-center text-gray-400 py-10">
+                No products found.
               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Profit Card Modal */}
+      {showProfitModal && orderResponse && orderResponse.profitCard && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              onClick={handleCloseProfitModal}
+            >
+              <span className="text-2xl">&times;</span>
+            </button>
+            <h4 className="text-lg font-semibold mb-3 text-center">
+              Profit Card
+            </h4>
+            <div className="border rounded-lg p-4 bg-green-50 shadow">
+              <div>
+                <span className="font-bold">Order Number:</span>{" "}
+                {orderResponse.profitCard.orderNumber}
+              </div>
+              {/* Add more profit card fields as needed */}
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>

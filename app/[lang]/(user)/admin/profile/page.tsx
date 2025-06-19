@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { User, DollarSign, Users, Gift, Phone, Pen, X } from "lucide-react";
+import { User, Users, Phone, Pen, X } from "lucide-react";
 import useAction from "@/hooks/useAction";
 import { viewProfile, profileUpdate } from "@/actions/common/profile";
 import { Button, Input } from "@heroui/react";
@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 function Page() {
-  const [user, setUser] = useAction(viewProfile, [true, () => {}]);
+  const [user] = useAction(viewProfile, [true, () => {}]);
   const [showModal, setShowModal] = useState(false);
 
   const [, updateAction] = useAction(profileUpdate, [
@@ -21,13 +21,16 @@ function Page() {
         title: res?.message ? "Profile Updated" : "Error",
         description: res?.message || "Update failed",
       });
-      // Update the local user state if backend returns updated user
-      if (res?.user) setUser();
       setShowModal(false);
     },
   ]);
 
-  const { register, handleSubmit, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       name: "",
@@ -47,11 +50,9 @@ function Page() {
   const openModal = () => setShowModal(true);
 
   const onSubmit = (data: any) => {
-    // Use correct property names as expected by the backend
     updateAction({
       name: data.name,
       phone: data.phone,
-      email: user?.email || "",
     });
   };
 
@@ -78,25 +79,11 @@ function Page() {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
           <div className="flex flex-col items-center">
-            <DollarSign className="w-8 h-8 text-green-500 mb-2" />
-            <p className="text-2xl font-bold text-green-700">
-              ${user?.balance?.toLocaleString?.() ?? "0"}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">Total Balance</p>
-          </div>
-          <div className="flex flex-col items-center">
             <Users className="w-8 h-8 text-blue-500 mb-2" />
             <p className="text-2xl font-bold text-blue-700">
               {/* {user?.invitedUsers ?? "0"} */}
             </p>
             <p className="text-gray-500 text-sm mt-1">Invited Users</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Gift className="w-8 h-8 text-orange-500 mb-2" />
-            <p className="text-2xl font-bold text-orange-600">
-              {/* ${user?.commission?.toLocaleString?.() ?? "0"} */}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">Commission</p>
           </div>
         </div>
         {/* Profile Info */}
@@ -133,19 +120,35 @@ function Page() {
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4 px-6 py-6">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="name"
+                >
+                  Name
+                </label>
                 <Input
-                  label="Name"
+                  id="name"
                   {...register("name")}
-                  // error={!!errors.name}
-                  // helperText={errors.name?.message as string}
                   autoFocus
+                  className="mb-1"
                 />
-                <Input
-                  label="Phone"
-                  {...register("phone")}
-                  // error={!!errors.phone}
-                  // helperText={errors.phone?.message as string}
-                />
+                {errors.name && (
+                  <span className="text-red-500 text-xs">
+                    {errors.name.message as string}
+                  </span>
+                )}
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="phone"
+                >
+                  Phone
+                </label>
+                <Input id="phone" {...register("phone")} className="mb-1" />
+                {errors.phone && (
+                  <span className="text-red-500 text-xs">
+                    {errors.phone.message as string}
+                  </span>
+                )}
               </div>
               <div className="flex justify-end gap-2 border-t px-6 py-4">
                 <Button
@@ -156,12 +159,7 @@ function Page() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  color="primary"
-                  type="submit"
-                  // loading={isUpdating}
-                  className="w-24"
-                >
+                <Button color="primary" type="submit" className="w-24">
                   Save
                 </Button>
               </div>

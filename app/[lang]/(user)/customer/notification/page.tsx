@@ -10,11 +10,11 @@ function Page() {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-6 px-2 md:px-6 h-dvh bg-gray-50">
+    <div className="w-full max-w-2xl mx-auto py-6 px-2 md:px-6 h-dvh bg-gray-50 ">
       <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 text-center">
         Notifications
       </h2>
-      <div className="overflow-y-auto max-h-[80vh]">
+      <div className="overflow-y-auto max-h-[80vh] mb-20">
         {isLoadingNotification ? (
           <div className="flex justify-center items-center py-10 text-gray-500">
             Loading...
