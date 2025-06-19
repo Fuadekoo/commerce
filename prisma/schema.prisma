@@ -36,6 +36,7 @@ model user {
   totalTask           Int      @default(0)
   leftTask            Int      @default(0)
   password            String
+  socket              String?
   transactionPassword String
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -49,6 +50,8 @@ model user {
   profitCard profitCard[]
   messages   message[]
   contact    contact[]
+  chatsFrom  chat[]       @relation("FromUser")
+  chatsTo    chat[]       @relation("ToUser")
 }
 
 model campanyAccount {
@@ -130,8 +133,19 @@ model contact {
   username    String
   phone       Int
   status      Status   @default(PENDING)
-  userId     String
-  user       user     @relation(fields: [userId], references: [id])
+  userId      String
+  user        user     @relation(fields: [userId], references: [id])
   description String
   createdAt   DateTime @default(now())
+}
+
+model chat {
+  id         String   @id @default(cuid())
+  from       user     @relation("FromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUserId String
+  to         user     @relation("ToUser", fields: [toUserId], references: [id], onDelete: Cascade)
+  toUserId   String
+  msg        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

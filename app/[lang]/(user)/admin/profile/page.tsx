@@ -9,9 +9,13 @@ import { addToast } from "@heroui/toast";
 import { updateProfileSchema } from "@/lib/zodSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Loading from "@/components/loading";
 
 function Page() {
-  const [user] = useAction(viewProfile, [true, () => {}]);
+  const [user, refresh, isLoadingUser] = useAction(viewProfile, [
+    true,
+    () => {},
+  ]);
   const [showModal, setShowModal] = useState(false);
 
   const { register, handleSubmit, reset } = useForm({
@@ -25,6 +29,15 @@ function Page() {
 
   const openModal = () => setShowModal(true);
 
+  if (isLoadingUser) {
+    // You can use your own Loading component or a skeleton here
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-8 px-2 md:px-4 overflow-auto">
       <div className="max-w-2xl mx-auto rounded-2xl shadow-xl p-6 md:p-10 flex flex-col gap-8 items-center bg-white">
@@ -37,9 +50,9 @@ function Page() {
               height={120}
               priority
               alt="Profile"
-              className="w-32 h-32 rounded-full border-4 border-green-400 shadow-lg ring-4 ring-green-100 object-cover"
+              className="w-32 h-32 rounded-full border-4 border-gray-400 shadow-lg ring-4 ring-green-100 object-cover"
             />
-            <span className="absolute bottom-2 right-2 bg-green-500 rounded-full p-1 border-2 border-white">
+            <span className="absolute bottom-2 right-2 bg-black rounded-full p-1 border-2 border-white">
               <User className="w-5 h-5 text-white" />
             </span>
           </div>
@@ -69,77 +82,7 @@ function Page() {
             </div>
           </div>
         </div>
-        <Button
-          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold flex items-center gap-2 shadow transition"
-          onClick={openModal}
-        >
-          <Pen className="w-5 h-5" />
-          Edit Profile
-        </Button>
       </div>
-      {/* Update Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-all">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 animate-fadeIn">
-            <div className="flex items-center justify-between border-b px-6 py-4">
-              <span className="text-lg font-bold">Update Profile</span>
-              <button
-                className="p-1 rounded hover:bg-gray-100"
-                onClick={() => setShowModal(false)}
-                aria-label="Close"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-            {/* <form onSubmit={handleSubmit(updateAction)}>
-              <div className="flex flex-col gap-4 px-6 py-6">
-                <label
-                  className="text-sm font-medium text-gray-700"
-                  htmlFor="name"
-                >
-                  Name
-                </label>
-                <Input
-                  id="name"
-                  {...register("name")}
-                  autoFocus
-                  className="mb-1"
-                />
-                {errors.name && (
-                  <span className="text-red-500 text-xs">
-                    {errors.name.message as string}
-                  </span>
-                )}
-                <label
-                  className="text-sm font-medium text-gray-700"
-                  htmlFor="phone"
-                >
-                  Phone
-                </label>
-                <Input id="phone" {...register("phone")} className="mb-1" />
-                {errors.phone && (
-                  <span className="text-red-500 text-xs">
-                    {errors.phone.message as string}
-                  </span>
-                )}
-              </div>
-              <div className="flex justify-end gap-2 border-t px-6 py-4">
-                <Button
-                  variant="flat"
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="w-24"
-                >
-                  Cancel
-                </Button>
-                <Button color="primary" type="submit" className="w-24">
-                  Save
-                </Button>
-              </div>
-            </form> */}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

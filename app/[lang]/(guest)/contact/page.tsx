@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import useAction from "@/hooks/useAction";
 import Link from "next/link";
+import { MessageCircleCode } from "lucide-react";
 
 function Page() {
   const {
@@ -48,6 +49,14 @@ function Page() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      {/* Animated Message Icon */}
+      <Link
+        href="/en/chat"
+        className="fixed bottom-6 right-6 z-50 animate-bounce hover:text-red-600"
+      >
+        <MessageCircleCode className="w-12 h-12 text-blue-500 drop-shadow-lg cursor-pointer" />
+      </Link>
+      {/* Contact Form */}
       <form
         onSubmit={handleSubmit(createAction)}
         className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md flex flex-col gap-5"
