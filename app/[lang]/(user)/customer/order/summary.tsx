@@ -3,8 +3,18 @@ import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
 import { madeOrder, makeSmartOrder } from "@/actions/user/order";
+import { getProductStats } from "@/actions/user/product";
+import { getUser } from "@/actions/user/newUser";
 
 function Summary() {
+  const [product, rereshProduct, isProductLoading] = useAction(
+    getProductStats,
+    [true, () => {}]
+  );
+  const [user, refreshUser, isUserLoading] = useAction(getUser, [
+    true,
+    () => {},
+  ]);
   const [orderResponse, orderAction, isOrdering] = useAction(makeSmartOrder, [
     ,
     (response) => {
@@ -44,24 +54,28 @@ function Summary() {
     <div>
       <div className="mt-6 bg-gray-100 p-4 rounded-lg">
         <h3 className="text-xl font-semibold mb-2">Order Summary</h3>
-        <p>
-          Subtotal: <span className="font-bold">$565</span>
-        </p>
-        <p>
-          Discount (20%): <span className="text-red-500">-$113</span>
-        </p>
-        <p>
-          Delivery Fee: <span className="font-bold">$15</span>
-        </p>
-        <p className="text-lg font-bold mt-2">
-          Total: <span className="text-green-600">$467</span>
-        </p>
+        {/* Product stats */}
+        <div className="mb-2">
+          <div>
+            <span className="font-bold">Total Products:</span>{" "}
+            {product?.totalProducts ?? 0}
+          </div>
+          <div>
+            <span className="font-bold">Total Price:</span> $
+            {product?.totalPrice ?? 0}
+          </div>
+          <div>
+            <span className="font-bold">Total Stocks:</span>{" "}
+            {product?.totalStocks ?? 0}
+          </div>
+        </div>
+        
         <button
           className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
           onClick={handleStart}
           disabled={isOrdering}
         >
-          start(0/60)
+          start({user?.user?.todayTask ?? 0}/60)
         </button>
       </div>
 

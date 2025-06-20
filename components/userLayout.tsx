@@ -185,7 +185,7 @@ function Header({
 function User({ sidebar }: { sidebar: boolean }) {
   const pathname = usePathname(),
     [, lang] = pathname.split("/"),
-    [data, , isLoading] = useAction(getUser, [true, () => {}]);
+    [data] = useAction(getUser, [true, () => {}]);
 
   return (
     <Dropdown className="overflow-hidden">

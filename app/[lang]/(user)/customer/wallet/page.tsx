@@ -9,10 +9,7 @@ import useAction from "@/hooks/useAction";
 import { viewProfile } from "@/actions/common/profile";
 
 function Page() {
-  const [profile, setProfile, isLoading] = useAction(viewProfile, [
-    true,
-    () => {},
-  ]);
+  const [profile] = useAction(viewProfile, [true, () => {}]);
   // Example balance, replace with your actual balance source
   const balance = profile?.balance || 0;
 
@@ -21,7 +18,7 @@ function Page() {
       <div className="flex items-center gap-2 mb-1 overflow-hidden">
         <span className="text-2xl font-bold">Total Balance:</span>
         <span className="text-3xl font-extrabold text-blue-700">
-          Br {balance.toLocaleString()}
+          $ {balance.toLocaleString()}
         </span>
       </div>
       {/* <div className="shrink-0 bg-green-500 h-dvh">here</div>

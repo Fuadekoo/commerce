@@ -79,6 +79,9 @@ export async function getUser() {
         email: true,
         phone: true,
         invitationCode: true,
+        totalTask: true,
+        leftTask: true,
+        todayTask: true,
         myCode: true,
         // Exclude sensitive fields like password, transactionPassword
       },
@@ -93,5 +96,3 @@ export async function getUser() {
     return { message: "Error fetching user" };
   }
 }
-
-
