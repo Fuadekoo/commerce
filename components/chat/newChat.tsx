@@ -62,7 +62,7 @@ function NewChat({ onFinish, onSelectChat }: NewChatProps) {
             <button
               className="mt-2 text-blue-600 text-sm underline"
               onClick={() => {
-                onSelectChat && onSelectChat(response.id, "user");
+                if (onSelectChat) onSelectChat(response.id, "user");
                 onFinish();
               }}
             >
@@ -74,10 +74,6 @@ function NewChat({ onFinish, onSelectChat }: NewChatProps) {
         )}
       </div>
     </div>
-  );
-}
-
-export default NewChat;
   );
 }
 

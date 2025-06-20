@@ -89,7 +89,7 @@ function AccountPage() {
     setShowModal(true);
   };
 
-  const openEditModal = (account: any) => {
+  const openEditModal = (account: string) => {
     setEditMode(true);
     setSelectedAccount(account);
     setShowModal(true);
@@ -126,7 +126,7 @@ function AccountPage() {
             <div className="flex gap-2 mt-2">
               <Button
                 color="primary"
-                onClick={() => openEditModal(acc)}
+                onClick={() => openEditModal(acc.id)}
                 disabled={isUpdating || isDeleting}
               >
                 {isUpdating && selectedAccount?.id === acc.id
