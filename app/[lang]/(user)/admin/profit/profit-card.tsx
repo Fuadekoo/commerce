@@ -49,12 +49,12 @@ function ProfitCard() {
     pageSize
   );
 
-  const [addresponse, addAction, isLoadingCreate] = useAction(addProfit, [
-    ,
-    () => {},
-  ]);
+  // const [addresponse, addAction, isLoadingCreate] = useAction(addProfit, [
+  //   ,
+  //   () => {},
+  // ]);
 
-  const [approveResponse, approveAction] = useAction(approveProfit, [
+  const [, approveAction] = useAction(approveProfit, [
     ,
     (response) => {
       setLoadingApproveId(null);

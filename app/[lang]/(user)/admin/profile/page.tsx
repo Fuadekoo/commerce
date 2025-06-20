@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { User, Phone, X } from "lucide-react";
+import { User, Phone } from "lucide-react";
 import useAction from "@/hooks/useAction";
-import { viewProfile, profileUpdate } from "@/actions/common/profile";
+import { viewProfile } from "@/actions/common/profile";
 // import { Button, Input } from "@heroui/react";
 // import { addToast } from "@heroui/toast";
 import { updateProfileSchema } from "@/lib/zodSchema";
@@ -15,9 +15,9 @@ function Page() {
   const [user, , isLoadingUser] = useAction(viewProfile, [true, () => {}]);
   // const [showModal, setShowModal] = useState(false);
 
-  const { register, handleSubmit, reset } = useForm({
-    resolver: zodResolver(updateProfileSchema),
-  });
+  // const { register, handleSubmit, reset } = useForm({
+  //   resolver: zodResolver(updateProfileSchema),
+  // });
 
   // const [updateResponse, updateAction, isLoadingUpdate] = useAction(
   //   profileUpdate,

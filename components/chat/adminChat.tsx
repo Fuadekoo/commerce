@@ -4,7 +4,8 @@ import ChatWriteCard from "./chatWriteCard";
 import React, { useEffect, useRef, useState } from "react";
 import useAction from "@/hooks/useAction";
 import { getChatToAdmin } from "@/actions/guest/chat";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
+// import { io } from "socket.io-client";
 
 type ChatMessage = {
   id: string;
@@ -24,7 +25,7 @@ function Chat({ chatId, guestId }: ChatProps) {
   const currentUserId = guestId;
   const adminId = chatId;
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<typeof Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   // Always call the hook with both ids if needed

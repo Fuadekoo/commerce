@@ -72,7 +72,8 @@ function NewChat({ onFinish, onSelectChat }: NewChatProps) {
               ? response
               : JSON.stringify(response)} */}
           </div>
-        ) : (
+        ) : null}
+        {!response && (
           <div className="mt-2 text-red-600 text-sm">No user found</div>
         )}
       </div>

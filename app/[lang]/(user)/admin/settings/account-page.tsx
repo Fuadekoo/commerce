@@ -25,7 +25,7 @@ function AccountPage() {
     () => {},
   ]);
 
-  const [addResponse, addAction, isAdding] = useAction(addCompanyAccount, [
+  const [, addAction, isAdding] = useAction(addCompanyAccount, [
     ,
     (res) => {
       addToast({
@@ -50,19 +50,16 @@ function AccountPage() {
       },
     ]
   );
-  const [deleteResponse, deleteAction, isDeleting] = useAction(
-    deleteCompanyAccount,
-    [
-      ,
-      (res) => {
-        addToast({
-          title: res?.message ? "Deleted" : "Error",
-          description: res?.message || "Delete failed",
-        });
-        fetchAccounts();
-      },
-    ]
-  );
+  const [, deleteAction, isDeleting] = useAction(deleteCompanyAccount, [
+    ,
+    (res) => {
+      addToast({
+        title: res?.message ? "Deleted" : "Error",
+        description: res?.message || "Delete failed",
+      });
+      fetchAccounts();
+    },
+  ]);
 
   const {
     register,

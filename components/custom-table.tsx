@@ -15,12 +15,12 @@ import Image from "next/image";
 interface ColumnDef {
   key: string;
   label: string;
-  renderCell?: (item: Record<string, any>) => ReactNode;
+  renderCell?: (item: Record<string, string>) => ReactNode;
 }
 
 interface CustomTableProps {
   rows: Array<
-    Record<string, any> & { key?: string | number; id?: string | number }
+    Record<string, string> & { key?: string | number; id?: string | number }
   >;
   columns: Array<ColumnDef>;
   totalRows: number;

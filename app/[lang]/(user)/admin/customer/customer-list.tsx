@@ -25,7 +25,12 @@ interface ColumnDef {
   key: string;
   label: string;
 
-  renderCell?: (item: any) => React.ReactNode;
+  renderCell?: (
+    item: Record<string, string> & {
+      key?: string | number;
+      id?: string | number;
+    }
+  ) => React.ReactNode;
 }
 
 function CustomerPage() {
@@ -363,11 +368,35 @@ function CustomerPage() {
   };
 
   const rows = (data?.data || []).map((user) => ({
-    ...user,
-    key: user.id,
+    key: String(user.id),
+    id: String(user.id),
+    username: user.username ?? "",
+    phone: user.phone ?? "",
+    email: user.email ?? "",
+    isBlocked: user.isBlocked ? "true" : "false",
+    invitationCode: user.invitationCode ?? "",
+    myCode: user.myCode ?? "",
+    remarks: user.remarks ?? "",
+    todayTask:
+      user.todayTask !== undefined && user.todayTask !== null
+        ? String(user.todayTask)
+        : "",
+    totalTask:
+      user.totalTask !== undefined && user.totalTask !== null
+        ? String(user.totalTask)
+        : "",
+    leftTask:
+      user.leftTask !== undefined && user.leftTask !== null
+        ? String(user.leftTask)
+        : "",
+    balance:
+      user.balance !== undefined && user.balance !== null
+        ? String(user.balance)
+        : "",
     createdAt: user.createdAt
       ? new Date(user.createdAt).toLocaleDateString()
       : "N/A",
+    // Add any other fields as needed, ensuring all are strings
   }));
 
   const columns: ColumnDef[] = [
@@ -402,7 +431,9 @@ function CustomerPage() {
           color={item.isBlocked ? "danger" : "success"}
           onPress={() => {
             if (item.isBlocked) {
-              executeUnblockUser(item.id);
+              if (item.id) {
+                executeUnblockUser(item.id);
+              }
             } else {
               executeBlockUser(item.id);
             }

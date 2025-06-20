@@ -56,7 +56,7 @@ export async function getUser(
 
   const data = users.map((user) => ({
     ...user,
-    balance: Number(user.balance), // Convert Decimal to number
+    balance: String(user.balance), // Convert Decimal to string
     createdAt: user.createdAt.toISOString(),
   }));
 

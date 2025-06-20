@@ -4,7 +4,6 @@ import CustomTable from "../../../../../components/custom-table";
 import useAction from "@/hooks/useAction";
 // import { addToast } from "@heroui/toast";
 import { WithdrawalHistorys } from "@/actions/user/wallet"; // Ensure this does NOT use server-only APIs like `headers` or `cookies` in its implementation
-import { z } from "zod";
 
 // Define table columns
 const columns = [
@@ -44,8 +43,11 @@ function WithdrawalHistory() {
       <CustomTable
         columns={columns}
         rows={(withdrawalHistory?.data || []).map((row) => ({
-          ...row,
           key: row.id,
+          id: row.id,
+          createdAt: String(row.createdAt),
+          amount: row.amount.toString(),
+          status: String(row.status),
         }))}
         totalRows={withdrawalHistory?.pagination.totalRecords || 0}
         page={page}

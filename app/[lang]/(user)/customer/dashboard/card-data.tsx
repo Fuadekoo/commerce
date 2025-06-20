@@ -4,9 +4,7 @@ import { Card, CardBody } from "@heroui/react";
 import {
   PlayCircle,
   Users,
-  ShoppingCart, // Keep if you might add order stats back
   DollarSign,
-  Star, // Keep if you might add commission stats back
   ClipboardList, // For Total Tasks
   ClipboardCheck, // For Today's Tasks (completed) or generic task icon
   ClipboardX, // For Left Tasks (pending)

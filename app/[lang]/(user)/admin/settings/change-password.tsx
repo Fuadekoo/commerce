@@ -10,36 +10,35 @@ import { changePassword } from "@/actions/user/settings";
 import { z } from "zod";
 
 function ChangePassword() {
-  const [
-    changePasswordResponse,
-    changePasswordAction,
-    isLoadingChangePassword,
-  ] = useAction(changePassword, [
-    ,
-    // initialData, can be null or an empty object
-    (response) => {
-      // Callback function after action execution
-      if (response) {
-        if (response.error) {
+  const [, changePasswordAction, isLoadingChangePassword] = useAction(
+    changePassword,
+    [
+      ,
+      // initialData, can be null or an empty object
+      (response) => {
+        // Callback function after action execution
+        if (response) {
+          if (response.error) {
+            addToast({
+              title: "Error",
+              description: response.error,
+            });
+          } else if (response.message) {
+            addToast({
+              title: "Success",
+              description: response.message,
+            });
+            reset(); // Reset form fields on success
+          }
+        } else {
           addToast({
             title: "Error",
-            description: response.error,
+            description: "An unexpected error occurred.",
           });
-        } else if (response.message) {
-          addToast({
-            title: "Success",
-            description: response.message,
-          });
-          reset(); // Reset form fields on success
         }
-      } else {
-        addToast({
-          title: "Error",
-          description: "An unexpected error occurred.",
-        });
-      }
-    },
-  ]);
+      },
+    ]
+  );
 
   const changePasswordSchema = z
     .object({

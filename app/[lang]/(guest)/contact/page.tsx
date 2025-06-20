@@ -15,28 +15,24 @@ function Page() {
   const { handleSubmit, register } = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
   });
-  const [createResponse, createAction, isLoadingCreate] = useAction(
-    createContact,
-    [
-      ,
-      (createResponse) => {
-        if (createResponse && createResponse.message) {
-          addToast({
-            title: "Contact",
-            description: createResponse.message,
-          });
-        } else {
-          addToast({
-            title: "Contact",
-            description: "Contact created successfully!",
-          });
-        }
-      },
-    ]
-  );
+  const [, createAction, isLoadingCreate] = useAction(createContact, [
+    ,
+    (createResponse) => {
+      if (createResponse && createResponse.message) {
+        addToast({
+          title: "Contact",
+          description: createResponse.message,
+        });
+      } else {
+        addToast({
+          title: "Contact",
+          description: "Contact created successfully!",
+        });
+      }
+    },
+  ]);
 
   const [username, setUsername] = useState("");
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -49,7 +45,9 @@ function Page() {
       </Link>
       {/* Contact Form */}
       <form
-        onSubmit={handleSubmit(createAction)}
+        onSubmit={handleSubmit((data) => {
+          createAction(data);
+        })}
         className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md flex flex-col gap-5"
       >
         <h1 className="text-2xl font-bold text-center text-blue-600 mb-2">
