@@ -36,20 +36,17 @@ function AccountPage() {
       fetchAccounts();
     },
   ]);
-  const [updateResponse, updateAction, isUpdating] = useAction(
-    updateCompanyAccount,
-    [
-      ,
-      (res) => {
-        addToast({
-          title: res?.message ? "Updated" : "Error",
-          description: res?.message || "Update failed",
-        });
-        setShowModal(false);
-        fetchAccounts();
-      },
-    ]
-  );
+  const [, updateAction, isUpdating] = useAction(updateCompanyAccount, [
+    ,
+    (res) => {
+      addToast({
+        title: res?.message ? "Updated" : "Error",
+        description: res?.message || "Update failed",
+      });
+      setShowModal(false);
+      fetchAccounts();
+    },
+  ]);
   const [, deleteAction, isDeleting] = useAction(deleteCompanyAccount, [
     ,
     (res) => {
@@ -61,12 +58,9 @@ function AccountPage() {
     },
   ]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<z.infer<typeof companyAccountSchema>>({
+  const { register, handleSubmit, reset } = useForm<
+    z.infer<typeof companyAccountSchema>
+  >({
     resolver: zodResolver(companyAccountSchema),
     defaultValues: {
       name: "",

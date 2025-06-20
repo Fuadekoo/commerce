@@ -4,11 +4,6 @@ import Image from "next/image";
 import { User, Phone } from "lucide-react";
 import useAction from "@/hooks/useAction";
 import { viewProfile } from "@/actions/common/profile";
-// import { Button, Input } from "@heroui/react";
-// import { addToast } from "@heroui/toast";
-import { updateProfileSchema } from "@/lib/zodSchema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "@/components/loading";
 
 function Page() {

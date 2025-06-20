@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import {
   getProfitCards,
-  addProfit,
   approveProfit,
   deleteProfit,
 } from "@/actions/admin/profitCards";
@@ -75,7 +74,7 @@ function ProfitCard() {
     },
   ]);
 
-  const [deleteResponse, deleteAction] = useAction(deleteProfit, [
+  const [, deleteAction] = useAction(deleteProfit, [
     ,
     (response) => {
       setLoadingDeleteId(null);
@@ -96,7 +95,7 @@ function ProfitCard() {
     },
   ]);
 
-  const rows = (apiResponse?.data || []).map((card: any) => ({
+  const rows = (apiResponse?.data || []).map((card) => ({
     ...card,
     createdAt:
       typeof card.createdAt === "string"
