@@ -4,7 +4,7 @@ import { getNotification } from "@/actions/user/notification";
 import useAction from "@/hooks/useAction";
 
 function Page() {
-  const [notificationData, refresh, isLoadingNotification] = useAction(
+  const [notificationData, , isLoadingNotification] = useAction(
     getNotification,
     [true, () => {}]
   );

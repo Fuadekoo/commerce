@@ -432,10 +432,12 @@ function CustomerPage() {
           onPress={() => {
             if (item.isBlocked) {
               if (item.id) {
-                executeUnblockUser(item.id);
+                executeUnblockUser(String(item.id));
               }
             } else {
-              executeBlockUser(item.id);
+              if (item.id !== undefined) {
+                executeBlockUser(String(item.id));
+              }
             }
           }}
           isLoading={isLoadingBlock || isLoadingUnblock}
@@ -465,14 +467,22 @@ function CustomerPage() {
             <DropdownMenu aria-label="Reset Actions">
               <DropdownItem
                 key="resetPassword"
-                onPress={() => executeResetPassword(item.id)}
+                onPress={() => {
+                  if (item.id !== undefined) {
+                    executeResetPassword(String(item.id));
+                  }
+                }}
                 isDisabled={isLoadingResetPassword}
               >
                 Password
               </DropdownItem>
               <DropdownItem
                 key="resetTransactionPassword"
-                onPress={() => executeResetTransactionPassword(item.id)}
+                onPress={() => {
+                  if (item.id !== undefined) {
+                    executeResetTransactionPassword(String(item.id));
+                  }
+                }}
                 isDisabled={isLoadingResetTransactionPassword}
               >
                 Transaction Password
@@ -483,7 +493,7 @@ function CustomerPage() {
             size="sm"
             color="success"
             variant="flat"
-            onPress={() => openOrderModal(item.id)}
+            onPress={() => openOrderModal(String(item.id))}
           >
             Set Order
           </Button>
@@ -491,7 +501,11 @@ function CustomerPage() {
             size="sm"
             color="primary"
             variant="flat"
-            onPress={() => openProfitModal(item.id)}
+            onPress={() => {
+              if (item.id !== undefined) {
+                openProfitModal(String(item.id));
+              }
+            }}
           >
             Add profit
           </Button>
@@ -499,7 +513,11 @@ function CustomerPage() {
             size="sm"
             color="danger"
             variant="flat"
-            onPress={() => openRemarkModal(item.id)}
+            onPress={() => {
+              if (item.id !== undefined) {
+                openRemarkModal(String(item.id));
+              }
+            }}
           >
             Add remark
           </Button>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const orders = [
@@ -36,7 +37,7 @@ function OrderList() {
             key={index}
             className="flex items-center gap-4 border p-4 rounded-lg shadow-md"
           >
-            <img
+            <Image
               src={order.image}
               alt={order.name}
               className="w-20 h-20 object-cover rounded-md"

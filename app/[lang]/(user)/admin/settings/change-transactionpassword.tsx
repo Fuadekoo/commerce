@@ -11,11 +11,12 @@ import { z } from "zod";
 
 function ChangeTransactionPassword() {
   const [
-    changeTransactionPasswordResponse,
+    ,
     changeTransactionPasswordAction,
     isLoadingChangeTransactionPassword,
   ] = useAction(changeTransactionPassword, [
-    , // initialData, can be null or an empty object
+    ,
+    // initialData, can be null or an empty object
     (response) => {
       // Callback function after action execution
       if (response) {
@@ -47,11 +48,19 @@ function ChangeTransactionPassword() {
   // Assuming similar password rules, adjust if different
   const changeTransactionPasswordSchema = z
     .object({
-      currentPassword: z.string().min(1, "Current transaction password is required (can be empty if setting for the first time and backend supports it, otherwise adjust min length)").or(z.literal("")), // Allow empty if setting for first time
+      currentPassword: z
+        .string()
+        .min(
+          1,
+          "Current transaction password is required (can be empty if setting for the first time and backend supports it, otherwise adjust min length)"
+        )
+        .or(z.literal("")), // Allow empty if setting for first time
       newPassword: z
         .string()
         .min(6, "New transaction password must be at least 6 characters"), // Adjusted min length for example
-      confirmPassword: z.string().min(6, "Please confirm your new transaction password"),
+      confirmPassword: z
+        .string()
+        .min(6, "Please confirm your new transaction password"),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: "Transaction passwords do not match",
@@ -62,15 +71,20 @@ function ChangeTransactionPassword() {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<z.infer<typeof changeTransactionPasswordSchema>>({
     resolver: zodResolver(changeTransactionPasswordSchema),
     mode: "onChange",
   });
 
-  const onSubmit = async (data: z.infer<typeof changeTransactionPasswordSchema>) => {
+  const onSubmit = async (
+    data: z.infer<typeof changeTransactionPasswordSchema>
+  ) => {
     // The changeTransactionPasswordAction expects (oldPassword: string, newPassword: string)
-    await changeTransactionPasswordAction(data.currentPassword, data.newPassword);
+    await changeTransactionPasswordAction(
+      data.currentPassword,
+      data.newPassword
+    );
   };
 
   return (

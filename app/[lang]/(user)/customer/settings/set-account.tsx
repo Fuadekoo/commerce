@@ -20,26 +20,23 @@ function SetAccount() {
     true,
     () => {},
   ]);
-  const [setResponse, setAccountAction, isLoadingSet] = useAction(
-    setMyAccount,
-    [
-      ,
-      (response) => {
-        if (response && response.message) {
-          addToast({
-            title: "Set Account",
-            description: response.message,
-          });
-        } else {
-          addToast({
-            title: "Set Account",
-            description: "Account updated successfully!",
-          });
-        }
-        fetchAccount();
-      },
-    ]
-  );
+  const [, setAccountAction, isLoadingSet] = useAction(setMyAccount, [
+    ,
+    (response) => {
+      if (response && response.message) {
+        addToast({
+          title: "Set Account",
+          description: response.message,
+        });
+      } else {
+        addToast({
+          title: "Set Account",
+          description: "Account updated successfully!",
+        });
+      }
+      fetchAccount();
+    },
+  ]);
 
   const {
     handleSubmit,

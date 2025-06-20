@@ -26,20 +26,20 @@ type DataCardItem = {
 };
 
 // Define the expected structure of the data from the `dashboard` server action
-interface DashboardStats {
-  totalTasks: number;
-  todayTasks: number;
-  leftTasks: number;
-  balance: number | string;
-  totalInvited: number;
-  // Include other fields if your dashboard action returns them
-  // e.g., totalOrders?: number; totalInviteCommission?: number | string;
-}
+// interface DashboardStats {
+//   totalTasks: number;
+//   todayTasks: number;
+//   leftTasks: number;
+//   balance: number | string;
+//   totalInvited: number;
+//   // Include other fields if your dashboard action returns them
+//   // e.g., totalOrders?: number; totalInviteCommission?: number | string;
+// }
 
 function DataCard() {
   // Fetch dynamic data using useAction
   // Renamed 'data' from useAction to 'dashboardData' to avoid conflict
-  const [data, action, isLoading] = useAction(dashboard, [true, () => {}]);
+  const [data, , isLoading] = useAction(dashboard, [true, () => {}]);
   // Handle loading state
   if (isLoading) {
     return (

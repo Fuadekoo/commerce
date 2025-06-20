@@ -11,7 +11,7 @@ import { z } from "zod";
 
 function ChangeTransactionPassword() {
   const [
-    changeTransactionPasswordResponse,
+    ,
     changeTransactionPasswordAction,
     isLoadingChangeTransactionPassword,
   ] = useAction(changeTransactionPassword, [
@@ -24,13 +24,13 @@ function ChangeTransactionPassword() {
           addToast({
             title: "Error",
             description: response.error,
-            status: "error",
+            // status: "error",
           });
         } else if (response.message) {
           addToast({
             title: "Success",
             description: response.message,
-            status: "success",
+            // status: "success",
           });
           reset(); // Reset form fields on success
         }
@@ -38,7 +38,7 @@ function ChangeTransactionPassword() {
         addToast({
           title: "Error",
           description: "An unexpected error occurred.",
-          status: "error",
+          // status: "error",
         });
       }
     },
@@ -71,7 +71,7 @@ function ChangeTransactionPassword() {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<z.infer<typeof changeTransactionPasswordSchema>>({
     resolver: zodResolver(changeTransactionPasswordSchema),
     mode: "onChange",
@@ -96,7 +96,7 @@ function ChangeTransactionPassword() {
             type="password"
             label="Current Transaction Password"
             {...register("currentPassword")}
-            error={errors.currentPassword?.message}
+            // error={errors.currentPassword?.message}
             placeholder="Leave empty if setting for the first time"
           />
         </div>
@@ -105,7 +105,7 @@ function ChangeTransactionPassword() {
             type="password"
             label="New Transaction Password"
             {...register("newPassword")}
-            error={errors.newPassword?.message}
+            // error={errors.newPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -113,7 +113,7 @@ function ChangeTransactionPassword() {
             type="password"
             label="Confirm New Transaction Password"
             {...register("confirmPassword")}
-            error={errors.confirmPassword?.message}
+            // error={errors.confirmPassword?.message}
           />
         </div>
         <Button

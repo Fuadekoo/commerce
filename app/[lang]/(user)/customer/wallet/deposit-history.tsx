@@ -21,10 +21,10 @@ interface PaginationInfo {
   hasPreviousPage: boolean;
 }
 
-interface DepositHistoryResponse {
-  data: DepositHistoryItem[];
-  pagination: PaginationInfo;
-}
+// interface DepositHistoryResponse {
+//   data: DepositHistoryItem[];
+//   pagination: PaginationInfo;
+// }
 
 const columns = [
   { key: "id", label: "Transaction ID" },

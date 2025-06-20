@@ -15,7 +15,12 @@ import Link from "next/link";
 interface ColumnDef {
   key: string;
   label: string;
-  renderCell?: (item: any) => React.ReactNode;
+  renderCell?: (
+    item: Record<string, string> & {
+      key?: string | number;
+      id?: string | number;
+    }
+  ) => React.ReactNode;
 }
 
 function SupportPage() {
@@ -90,7 +95,11 @@ function SupportPage() {
             size="sm"
             color="success"
             variant="flat"
-            onPress={() => approveContactAction(item.id)}
+            onPress={() => {
+              if (typeof item.id === "string") {
+                approveContactAction(item.id);
+              }
+            }}
             disabled={approveLoading || item.status === "APPROVED"}
           >
             Approve
@@ -99,7 +108,11 @@ function SupportPage() {
             size="sm"
             color="danger"
             variant="flat"
-            onPress={() => rejectContactAction(item.id)}
+            onPress={() => {
+              if (typeof item.id === "string") {
+                rejectContactAction(item.id);
+              }
+            }}
             disabled={rejectLoading || item.status === "REJECTED"}
           >
             Reject

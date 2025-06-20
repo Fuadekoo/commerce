@@ -2,15 +2,7 @@ import React from "react";
 import { auth } from "@/lib/auth";
 import UserLayout from "@/components/userLayout";
 import { redirect } from "next/navigation";
-import {
-  Home,
-  ShoppingCart,
-  Package,
-  CreditCard,
-  User,
-  Bell,
-  Settings,
-} from "lucide-react";
+import { Home, Package, CreditCard, User, Bell, Settings } from "lucide-react";
 
 const menu = [
   { label: "Dashboard", url: "dashboard", icon: <Home size={18} /> },

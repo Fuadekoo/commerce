@@ -10,23 +10,28 @@ import CustomTable from "@/components/custom-table";
 import { Button } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 
-interface ProfitCardItem {
-  id: string | number;
-  key?: string | number;
-  orderNumber: number;
-  profit: number;
-  priceDifference: number;
-  createdAt: string;
-  status?: string;
-  user?: {
-    username: string;
-  };
-}
+// interface ProfitCardItem {
+//   id: string | number;
+//   key?: string | number;
+//   orderNumber: number;
+//   profit: number;
+//   priceDifference: number;
+//   createdAt: string;
+//   status?: string;
+//   user?: {
+//     username: string;
+//   };
+// }
 
 interface ColumnDef {
   key: string;
   label: string;
-  renderCell?: (item: ProfitCardItem) => React.ReactNode;
+  renderCell?: (
+    item: Record<string, string> & {
+      key?: string | number;
+      id?: string | number;
+    }
+  ) => React.ReactNode;
 }
 
 function ProfitCard() {
@@ -95,13 +100,20 @@ function ProfitCard() {
     },
   ]);
 
+  // Map rows to plain string properties for CustomTable compatibility
   const rows = (apiResponse?.data || []).map((card) => ({
-    ...card,
+    key: String(card.id),
+    id: String(card.id),
+    orderNumber: String(card.orderNumber),
+    profit: card.profit != null ? String(card.profit) : "",
+    priceDifference:
+      card.priceDifference != null ? String(card.priceDifference) : "",
     createdAt:
       typeof card.createdAt === "string"
         ? card.createdAt
         : card.createdAt?.toISOString?.() ?? "",
-    key: card.id,
+    status: card.status ?? "",
+    user: card.user?.username ?? "N/A",
   }));
 
   const columns: ColumnDef[] = [
@@ -116,9 +128,9 @@ function ProfitCard() {
       },
     },
     {
-      key: "user.username",
+      key: "user",
       label: "User",
-      renderCell: (item) => item.user?.username || "N/A",
+      renderCell: (item) => item.user || "N/A",
     },
     { key: "orderNumber", label: "Order Number" },
     {
@@ -131,7 +143,6 @@ function ProfitCard() {
       label: "Price Difference",
       renderCell: (item) => `$${Number(item.priceDifference).toFixed(2)}`,
     },
-
     {
       key: "createdAt",
       label: "Date",
@@ -152,7 +163,7 @@ function ProfitCard() {
             color="warning"
             variant="flat"
             onPress={async () => {
-              setLoadingDeleteId(item.id);
+              setLoadingDeleteId(item.id ?? null);
               await deleteAction(String(item.id));
             }}
             isLoading={loadingDeleteId === item.id}
@@ -166,7 +177,7 @@ function ProfitCard() {
               color="success"
               variant="flat"
               onPress={async () => {
-                setLoadingApproveId(item.id);
+                setLoadingApproveId(item.id ?? null);
                 await approveAction(String(item.id));
               }}
               isLoading={loadingApproveId === item.id}

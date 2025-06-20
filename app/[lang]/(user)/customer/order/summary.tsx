@@ -2,19 +2,13 @@
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
-import { madeOrder, makeSmartOrder } from "@/actions/user/order";
+import { makeSmartOrder } from "@/actions/user/order";
 import { getProductStats } from "@/actions/user/product";
 import { getUser } from "@/actions/user/newUser";
 
 function Summary() {
-  const [product, rereshProduct, isProductLoading] = useAction(
-    getProductStats,
-    [true, () => {}]
-  );
-  const [user, refreshUser, isUserLoading] = useAction(getUser, [
-    true,
-    () => {},
-  ]);
+  const [product, ,] = useAction(getProductStats, [true, () => {}]);
+  const [user, ,] = useAction(getUser, [true, () => {}]);
   const [orderResponse, orderAction, isOrdering] = useAction(makeSmartOrder, [
     ,
     (response) => {
@@ -69,7 +63,7 @@ function Summary() {
             {product?.totalStocks ?? 0}
           </div>
         </div>
-        
+
         <button
           className="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
           onClick={handleStart}
@@ -92,7 +86,7 @@ function Summary() {
             <h4 className="text-lg font-semibold mb-3 text-center">Products</h4>
             {orderResponse.products && orderResponse.products.length > 0 ? (
               <div className="grid gap-3">
-                {orderResponse.products.map((product: any) => (
+                {orderResponse.products.map((product) => (
                   <div
                     key={product.id}
                     className="border rounded-lg p-4 bg-white shadow flex flex-col md:flex-row md:items-center md:justify-between"

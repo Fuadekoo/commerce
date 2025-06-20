@@ -10,39 +10,38 @@ import { changePassword } from "@/actions/user/settings";
 import { z } from "zod";
 
 function ChangePassword() {
-  const [
-    changePasswordResponse,
-    changePasswordAction,
-    isLoadingChangePassword,
-  ] = useAction(changePassword, [
-    ,
-    // initialData, can be null or an empty object
-    (response) => {
-      // Callback function after action execution
-      if (response) {
-        if (response.error) {
+  const [, changePasswordAction, isLoadingChangePassword] = useAction(
+    changePassword,
+    [
+      ,
+      // initialData, can be null or an empty object
+      (response) => {
+        // Callback function after action execution
+        if (response) {
+          if (response.error) {
+            addToast({
+              title: "Error",
+              description: response.error,
+              // status: "error",
+            });
+          } else if (response.message) {
+            addToast({
+              title: "Success",
+              description: response.message,
+              // status: "success",
+            });
+            reset(); // Reset form fields on success
+          }
+        } else {
           addToast({
             title: "Error",
-            description: response.error,
-            status: "error",
+            description: "An unexpected error occurred.",
+            // status: "error",
           });
-        } else if (response.message) {
-          addToast({
-            title: "Success",
-            description: response.message,
-            status: "success",
-          });
-          reset(); // Reset form fields on success
         }
-      } else {
-        addToast({
-          title: "Error",
-          description: "An unexpected error occurred.",
-          status: "error",
-        });
-      }
-    },
-  ]);
+      },
+    ]
+  );
 
   const changePasswordSchema = z
     .object({
@@ -81,7 +80,7 @@ function ChangePassword() {
             type="password"
             label="Current Password"
             {...register("currentPassword")}
-            error={errors.currentPassword?.message}
+            // error={errors.currentPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -89,7 +88,7 @@ function ChangePassword() {
             type="password"
             label="New Password"
             {...register("newPassword")}
-            error={errors.newPassword?.message}
+            // error={errors.newPassword?.message}
           />
         </div>
         <div className="mb-4">
@@ -97,7 +96,7 @@ function ChangePassword() {
             type="password"
             label="Confirm New Password"
             {...register("confirmPassword")}
-            error={errors.confirmPassword?.message}
+            // error={errors.confirmPassword?.message}
           />
         </div>
         <Button
