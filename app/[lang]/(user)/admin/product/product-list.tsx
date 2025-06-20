@@ -28,14 +28,14 @@ interface ProductItem {
   createdAt?: string;
 }
 
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-  totalRecords: number;
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-}
+// interface PaginationInfo {
+//   currentPage: number;
+//   totalPages: number;
+//   itemsPerPage: number;
+//   totalRecords: number;
+//   hasNextPage?: boolean;
+//   hasPreviousPage?: boolean;
+// }
 
 // interface GetProductResponse {
 //   data: ProductItem[];
@@ -73,54 +73,47 @@ function ProductList() {
     pageSize
   );
 
-  const [deleteResponse, executeDeleteProduct, isLoadingDelete] = useAction(
-    deleteProduct,
-    [
-      ,
-      (response) => {
-        if (response) {
-          addToast({
-            title: "Success",
-            description: (response as any)?.message || "Product deleted.",
-            // status: "success",
-          });
-          refreshProducts();
-        } else {
-          addToast({
-            title: "Error",
-            description:
-              (response as any)?.error || "Failed to delete product.",
-            // status: "error",
-          });
-        }
-      },
-    ]
-  );
+  const [, executeDeleteProduct, isLoadingDelete] = useAction(deleteProduct, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Success",
+          description: response?.message || "Product deleted.",
+          // status: "success",
+        });
+        refreshProducts();
+      } else {
+        addToast({
+          title: "Error",
+          description: response || "Failed to delete product.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
-  const [createProductResponse, productAction, isLoadingCreate] = useAction(
-    createProduct,
-    [
-      ,
-      (response) => {
-        if (response) {
-          addToast({
-            title: "Success",
-            description: response?.message || "Product created.",
-            // status: "success",
-          });
-          setShowModal(false);
-          reset();
-          refreshProducts();
-        } else {
-          addToast({
-            title: "Error",
-            description: response || "Failed to create product.",
-            // status: "error",
-          });
-        }
-      },
-    ]
-  );
+  const [, productAction, isLoadingCreate] = useAction(createProduct, [
+    ,
+    (response) => {
+      if (response) {
+        addToast({
+          title: "Success",
+          description: response?.message || "Product created.",
+          // status: "success",
+        });
+        setShowModal(false);
+        reset();
+        refreshProducts();
+      } else {
+        addToast({
+          title: "Error",
+          description: response || "Failed to create product.",
+          // status: "error",
+        });
+      }
+    },
+  ]);
 
   const [, updateProductAction, isLoadingUpdate] = useAction(updateProduct, [
     ,

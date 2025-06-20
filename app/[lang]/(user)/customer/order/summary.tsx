@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
-import { madeOrder } from "@/actions/user/order";
+import { madeOrder, makeSmartOrder } from "@/actions/user/order";
 
 function Summary() {
-  const [orderResponse, orderAction, isOrdering] = useAction(madeOrder, [
+  const [orderResponse, orderAction, isOrdering] = useAction(makeSmartOrder, [
     ,
     (response) => {
       if (response) {

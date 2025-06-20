@@ -2,6 +2,7 @@
 import Image from "next/image";
 import ChatWriteCard from "./chatWriteCard";
 import React, { useEffect, useRef, useState } from "react";
+import { getUserByUsername } from "@/actions/admin/chat";
 import { getLoginUserId } from "@/actions/admin/chat";
 import useAction from "@/hooks/useAction";
 import { getUserChat } from "@/actions/admin/chat";
@@ -18,12 +19,12 @@ type ChatMessage = {
 
 type ChatProps = {
   chatId: string;
-  type: "user";
+  guestId: string;
 };
 
-function Chat({ chatId, type }: ChatProps) {
-  const [currentUser] = useAction(getLoginUserId, [true, () => {}]);
-  const currentUserId = currentUser;
+function Chat({ chatId, guestId }: ChatProps) {
+  // Use guestId as currentUserId in guest mode
+  const currentUserId = guestId;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -51,9 +52,9 @@ function Chat({ chatId, type }: ChatProps) {
     // Handle incoming direct messages
     const handleMsg = (newMsg: ChatMessage) => {
       if (
-        type === "user" &&
-        ((newMsg.fromUserId === chatId && newMsg.toUserId === currentUserId) ||
-          (newMsg.fromUserId === currentUserId && newMsg.toUserId === chatId))
+        // type === "user" && // Removed type check, always user
+        (newMsg.fromUserId === chatId && newMsg.toUserId === currentUserId) ||
+        (newMsg.fromUserId === currentUserId && newMsg.toUserId === chatId)
       ) {
         setMessages((prev) => [
           ...prev,
@@ -68,11 +69,12 @@ function Chat({ chatId, type }: ChatProps) {
       newSocket.off("msg", handleMsg);
       newSocket.disconnect();
     };
-  }, [currentUserId, chatId, type]);
+  }, [currentUserId, chatId]);
 
   // Set initial messages when data loads
   useEffect(() => {
-    if (type === "user" && userData) {
+    // if (type === "user" && userData) { // Removed type check
+    if (userData) {
       setMessages(
         (userData as ChatMessage[]).map((msg) => ({
           ...msg,
@@ -80,7 +82,7 @@ function Chat({ chatId, type }: ChatProps) {
         }))
       );
     }
-  }, [userData, type, currentUserId]);
+  }, [userData, currentUserId]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -128,9 +130,7 @@ function Chat({ chatId, type }: ChatProps) {
             className="rounded-full object-cover border"
           />
           <div>
-            <div className="font-semibold text-gray-800">
-              {/* {type === "user" ? currentUserName : "Group"} */}
-            </div>
+            <div className="font-semibold text-gray-800">{/* User Name */}</div>
             <div className="text-xs text-gray-500">Online</div>
           </div>
         </div>

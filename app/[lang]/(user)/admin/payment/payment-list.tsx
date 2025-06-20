@@ -24,14 +24,14 @@ interface PaymentItem {
   };
 }
 
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-  totalRecords: number;
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-}
+// interface PaginationInfo {
+//   currentPage: number;
+//   totalPages: number;
+//   itemsPerPage: number;
+//   totalRecords: number;
+//   hasNextPage?: boolean;
+//   hasPreviousPage?: boolean;
+// }
 
 // interface GetPaymentResponse {
 //   data: PaymentItem[];
@@ -44,11 +44,7 @@ interface ColumnDef {
   renderCell?: (item: PaymentItem) => React.ReactNode;
 }
 
-const handleViewPayment = (item: PaymentItem) => {
-  console.log("View payment:", item);
-  alert(`Viewing payment ID: ${item.id}, Amount: ${item.amount}`);
-  // Implement actual view logic (e.g., open modal)
-};
+
 
 function PaymentListPage() {
   const [search, setSearch] = useState("");

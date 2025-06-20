@@ -12,22 +12,18 @@ import Link from "next/link";
 import { MessageCircleCode } from "lucide-react";
 
 function Page() {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<z.infer<typeof contactSchema>>({
+  const { handleSubmit, register } = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
   });
   const [createResponse, createAction, isLoadingCreate] = useAction(
     createContact,
     [
       ,
-      (response) => {
-        if (response) {
+      (createResponse) => {
+        if (createResponse && createResponse.message) {
           addToast({
             title: "Contact",
-            description: response.message,
+            description: createResponse.message,
           });
         } else {
           addToast({
@@ -35,17 +31,12 @@ function Page() {
             description: "Contact created successfully!",
           });
         }
-        setUsername("");
-        setPhone("");
-        setDescription("");
       },
     ]
   );
 
   const [username, setUsername] = useState("");
-  const [phone, setPhone] = useState("");
-  const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

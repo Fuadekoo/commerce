@@ -190,36 +190,33 @@ function User({ sidebar }: { sidebar: boolean }) {
   return (
     <Dropdown className="overflow-hidden">
       <DropdownTrigger>
-        {isLoading || !data ? (
-          <div> this is a loading</div>
-        ) : (
-          //   <CSkeleton className="h-12" />
-          <Button
-            isIconOnly
-            color="primary"
-            variant="flat"
-            className={cn(
-              "w-full h-fit inline-flex gap-5 justify-start",
-              sidebar ? "md:px-4 md:py-1" : ""
-            )}
-          >
-            <Image
-              alt=""
-              src="/profile.jpg"
-              width={100}
-              height={100}
-              className="size-10"
-            />
-            {sidebar && (
-              <p className="px-4 grid justify-start">
-                <span className="text-medium overflow-hidden whitespace-nowrap ">
-                  {data.user?.username}{" "}
-                </span>
-                <span className="text-xs text-start">{data.user?.myCode}</span>
-              </p>
-            )}
-          </Button>
-        )}
+        <Button
+          isIconOnly
+          color="primary"
+          variant="flat"
+          className={cn(
+            "w-full h-fit inline-flex gap-5 justify-start",
+            sidebar ? "md:px-4 md:py-1" : ""
+          )}
+        >
+          <Image
+            alt=""
+            src="/profile.jpg"
+            width={100}
+            height={100}
+            className="size-10"
+          />
+          {sidebar && (
+            <p className="px-4 grid justify-start">
+              <span className="text-medium overflow-hidden whitespace-nowrap ">
+                {data?.user?.username ?? "User"}
+              </span>
+              <span className="text-xs text-start">
+                {data?.user?.myCode ?? ""}
+              </span>
+            </p>
+          )}
+        </Button>
       </DropdownTrigger>
       <DropdownMenu color="primary" variant="flat">
         <DropdownItem

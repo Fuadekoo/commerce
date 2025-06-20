@@ -25,7 +25,7 @@ model user {
   email               String?  @unique
   photo               String?
   role                Role     @default(USER) // Only one admin will have ADMIN
-  balance             Decimal  @default(0.00)
+  balance             Int  @default(0)
   walletAddress       String?
   isBlocked           Boolean  @default(false)
   isAdmin             Boolean  @default(false)

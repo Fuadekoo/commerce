@@ -27,6 +27,7 @@ export async function adminDashboard() {
   const pendingProfitCards = await prisma.profitCard.count({
     where: { status: "PENDING" },
   });
+  console.log("Pending Profit Cards:", pendingProfitCards); 
 
   // Convert Decimal to number for client compatibility
   return {

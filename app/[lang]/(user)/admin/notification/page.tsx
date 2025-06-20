@@ -17,7 +17,7 @@ function Page() {
     [true, () => {}]
   );
 
-  const [createResponse, createAction] = useAction(createNotification, [
+  const [, createAction] = useAction(createNotification, [
     ,
     (res) => {
       addToast({

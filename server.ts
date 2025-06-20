@@ -23,7 +23,10 @@ app.prepare().then(async () => {
       allowedHeaders: "Content-Type,Authorization",
     })
   );
-  expressApp.all("*", (req, res) => app.getRequestHandler()(req, res));
+
+  // Fix: Use app.getRequestHandler() directly, not as a function call
+  const handler = app.getRequestHandler();
+  expressApp.all("*", (req, res) => handler(req, res));
 
   const httpServer = createServer(expressApp);
 

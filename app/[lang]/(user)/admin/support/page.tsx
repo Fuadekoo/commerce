@@ -9,6 +9,8 @@ import {
 import CustomTable from "@/components/custom-table";
 import { Button } from "@heroui/react";
 import { addToast } from "@heroui/toast";
+import { MessageCircleCode } from "lucide-react";
+import Link from "next/link";
 
 interface ColumnDef {
   key: string;
@@ -112,6 +114,14 @@ function SupportPage() {
       <h1 className="text-2xl font-bold mb-6 text-slate-800">
         Customer Support
       </h1>
+      <div className="flex justify-end mb-4">
+        <Link href="/en/admin/chat">
+          <Button as="span" color="primary" className="flex items-center">
+            <MessageCircleCode className="mr-2" />
+            Support chat
+          </Button>
+        </Link>
+      </div>
       <CustomTable
         columns={columns}
         rows={rows}

@@ -218,23 +218,23 @@ function CustomerPage() {
   };
 
   // --- Set Order (Set Task) ---
-  const onSetTaskCompleted = (response: {
-    message: string;
-    todayTask?: number;
-    error?: string;
-  }) => {
-    if (response) {
-      if (response.error) {
-        alert(`Error setting task: ${response.error}`); // TODO: Replace with toast
-      } else if (response.message) {
-        alert(response.message); // TODO: Replace with toast
-        refresh();
-        handleCloseOrderModal();
-      }
-    } else {
-      alert("An unexpected response occurred while setting the task."); // TODO: Replace with toast
-    }
-  };
+  // const onSetTaskCompleted = (response: {
+  //   message: string;
+  //   todayTask?: number;
+  //   error?: string;
+  // }) => {
+  //   if (response) {
+  //     if (response.error) {
+  //       alert(`Error setting task: ${response.error}`); // TODO: Replace with toast
+  //     } else if (response.message) {
+  //       alert(response.message); // TODO: Replace with toast
+  //       refresh();
+  //       handleCloseOrderModal();
+  //     }
+  //   } else {
+  //     alert("An unexpected response occurred while setting the task."); // TODO: Replace with toast
+  //   }
+  // };
   const [, executeSetTask, isLoadingSetTask] = useAction(setTask, [
     ,
     (taskResponse) => {
@@ -362,7 +362,7 @@ function CustomerPage() {
     );
   };
 
-  const rows = (data?.data || []).map((user: any) => ({
+  const rows = (data?.data || []).map((user) => ({
     ...user,
     key: user.id,
     createdAt: user.createdAt

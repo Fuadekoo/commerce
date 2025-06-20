@@ -1,33 +1,30 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { User, Phone, Pen, X } from "lucide-react";
+import { User, Phone, X } from "lucide-react";
 import useAction from "@/hooks/useAction";
 import { viewProfile, profileUpdate } from "@/actions/common/profile";
-import { Button, Input } from "@heroui/react";
-import { addToast } from "@heroui/toast";
+// import { Button, Input } from "@heroui/react";
+// import { addToast } from "@heroui/toast";
 import { updateProfileSchema } from "@/lib/zodSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loading from "@/components/loading";
 
 function Page() {
-  const [user, refresh, isLoadingUser] = useAction(viewProfile, [
-    true,
-    () => {},
-  ]);
-  const [showModal, setShowModal] = useState(false);
+  const [user, , isLoadingUser] = useAction(viewProfile, [true, () => {}]);
+  // const [showModal, setShowModal] = useState(false);
 
   const { register, handleSubmit, reset } = useForm({
     resolver: zodResolver(updateProfileSchema),
   });
 
-  const [updateResponse, updateAction, isLoadingUpdate] = useAction(
-    profileUpdate,
-    [, () => {}]
-  );
+  // const [updateResponse, updateAction, isLoadingUpdate] = useAction(
+  //   profileUpdate,
+  //   [, () => {}]
+  // );
 
-  const openModal = () => setShowModal(true);
+  // const openModal = () => setShowModal(true);
 
   if (isLoadingUser) {
     // You can use your own Loading component or a skeleton here

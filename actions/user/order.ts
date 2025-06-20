@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { Decimal } from "@prisma/client/runtime/library";
 
 // fristly check the profit card in login userid if found then return until the profit card order number found equal product ordernumber
 // if not found the product card for this user then return all product by order in orderNumber\
@@ -147,4 +148,107 @@ export async function madeOrder() {
   } else {
     return { message: "No today tasks available", products: [] };
   }
+}
+
+// import { Prisma } from "@prisma/client";
+
+export async function makeSmartOrder() {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    return { message: "Unauthorized", products: [] };
+  }
+
+  // 1. Check user balance
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { balance: true, todayTask: true, totalTask: true, leftTask: true },
+  });
+  if (!user) return { message: "User not found", products: [] };
+  // Use Prisma.Decimal for comparison
+  if (!user.balance || user.balance <= 0) {
+    return { message: "Insufficient balance", products: [] };
+  }
+
+  // 2. Check for profit card
+  const profitCard = await prisma.profitCard.findFirst({
+    where: { userId: session.user.id },
+    orderBy: { orderNumber: "asc" },
+  });
+
+  // 3. If profit card found, use its orderNumber, else default to 60
+  const orderNumber = profitCard?.orderNumber ?? 60;
+
+  // 4. If leftTask > 0 and profit card exists, use leftTask logic
+  if (profitCard && (user.leftTask ?? 0) > 0) {
+    // Get products up to profit card's orderNumber
+    const products = await prisma.product.findMany({
+      where: { orderNumber: { lte: orderNumber } },
+      orderBy: { orderNumber: "asc" },
+    });
+
+    // Update user tasks and balance
+    const newLeftTask = Math.max((user.leftTask ?? 0) - 1, 0);
+    const newTotalTask = (user.totalTask ?? 0) + orderNumber;
+    // Use Prisma.Decimal for arithmetic
+    const newBalance = user.balance + orderNumber * 15;
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        leftTask: newLeftTask,
+        totalTask: newTotalTask,
+        balance: newBalance,
+      },
+    });
+
+    return {
+      message: "Profit card found, used leftTask",
+      products,
+      profitCard,
+    };
+  }
+
+  // 5. If leftTask is 0, use todayTask logic
+  if ((user.todayTask ?? 0) >= orderNumber) {
+    // Get products (all if no profit card, or up to orderNumber if profit card)
+    let products;
+    if (profitCard) {
+      products = await prisma.product.findMany({
+        where: { orderNumber: { lte: orderNumber } },
+        orderBy: { orderNumber: "asc" },
+      });
+    } else {
+      products = await prisma.product.findMany({
+        orderBy: { orderNumber: "asc" },
+      });
+    }
+
+    // Update user tasks and balance
+    const newTodayTask = Math.max((user.todayTask ?? 0) - orderNumber, 0);
+    const newTotalTask = (user.totalTask ?? 0) + orderNumber;
+    const newBalance = user.balance + orderNumber * 15;
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        todayTask: newTodayTask,
+        totalTask: newTotalTask,
+        balance: newBalance,
+      },
+    });
+
+    return {
+      message: profitCard
+        ? "Profit card found, used todayTask"
+        : "No profit card found, used todayTask",
+      products,
+      profitCard,
+    };
+  }
+
+  // 6. If not enough leftTask or todayTask
+  return {
+    message: "No tasks available or not enough todayTask",
+    products: [],
+  };
 }
