@@ -79,7 +79,7 @@ export async function GET(
         // "Content-Disposition": `inline; filename="${filename}"`, // Use 'inline' for display
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
     if (
       typeof error === "object" &&
       error !== null &&

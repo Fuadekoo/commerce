@@ -17,7 +17,16 @@ import { z } from "zod";
 function AccountPage() {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
+  // Define a proper type for selectedAccount
+  type AccountType = {
+    id: string;
+    name: string;
+    account: string;
+  };
+  const [selectedAccount, setSelectedAccount] = useState<AccountType | null>(
+    null
+  );
 
   // Fetch all company accounts
   const [accounts, fetchAccounts, isGetting] = useAction(getCompanyAccount, [
@@ -89,7 +98,7 @@ function AccountPage() {
     setShowModal(true);
   };
 
-  const openEditModal = (account: string) => {
+  const openEditModal = (account: AccountType) => {
     setEditMode(true);
     setSelectedAccount(account);
     setShowModal(true);
@@ -126,7 +135,7 @@ function AccountPage() {
             <div className="flex gap-2 mt-2">
               <Button
                 color="primary"
-                onClick={() => openEditModal(acc.id)}
+                onClick={() => openEditModal(acc)}
                 disabled={isUpdating || isDeleting}
               >
                 {isUpdating && selectedAccount?.id === acc.id
