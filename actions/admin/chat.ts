@@ -66,6 +66,7 @@ export async function getUserChat(userAId: string) {
   return chats;
 }
 
+
 export async function getUserList(search?: string) {
   const session = await auth();
   if (!session || !session.user || !session.user.id) {

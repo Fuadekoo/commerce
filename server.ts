@@ -26,7 +26,7 @@ app.prepare().then(async () => {
 
   // Fix: Use app.getRequestHandler() directly, not as a function call
   const handler = app.getRequestHandler();
-  expressApp.all("*", (req, res) => handler(req, res));
+  expressApp.use((req, res) => handler(req, res));
 
   const httpServer = createServer(expressApp);
 
@@ -71,63 +71,16 @@ app.prepare().then(async () => {
           });
         }
         // (Optional) Emit to sender for confirmation (self: true)
-        // socket.emit("msg", {
-        //   id: chat.id,
-        //   fromUserId: socket.data.id,
-        //   toUserId: user.id,
-        //   msg: chat.msg,
-        //   createdAt: chat.createdAt,
-        //   self: true,
-        // });
+        socket.emit("msg", {
+          id: chat.id,
+          fromUserId: socket.data.id,
+          toUserId: user.id,
+          msg: chat.msg,
+          createdAt: chat.createdAt,
+          self: true,
+        });
       }
     });
-
-    // Group message
-    // socket.on(
-    //   "group:msg",
-    //   async ({ groupId, msg }: { groupId: string; msg: string }) => {
-    //     console.log("GROUP MSG >> ", socket.data.id, "to group", groupId);
-    //     // Save the group message
-    //     const groupMsg = await prisma.groupChatMessage.create({
-    //       data: {
-    //         groupChatId: groupId,
-    //         senderId: socket.data.id,
-    //         msg,
-    //       },
-    //       include: {
-    //         groupChat: {
-    //           select: { members: { select: { socket: true, id: true } } },
-    //         },
-    //       },
-    //     });
-
-    //     // Emit to all group members except sender
-    //     const sockets = groupMsg.groupChat.members
-    //       .filter((m) => m.id !== socket.data.id && m.socket)
-    //       .map((m) => m.socket);
-
-    //     sockets.forEach((sockId) => {
-    //       if (sockId) {
-    //         io.to(sockId).emit("group:msg", {
-    //           id: groupMsg.id,
-    //           groupId,
-    //           msg: groupMsg.msg,
-    //           senderId: socket.data.id,
-    //           createdAt: groupMsg.createdAt,
-    //         });
-    //       }
-    //     });
-
-    //     // (Optional) Emit to sender for confirmation (self: true)
-    //     // socket.emit("group:msg", {
-    //     //   id: groupMsg.id,
-    //     //   groupId,
-    //     //   msg: groupMsg.msg,
-    //     //   senderId: socket.data.id,
-    //     //   createdAt: groupMsg.createdAt,
-    //     // });
-    //   }
-    // );
 
     socket.on("disconnect", async (reason) => {
       console.log("DISCONNECT >> ", reason);

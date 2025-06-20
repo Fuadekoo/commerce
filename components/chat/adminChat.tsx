@@ -2,10 +2,8 @@
 import Image from "next/image";
 import ChatWriteCard from "./chatWriteCard";
 import React, { useEffect, useRef, useState } from "react";
-// import { getUserByUsername } from "@/actions/admin/chat";
-// import { getLoginUserId } from "@/actions/admin/chat";
 import useAction from "@/hooks/useAction";
-import { getUserChat } from "@/actions/admin/chat";
+import { getChatToAdmin } from "@/actions/guest/chat";
 import { io, Socket } from "socket.io-client";
 
 type ChatMessage = {
@@ -18,27 +16,27 @@ type ChatMessage = {
 };
 
 type ChatProps = {
-  chatId: string;
-  guestId: string;
+  chatId: string; // admin user id
+  guestId: string; // guest user id
 };
 
 function Chat({ chatId, guestId }: ChatProps) {
-  // Use guestId as currentUserId in guest mode
   const currentUserId = guestId;
+  const adminId = chatId;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Always call the hook
+  // Always call the hook with both ids if needed
   const [userData, , userLoading] = useAction(
-    getUserChat,
+    getChatToAdmin,
     [true, () => {}],
-    chatId
+    adminId
   );
 
   // Initialize socket connection
   useEffect(() => {
-    if (!currentUserId) return;
+    if (!currentUserId || !adminId) return;
 
     const newSocket = io(
       process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000",
@@ -52,9 +50,8 @@ function Chat({ chatId, guestId }: ChatProps) {
     // Handle incoming direct messages
     const handleMsg = (newMsg: ChatMessage) => {
       if (
-        // type === "user" && // Removed type check, always user
-        (newMsg.fromUserId === chatId && newMsg.toUserId === currentUserId) ||
-        (newMsg.fromUserId === currentUserId && newMsg.toUserId === chatId)
+        (newMsg.fromUserId === adminId && newMsg.toUserId === currentUserId) ||
+        (newMsg.fromUserId === currentUserId && newMsg.toUserId === adminId)
       ) {
         setMessages((prev) => [
           ...prev,
@@ -69,11 +66,10 @@ function Chat({ chatId, guestId }: ChatProps) {
       newSocket.off("msg", handleMsg);
       newSocket.disconnect();
     };
-  }, [currentUserId, chatId]);
+  }, [currentUserId, adminId]);
 
   // Set initial messages when data loads
   useEffect(() => {
-    // if (type === "user" && userData) { // Removed type check
     if (userData) {
       setMessages(
         (userData as ChatMessage[]).map((msg) => ({
@@ -99,14 +95,14 @@ function Chat({ chatId, guestId }: ChatProps) {
       {
         id: Math.random().toString(36).slice(2), // temp id
         fromUserId: currentUserId,
-        toUserId: chatId,
+        toUserId: adminId,
         msg: message,
         createdAt: now,
         self: true,
       },
     ]);
     socket.emit("msg", {
-      id: chatId,
+      id: adminId,
       msg: message,
       fromUserId: currentUserId,
     });
