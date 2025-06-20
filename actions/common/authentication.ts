@@ -21,13 +21,16 @@ export async function authenticate(
     return { message: "Invalid email or password" };
   }
   console.log("sign in successfully");
-  // before redirect display a success message return
-
-  // Fetch user role from DB
+  // Fetch user role and isBlocked from DB
   const user = await prisma.user.findUnique({
     where: { phone: data.phone },
-    select: { role: true },
+    select: { role: true, isBlocked: true },
   });
+
+  // Deny login if user is blocked
+  if (user?.isBlocked) {
+    return { message: "Your account is blocked. Please contact support." };
+  }
 
   // Redirect based on role
   if (user?.role === "ADMIN") {
