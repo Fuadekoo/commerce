@@ -72,7 +72,7 @@ function SupportPage() {
     },
   ]);
 
-  const rows = (data?.data || []).map((item: any) => ({
+  const rows = (data?.data || []).map((item) => ({
     ...item,
     key: item.id,
     createdAt: item.createdAt

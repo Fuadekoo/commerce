@@ -4,22 +4,22 @@ import { DepositHistory } from "@/actions/user/wallet";
 import React, { useState } from "react";
 import CustomTable from "@/components/custom-table";
 
-interface DepositHistoryItem {
-  id: string;
-  amount: number;
-  photo: string;
-  createdAt: string;
-  status: string;
-}
+// interface DepositHistoryItem {
+//   id: string;
+//   amount: number;
+//   photo: string;
+//   createdAt: string;
+//   status: string;
+// }
 
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-  totalRecords: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+// interface PaginationInfo {
+//   currentPage: number;
+//   totalPages: number;
+//   itemsPerPage: number;
+//   totalRecords: number;
+//   hasNextPage: boolean;
+//   hasPreviousPage: boolean;
+// }
 
 // interface DepositHistoryResponse {
 //   data: DepositHistoryItem[];
@@ -30,7 +30,6 @@ const columns = [
   { key: "id", label: "Transaction ID" },
   { key: "amount", label: "Amount" },
   { key: "status", label: "Status" },
-  // { key: "photo", label: "photo" },
   { key: "createdAt", label: "Created At" },
 ];
 
@@ -39,7 +38,7 @@ function DepositHistoryPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
 
-  const [data, refresh, isLoading] = useAction(
+  const [data, ,] = useAction(
     DepositHistory,
     [true, () => {}],
     search,
@@ -52,7 +51,15 @@ function DepositHistoryPage() {
       <h1 className="text-2xl font-bold mb-4">Deposit History</h1>
       <CustomTable
         columns={columns}
-        rows={(data?.data || []).map((item) => ({ ...item, key: item.id }))}
+        rows={(data?.data || []).map((item) => ({
+          ...item,
+          key: String(item.id),
+          id: String(item.id),
+          amount: item.amount != null ? String(item.amount) : "",
+          status: item.status ?? "",
+          createdAt: item.createdAt ?? "",
+          // photo: item.photo ?? "", // Only if needed by your table
+        }))}
         totalRows={data?.pagination.totalRecords || 0}
         page={page}
         pageSize={pageSize}

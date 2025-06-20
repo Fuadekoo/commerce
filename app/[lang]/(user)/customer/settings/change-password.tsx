@@ -60,7 +60,7 @@ function ChangePassword() {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<z.infer<typeof changePasswordSchema>>({
     resolver: zodResolver(changePasswordSchema),
     mode: "onChange",

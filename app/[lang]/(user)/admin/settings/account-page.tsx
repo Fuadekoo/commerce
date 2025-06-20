@@ -115,7 +115,7 @@ function AccountPage() {
       {isGetting ? (
         <div className="text-center text-gray-400 py-10">Loading...</div>
       ) : accounts && accounts.length > 0 ? (
-        accounts.map((acc: any) => (
+        accounts.map((acc) => (
           <div key={acc.id} className="border rounded-lg p-4 bg-gray-50 mb-4">
             <div className="mb-2">
               <span className="font-semibold">Name:</span> {acc.name}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react"; // Added useEffect
+import React, { useState } from "react"; // Added useEffect
 import useAction from "@/hooks/useAction";
 // Ensure the server action is named 'deposits' if that's what you are importing
 import { getCompanyAccount, deposits } from "@/actions/user/wallet";
@@ -15,11 +15,11 @@ import { Loader2 } from "lucide-react"; // For loading state
 import Image from "next/image";
 
 // Define a type for the company account data for clarity
-interface CompanyAccount {
-  id: string;
-  name: string;
-  account: string;
-}
+// interface CompanyAccount {
+//   id: string;
+//   name: string;
+//   account: string;
+// }
 
 interface DepositProps {
   onDepositSuccess?: () => void;
@@ -42,7 +42,7 @@ function Deposit({ onDepositSuccess }: DepositProps) {
     getCompanyAccount,
     [true, () => {}]
   );
-  const [response, depositAction, depositLoading] = useAction(deposits, [
+  const [, depositAction, depositLoading] = useAction(deposits, [
     ,
     // initialValue for response
     (res) => {

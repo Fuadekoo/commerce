@@ -68,16 +68,16 @@ function NewChat({ onFinish, onSelectChat }: NewChatProps) {
             >
               {response.username} ({response.phone})
             </button>
-            {/* {typeof response === "string"
-              ? response
-              : JSON.stringify(response)} */}
           </div>
-        ) : null}
-        {!response && (
+        ) : (
           <div className="mt-2 text-red-600 text-sm">No user found</div>
         )}
       </div>
     </div>
+  );
+}
+
+export default NewChat;
   );
 }
 
