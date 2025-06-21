@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ReactNode } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableHeader,
@@ -8,21 +8,21 @@ import {
   TableRow,
   TableCell,
   getKeyValue,
-} from "@heroui/react";
+} from "@heroui/react"; // <-- Make sure this is the correct package name. If not, replace with the correct one.
 import { X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-interface ColumnDef {
+export interface ColumnDef<T> {
   key: string;
   label: string;
-  renderCell?: (item: Record<string, string>) => ReactNode;
+  renderCell?: (item: T) => React.ReactNode;
 }
 
 interface CustomTableProps {
   rows: Array<
     Record<string, string> & { key?: string | number; id?: string | number }
   >;
-  columns: Array<ColumnDef>;
+  columns: Array<ColumnDef<Record<string, string>>>;
   totalRows: number;
   page: number;
   pageSize: number;

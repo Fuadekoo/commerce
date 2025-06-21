@@ -6,12 +6,8 @@ import { promisify } from "util";
 const readFileAsync = promisify(fs.readFile);
 const statAsync = promisify(fs.stat);
 
-// Define the directory where your files are stored.
-// For security, this should ideally be outside the `public` folder if these are not meant to be directly public.
-// Ensure this path is correct relative to your project root.
 const FILE_STORAGE_PATH = path.resolve(process.cwd(), "filedata");
 
-// Helper function to get MIME type (can be expanded)
 function getMimeType(filePath: string): string {
   const ext = path.extname(filePath).toLowerCase();
   switch (ext) {
@@ -29,7 +25,7 @@ function getMimeType(filePath: string): string {
     case ".txt":
       return "text/plain";
     default:
-      return "application/octet-stream"; // Generic binary type
+      return "application/octet-stream";
   }
 }
 
@@ -46,7 +42,6 @@ export async function GET(
     });
   }
 
-  // Basic security: Prevent path traversal attacks
   if (filename.includes("..") || filename.includes("/")) {
     return new NextResponse(JSON.stringify({ error: "Invalid filename" }), {
       status: 400,
@@ -57,7 +52,6 @@ export async function GET(
   const filePath = path.join(FILE_STORAGE_PATH, filename);
 
   try {
-    // Check if file exists and is a file (not a directory)
     const stats = await statAsync(filePath);
     if (!stats.isFile()) {
       return new NextResponse(JSON.stringify({ error: "Not a file" }), {
@@ -69,14 +63,11 @@ export async function GET(
     const fileBuffer = await readFileAsync(filePath);
     const mimeType = getMimeType(filePath);
 
-    // For display in browser, Content-Disposition is not strictly needed for images
-    // but can be useful for other file types or to suggest a filename on download.
     return new NextResponse(fileBuffer, {
       status: 200,
       headers: {
         "Content-Type": mimeType,
         "Content-Length": stats.size.toString(),
-        // "Content-Disposition": `inline; filename="${filename}"`, // Use 'inline' for display
       },
     });
   } catch (error) {

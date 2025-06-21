@@ -15,7 +15,7 @@ import Link from "next/link";
 
 function Page() {
   const searchParams = useSearchParams();
-  const invitationCodeFromUrl = searchParams.get("invitationCode") || "";
+  const invitationCodeFromUrl = searchParams?.get("invitationCode") || "";
   const [step, setStep] = useState(1);
   const totalSteps = 2;
 

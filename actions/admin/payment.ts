@@ -78,7 +78,7 @@ export async function getPayment(
     // Renamed rows to data
     ...item,
     id: item.id, // Ensure id is included if selected
-    amount: item.amount ? Number(item.amount) : 0, // Convert to Number, handle null/undefined
+    amount: item.amount !== undefined && item.amount !== null ? String(item.amount) : "0", // Convert to string, handle null/undefined
     createdAt: item.createdAt.toISOString(),
   }));
 
@@ -126,7 +126,7 @@ export async function aProofDeposit(id: string) {
       where: { id: depositRecord.userId },
       data: {
         balance: {
-          increment: depositRecord.amount,
+          increment: Number(depositRecord.amount),
         },
       },
     }),

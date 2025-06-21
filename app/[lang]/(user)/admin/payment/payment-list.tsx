@@ -9,42 +9,12 @@ import {
   rejectDeposit,
 } from "@/actions/admin/payment"; // Assuming you have an action for approving deposits
 import { addToast } from "@heroui/toast";
-// Define the structure of a single payment item based on getPayment action
-interface PaymentItem {
-  id: string | number;
-  key?: string | number;
-  amount: number;
-  photo?: string;
-  status: string;
-  createdAt: string;
-  user?: {
-    username: string;
-    email?: string;
-    phone?: string;
-  };
-}
-
-// interface PaginationInfo {
-//   currentPage: number;
-//   totalPages: number;
-//   itemsPerPage: number;
-//   totalRecords: number;
-//   hasNextPage?: boolean;
-//   hasPreviousPage?: boolean;
-// }
-
-// interface GetPaymentResponse {
-//   data: PaymentItem[];
-//   pagination: PaginationInfo;
-// }
-
+// Remove PaymentItem interface and update ColumnDef and columns to use Record<string, string>
 interface ColumnDef {
   key: string;
   label: string;
-  renderCell?: (item: PaymentItem) => React.ReactNode;
+  renderCell?: (item: Record<string, string>) => React.ReactNode;
 }
-
-
 
 function PaymentListPage() {
   const [search, setSearch] = useState("");
@@ -120,9 +90,15 @@ function PaymentListPage() {
     },
   ]);
 
+  // Convert all row fields to string for CustomTable compatibility
   const rows = (data?.data || []).map((payment) => ({
-    ...payment,
-    key: payment.id,
+    key: String(payment.id),
+    id: String(payment.id),
+    amount: payment.amount != null ? String(payment.amount) : "",
+    createdAt: payment.createdAt ?? "",
+    status: payment.status ?? "",
+    photo: payment.photo ?? "",
+    user: payment.user?.username ?? "N/A",
   }));
 
   const columns: ColumnDef[] = [
@@ -138,21 +114,21 @@ function PaymentListPage() {
       },
     },
     {
-      key: "user.username",
+      key: "user",
       label: "User",
-      renderCell: (item) => item.user?.username || "N/A",
+      renderCell: (item) => item.user || "N/A",
     },
     {
       key: "amount",
       label: "Amount",
-      renderCell: (item) => `$${item.amount.toFixed(2)}`, // Amount is already a number
+      renderCell: (item) => `$${Number(item.amount).toFixed(2)}`,
     },
     { key: "status", label: "Status" },
-    { key: "photo", label: "Proof" }, // Assuming CustomTable handles 'photo' key for image display
+    { key: "photo", label: "Proof" },
     {
       key: "createdAt",
       label: "Date",
-      renderCell: (item) => new Date(item.createdAt).toLocaleDateString(), // createdAt is ISO string
+      renderCell: (item) => new Date(item.createdAt).toLocaleDateString(),
     },
     {
       key: "actions",

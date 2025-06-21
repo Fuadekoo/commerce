@@ -45,7 +45,7 @@ interface ProductItem {
 interface ColumnDef {
   key: string;
   label: string;
-  renderCell?: (item: ProductItem) => React.ReactNode;
+  renderCell?: (item: Record<string, string>) => React.ReactNode;
 }
 
 function ProductList() {
@@ -168,8 +168,11 @@ function ProductList() {
   };
 
   const rows = (productData?.data || []).map((product) => ({
-    ...product,
-    key: product.id,
+    ...Object.fromEntries(
+      Object.entries(product).map(([k, v]) => [k, v === undefined || v === null ? "" : v.toString()])
+    ),
+    key: product.id?.toString(),
+    id: product.id?.toString(),
   }));
 
   const columns: ColumnDef[] = [
@@ -181,7 +184,7 @@ function ProductList() {
         if (rowIndexOnPage !== -1) {
           return (page - 1) * pageSize + rowIndexOnPage + 1;
         }
-        return item.id.toString().slice(0, 5) + "...";
+        return item.id?.toString().slice(0, 5) + "...";
       },
     },
     {
@@ -192,17 +195,20 @@ function ProductList() {
     {
       key: "price",
       label: "Price",
-      renderCell: (item) => `$${item.price.toFixed(2)}`,
+      renderCell: (item) => {
+        const price = Number(item.price);
+        return isNaN(price) ? "N/A" : `$${price.toFixed(2)}`;
+      },
     },
     {
       key: "stock",
       label: "Stock",
-      renderCell: (item) => item.stock ?? "N/A",
+      renderCell: (item) => item.stock || "N/A",
     },
     {
       key: "orderNumber",
       label: "Order No.",
-      renderCell: (item) => item.orderNumber ?? "N/A",
+      renderCell: (item) => item.orderNumber || "N/A",
     },
     {
       key: "createdAt",
@@ -219,7 +225,15 @@ function ProductList() {
             size="sm"
             color="primary"
             variant="flat"
-            onPress={() => handleEditProduct(item)}
+            onPress={() => handleEditProduct({
+              id: item.id,
+              name: item.name,
+              price: Number(item.price),
+              stock: item.stock ? Number(item.stock) : undefined,
+              orderNumber: item.orderNumber ? Number(item.orderNumber) : undefined,
+              createdAt: item.createdAt,
+              description: "", // or fetch description if available
+            })}
             disabled={isLoadingDelete}
           >
             Edit

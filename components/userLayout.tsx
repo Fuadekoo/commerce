@@ -62,7 +62,7 @@ function Sidebar({
   }[];
   isManager?: boolean;
 }) {
-  const pathname = usePathname(),
+  const pathname = usePathname() ?? "",
     [, lang, role, selected] = pathname.split("/");
 
   return (
@@ -183,7 +183,7 @@ function Header({
 }
 
 function User({ sidebar }: { sidebar: boolean }) {
-  const pathname = usePathname(),
+  const pathname = usePathname() ?? "",
     [, lang] = pathname.split("/"),
     [data] = useAction(getUser, [true, () => {}]);
 

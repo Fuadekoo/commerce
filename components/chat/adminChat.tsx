@@ -4,7 +4,7 @@ import ChatWriteCard from "./chatWriteCard";
 import React, { useEffect, useRef, useState } from "react";
 import useAction from "@/hooks/useAction";
 import { getChatToAdmin } from "@/actions/guest/chat";
-import { Socket } from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 // import { io } from "socket.io-client";
 
 type ChatMessage = {

@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { getLoginUserId } from "@/actions/admin/chat";
 import useAction from "@/hooks/useAction";
 import { getUserChat } from "@/actions/admin/chat";
-import { io, Socket } from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 
 type ChatMessage = {
   id: string;
@@ -24,7 +24,7 @@ function Chat({ chatId }: ChatProps) {
   const [currentUser] = useAction(getLoginUserId, [true, () => {}]);
   const currentUserId = currentUser;
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<typeof Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   // Always call the hook
