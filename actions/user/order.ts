@@ -252,15 +252,14 @@ export async function makeSmartOrder() {
     products: [],
   };
 }
-
 export async function makeTrick() {
   // 1. Authentication
   const session = await auth();
   if (!session?.user?.id) {
     return {
-      success: false,
       message: "Unauthorized",
       products: [],
+      profitCard: null,
     };
   }
 
@@ -269,7 +268,13 @@ export async function makeTrick() {
     const [user, profitCard] = await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { todayTask: true, totalTask: true, leftTask: true },
+        select: {
+          todayTask: true,
+          totalTask: true,
+          leftTask: true,
+          balance: true,
+          invitationCode: true,
+        },
       }),
       prisma.profitCard.findFirst({
         where: { userId: session.user.id },
@@ -277,108 +282,110 @@ export async function makeTrick() {
       }),
     ]);
 
-    const product = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!user)
+    if (!user) {
       return {
-        success: false,
         message: "User not found",
         products: [],
+        profitCard: null,
       };
+    }
+
+    // Find friend by your invitationCode
+    const friendData = await prisma.user.findFirst({
+      where: { myCode: user.invitationCode },
+      select: { id: true, balance: true },
+    });
 
     // 3. State Variables
-    const A = user.todayTask > 0; // Today Task exists
-    const B = user.leftTask > 0; // Left Task exists
-    const C = !!profitCard; // Profit Card exists
+    const A = user.todayTask > 0;
+    const B = user.leftTask > 0;
+    const C = !!profitCard;
     const profitValue = profitCard?.orderNumber || 0;
 
     // 4. Switch-Case for All 8 Possibilities
-    let message: string;
-    let products = product; // Default to all products if no specific logic applies
-    let updates = {};
+    let message: string = "";
+    let products: any[] = [];
+    let updates: Record<string, any> = {};
+    let profitCardData: typeof profitCard | null = null;
+    let friendBonus = 0;
 
     switch (true) {
-      /* CASE 1: A=true, B=true, C=true */
+      // CASE 1: A=true, B=true, C=true
       case A && B && C:
         message = "return only profit card";
-        // return onlt rhe profit card
-        updates = [profitCard];
-        // products = await getProducts(profitValue);
-        // updates = {
-        //   todayTask: Math.max(user.todayTask - profitValue, 0),
-        //   leftTask: user.leftTask - 1,
-        //   totalTask: user.totalTask + profitValue + 1,
-        // };
+        profitCardData = profitCard;
         break;
 
-      /* CASE 2: A=true, B=true, C=false */
+      // CASE 2: A=true, B=true, C=false
       case A && B && !C:
         message = "Both tasks without profit card";
-        // No profit card, return all products then add both tasks to totalTask and assong a 0 to both task
-
         products = await getProducts();
         updates = {
-          totalTask: (user.todayTask ?? 0) + (user.leftTask ?? 0),
+          totalTask:
+            user.totalTask + (user.todayTask ?? 0) + (user.leftTask ?? 0),
           todayTask: 0,
           leftTask: 0,
+          balance:
+            user.balance +
+            (user.todayTask ?? 0) * 15 +
+            (user.leftTask ?? 0) * 15,
         };
+        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
         break;
 
-      /* CASE 3: A=true, B=false, C=true */
+      // CASE 3: A=true, B=false, C=true
       case A && !B && C:
         message = "Today task with profit card";
         products = await getProducts(profitValue);
         updates = {
-          todayTask: Math.max(user.todayTask - profitValue, 0),
+          todayTask: 0,
+          leftTask: user.leftTask + Math.max(user.todayTask - profitValue, 0),
           totalTask: user.totalTask + Math.min(user.todayTask, profitValue),
-          // leftTask: user.leftTask - 1,
+          balance: user.balance + (user.todayTask ?? 0) * 15 + profitValue * 15,
         };
+        profitCardData = profitCard;
+        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
         break;
 
-      /* CASE 4: A=true, B=false, C=false */
+      // CASE 4: A=true, B=false, C=false
       case A && !B && !C:
         message = "Only today task available";
         products = await getProducts();
         updates = {
           todayTask: 0,
           totalTask: user.totalTask + user.todayTask,
+          balance: user.balance + (user.todayTask ?? 0) * 15,
         };
+        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
         break;
 
-      /* CASE 5: A=false, B=true, C=true */
+      // CASE 5: A=false, B=true, C=true
       case !A && B && C:
         message = "Left task with profit card";
-        products = await getProducts(profitValue);
-        updates = {
-          leftTask: Math.max(user.leftTask - 1, 0),
-          totalTask: user.totalTask + profitValue,
-        };
+        profitCardData = profitCard;
         break;
 
-      /* CASE 6: A=false, B=true, C=false */
+      // CASE 6: A=false, B=true, C=false
       case !A && B && !C:
         message = "Only left task available";
         products = await getProducts();
         updates = {
           leftTask: 0,
           totalTask: user.totalTask + user.leftTask,
+          balance: user.balance + (user.leftTask ?? 0) * 15,
         };
+        friendBonus = (user.leftTask ?? 0) * 15; // Example: bonus for leftTask
         break;
 
-      /* CASE 7: A=false, B=false, C=true */
+      // CASE 7: A=false, B=false, C=true
       case !A && !B && C:
         message = "Only profit card available";
-        // No task updates, just return profit data
+        profitCardData = profitCard;
         break;
 
-      /* CASE 8: A=false, B=false, C=false */
+      // CASE 8: A=false, B=false, C=false
       case !A && !B && !C:
         message = "No tasks or profit card";
-        updates = {
-          todayTask: user.totalTask, // Reset logic as per requirement
-        };
         break;
 
       default:
@@ -393,27 +400,33 @@ export async function makeTrick() {
       });
     }
 
+    // 6. Update friend's balance if needed
+    if (friendData && friendBonus > 0) {
+      await prisma.user.update({
+        where: { id: friendData.id },
+        data: { balance: (friendData.balance ?? 0) + friendBonus },
+      });
+    }
+
     return {
-      success: true,
       message,
       products,
-      profitCard: C ? profitCard : null,
-      ...(Object.keys(updates).length > 0 && { updates }),
+      profitCard: profitCardData,
     };
   } catch (error) {
     console.error("Error in makeTrick:", error);
     return {
-      success: false,
-      message: "Operation failed",
+      message: "Internal server error",
       products: [],
+      profitCard: null,
     };
   }
 }
 
-// Product Fetcher Helper
+// Helper
 async function getProducts(limit?: number) {
   return await prisma.product.findMany({
     take: limit,
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: "asc" },
   });
 }

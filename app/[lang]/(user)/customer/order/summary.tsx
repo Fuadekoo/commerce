@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
-import { makeSmartOrder } from "@/actions/user/order";
+import {  makeTrick } from "@/actions/user/order";
 import { getProductStats } from "@/actions/user/product";
 import { getUser } from "@/actions/user/newUser";
 
 function Summary() {
   const [product, ,] = useAction(getProductStats, [true, () => {}]);
   const [user, ,] = useAction(getUser, [true, () => {}]);
-  const [orderResponse, orderAction, isOrdering] = useAction(makeSmartOrder, [
+  const [orderResponse, orderAction, isOrdering] = useAction(makeTrick, [
     ,
     (response) => {
       if (response) {

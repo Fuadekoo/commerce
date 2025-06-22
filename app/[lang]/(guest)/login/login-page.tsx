@@ -92,12 +92,12 @@ function LoginPage() {
           </div>
           <div className="mt-2 text-center">
             <span className="text-gray-500 text-sm">
-              If any problem in the system, please{" "}
+              If you have any problem in the system, please{" "}
               <Link
                 href="/en/contact"
                 className="text-blue-600 font-semibold hover:underline"
               >
-                contact assistance
+                Contact Us
               </Link>
               .
             </span>
