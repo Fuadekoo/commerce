@@ -71,14 +71,14 @@ app.prepare().then(async () => {
           });
         }
         // (Optional) Emit to sender for confirmation (self: true)
-        socket.emit("msg", {
-          id: chat.id,
-          fromUserId: socket.data.id,
-          toUserId: user.id,
-          msg: chat.msg,
-          createdAt: chat.createdAt,
-          self: true,
-        });
+        // socket.emit("msg", {
+        //   id: chat.id,
+        //   fromUserId: socket.data.id,
+        //   toUserId: user.id,
+        //   msg: chat.msg,
+        //   createdAt: chat.createdAt,
+        //   self: true,
+        // });
       }
     });
 

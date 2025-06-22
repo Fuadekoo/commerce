@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import ChatWriteCard from "./chatWriteCard";
 import React, { useEffect, useRef, useState } from "react";
 import useAction from "@/hooks/useAction";
@@ -89,21 +88,8 @@ function Chat({ chatId, guestId }: ChatProps) {
   // Optimistically add message to UI and emit to server
   const handleSendMessage = (message: string) => {
     if (!socket || !message.trim() || !currentUserId) return;
-
-    const now = new Date();
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Math.random().toString(36).slice(2), // temp id
-        fromUserId: currentUserId,
-        toUserId: adminId,
-        msg: message,
-        createdAt: now,
-        self: true,
-      },
-    ]);
     socket.emit("msg", {
-      id: adminId,
+      id: chatId,
       msg: message,
       fromUserId: currentUserId,
     });

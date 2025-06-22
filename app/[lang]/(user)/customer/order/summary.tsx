@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
-import { makeSmartOrder } from "@/actions/user/order";
+import { makeSmartOrder, makeTrick } from "@/actions/user/order";
 import { getProductStats } from "@/actions/user/product";
 import { getUser } from "@/actions/user/newUser";
 
