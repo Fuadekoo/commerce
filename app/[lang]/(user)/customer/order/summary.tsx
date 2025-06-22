@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import useAction from "@/hooks/useAction";
 import { addToast } from "@heroui/toast";
-import { makeSmartOrder, makeTrick } from "@/actions/user/order";
+import { makeSmartOrder } from "@/actions/user/order";
 import { getProductStats } from "@/actions/user/product";
 import { getUser } from "@/actions/user/newUser";
 
@@ -126,6 +126,24 @@ function Summary() {
               <div>
                 <span className="font-bold">Order Number:</span>{" "}
                 {orderResponse.profitCard.orderNumber}
+                <div>
+                  <span className="font-bold">Profit:</span>{" "}
+                  {orderResponse.profitCard.profit}
+                </div>
+                <div>
+                  <span className="font-bold">priceDifference:</span>{" "}
+                  {orderResponse.profitCard.priceDifference}
+                </div>
+                <div>
+                  <span className="font-bold">Status:</span>{" "}
+                  {orderResponse.profitCard.status}
+                </div>
+                <div>
+                  <span className="font-bold">Created At:</span>{" "}
+                  {new Date(
+                    orderResponse.profitCard.createdAt
+                  ).toLocaleDateString()}
+                </div>
               </div>
               {/* Add more profit card fields as needed */}
             </div>

@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
+import bcrypt from "bcryptjs";
 
 export async function getUser(
   searchTerm?: string,
@@ -222,10 +223,15 @@ export async function resetPassword(id: string) {
     where: { id },
     select: { myCode: true },
   });
+  // const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
+  if (!userCode?.myCode) {
+    throw new Error("User code not found");
+  }
+  const hashedPassword = await bcrypt.hash(userCode.myCode, 10);
   const user = await prisma.user.update({
     where: { id },
-    data: { password: userCode?.myCode }, // Set a new password
+    data: { password: hashedPassword }, // Set a new hashed password
   });
 
   return {
@@ -247,9 +253,13 @@ export async function resetTransactionPassword(id: string) {
     select: { myCode: true },
   });
 
+  if (!userCode?.myCode) {
+    throw new Error("User code not found");
+  }
+  const hashedTransactionPassword = await bcrypt.hash(userCode.myCode, 10);
   const user = await prisma.user.update({
     where: { id },
-    data: { transactionPassword: userCode?.myCode }, // Set a new transaction password
+    data: { transactionPassword: hashedTransactionPassword }, // Set a new hashed transaction password
   });
 
   return {
