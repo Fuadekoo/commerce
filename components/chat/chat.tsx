@@ -6,6 +6,7 @@ import { getLoginUserId } from "@/actions/admin/chat";
 import useAction from "@/hooks/useAction";
 import { getUserChat } from "@/actions/admin/chat";
 import io, { Socket } from "socket.io-client";
+import Loading from "../loading";
 
 type ChatMessage = {
   id: string;
@@ -111,26 +112,19 @@ function Chat({ chatId }: ChatProps) {
   const loading = userLoading;
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="h-svh flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-blue-50 overflow-hidden">
         <div className="flex items-center gap-3 overflow-hidden">
-          <button className="md:hidden text-blue-500 text-xl font-bold px-2 overflow-hidden">
+          {/* Show back button only on mobile */}
+          <button
+            className="block md:hidden text-blue-500 text-xl font-bold px-2 overflow-hidden"
+            onClick={() => window.history.back()}
+            aria-label="Back"
+          >
             &lt;
           </button>
-          <Image
-            src="/ai.png"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="rounded-full object-cover border"
-          />
-          <div>
-            <div className="font-semibold text-gray-800">{/* User Name */}</div>
-            <div className="text-xs text-gray-500">Online</div>
-          </div>
         </div>
-        <button className="text-gray-400 hover:text-blue-500 text-xl">⋮</button>
       </div>
 
       {/* Messages */}
