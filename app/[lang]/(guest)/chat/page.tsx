@@ -35,7 +35,7 @@ function Page() {
   // Step 2: Show popup until guestId is set
   if (showPopup || !guestId) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-blur bg-opacity-40 z-50">
         <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm">
           <h2 className="text-lg font-bold mb-4">
             Enter your username to start chat
@@ -67,7 +67,7 @@ function Page() {
   if (!chatId) {
     return (
       <div className="overflow-hidden h-screen">
-        <h1>Contact Admin</h1>
+        {/* <h1>Contact Admin</h1> */}
         <main className="flex-1 overflow-hidden">
           <div className="h-full overflow-hidden">
             <AdminList onSelectChat={(adminId: string) => setChatId(adminId)} />
@@ -80,7 +80,7 @@ function Page() {
   // Step 4: Show Chat with chatId (admin) and guestId
   return (
     <div className="overflow-hidden h-screen">
-      <h1>Contact Admin</h1>
+      {/* <h1>Contact Admin</h1> */}
       <main className="flex-1 overflow-hidden">
         <div className="h-full overflow-hidden">
           <Chat chatId={chatId} guestId={guestId} />

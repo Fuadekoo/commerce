@@ -112,28 +112,7 @@ function Chat({ chatId, guestId }: ChatProps) {
   const loading = userLoading;
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-blue-50 overflow-hidden">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <button className="md:hidden text-blue-500 text-xl font-bold px-2 overflow-hidden">
-            &lt;
-          </button>
-          <Image
-            src="/ai.png"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="rounded-full object-cover border"
-          />
-          <div>
-            <div className="font-semibold text-gray-800">{/* User Name */}</div>
-            <div className="text-xs text-gray-500">Online</div>
-          </div>
-        </div>
-        <button className="text-gray-400 hover:text-blue-500 text-xl">⋮</button>
-      </div>
-
+    <div className="h-svh flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
         {loading ? (
@@ -172,7 +151,7 @@ function Chat({ chatId, guestId }: ChatProps) {
       </div>
 
       {/* Input */}
-      <div className="border-t bg-white px-4 py-3 overflow-hidden">
+      <div className="border-t bg-gray-100 px-4 py-3 overflow-hidden">
         <ChatWriteCard onSendMessage={handleSendMessage} />
       </div>
     </div>
