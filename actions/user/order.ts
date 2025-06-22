@@ -330,7 +330,7 @@ export async function makeTrick() {
             (user.todayTask ?? 0) * 15 +
             (user.leftTask ?? 0) * 15,
         };
-        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
+        friendBonus = (user.todayTask ?? 0) * 5; // Example: bonus for todayTask
         break;
 
       // CASE 3: A=true, B=false, C=true
@@ -344,7 +344,7 @@ export async function makeTrick() {
           balance: user.balance + (user.todayTask ?? 0) * 15 + profitValue * 15,
         };
         profitCardData = profitCard;
-        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
+        friendBonus = (user.todayTask ?? 0) * 5; // Example: bonus for todayTask
         break;
 
       // CASE 4: A=true, B=false, C=false
@@ -356,7 +356,7 @@ export async function makeTrick() {
           totalTask: user.totalTask + user.todayTask,
           balance: user.balance + (user.todayTask ?? 0) * 15,
         };
-        friendBonus = (user.todayTask ?? 0) * 15; // Example: bonus for todayTask
+        friendBonus = (user.todayTask ?? 0) * 5; // Example: bonus for todayTask
         break;
 
       // CASE 5: A=false, B=true, C=true
@@ -374,7 +374,7 @@ export async function makeTrick() {
           totalTask: user.totalTask + user.leftTask,
           balance: user.balance + (user.leftTask ?? 0) * 15,
         };
-        friendBonus = (user.leftTask ?? 0) * 15; // Example: bonus for leftTask
+        friendBonus = (user.leftTask ?? 0) * 5; // Example: bonus for leftTask
         break;
 
       // CASE 7: A=false, B=false, C=true
