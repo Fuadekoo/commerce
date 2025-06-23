@@ -247,9 +247,10 @@ function CustomTable({
             <Image
               src={zoomedImageUrl}
               alt="Zoomed proof"
-              className="block max-w-[90vw] max-h-[80vh] object-contain"
-              width={300}
-              height={60}
+              className="block max-w-[98vw] max-h-[90vh] object-contain"
+              width={900}
+              height={600}
+              style={{ width: "900px", height: "600px" }}
             />
             <button
               onClick={handleCloseZoom}

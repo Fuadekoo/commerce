@@ -40,3 +40,17 @@ export async function dashboard() {
 
   return { user: userWithNumberBalance, totalInvited };
 }
+
+export async function productsData() {
+  const products = await prisma.product.findMany({
+    select: {
+      name: true,
+      price: true,
+      stock: true,
+    },
+  });
+  return products.map((product) => ({
+    ...product,
+    price: Number(product.price), // Convert Decimal to number
+  }));
+}

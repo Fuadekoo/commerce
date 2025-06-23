@@ -12,13 +12,16 @@ import {
 } from "recharts";
 
 const data = [
-  { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-  { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-  { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-  { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-  { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-  { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-  { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
+  { name: "Shampoo", uv: 4000, pv: 2400, amt: 2400 },
+  { name: "Soap", uv: 3000, pv: 1398, amt: 2210 },
+  { name: "Detergent", uv: 2000, pv: 9800, amt: 2290 },
+  { name: "Clothes", uv: 2780, pv: 3908, amt: 2000 },
+  { name: "Trousers", uv: 1890, pv: 4800, amt: 2181 },
+  { name: "Toothpaste", uv: 2390, pv: 3800, amt: 2500 },
+  { name: "Toothbrush", uv: 3490, pv: 4300, amt: 2100 },
+  { name: "Face Wash", uv: 2200, pv: 3200, amt: 1800 },
+  { name: "Body Lotion", uv: 1800, pv: 2100, amt: 1700 },
+  { name: "Hand Sanitizer", uv: 2600, pv: 3300, amt: 2000 },
 ];
 
 export default function CustomerStat() {
