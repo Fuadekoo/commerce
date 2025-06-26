@@ -12,7 +12,7 @@ import { addToast } from "@heroui/toast";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Loader2 } from "lucide-react"; // For loading state
-import Image from "next/image";
+// import Image from "next/image";
 
 // Define a type for the company account data for clarity
 // interface CompanyAccount {
@@ -307,7 +307,7 @@ function Deposit({ onDepositSuccess }: DepositProps) {
                     <span className="text-xs text-gray-500 block text-center mb-1">
                       Preview
                     </span>
-                    <Image
+                    <img
                       // Assuming the backend expects raw base64, but for display, you need a data URL.
                       // The backend code snippet implies it can handle raw base64 OR data URL.
                       // If photoValue is raw base64, you need to prepend the data URL scheme for the <img> src.

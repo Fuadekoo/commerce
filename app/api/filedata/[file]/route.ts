@@ -33,8 +33,8 @@ export async function GET(
   { params }: { params: Promise<{ file: string }> }
 ) {
   const filename = (await params).file;
-  console.log(filename);
-  return Response.json({ ak: "ak" });
+  // console.log(filename);
+  // return Response.json({ ak: "ak" });
 
   if (!filename) {
     return new Response(JSON.stringify({ error: "Filename is required" }), {
@@ -84,12 +84,9 @@ export async function GET(
       });
     }
     console.error("Error serving file:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
