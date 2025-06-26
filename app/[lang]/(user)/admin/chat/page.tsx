@@ -12,7 +12,7 @@ function Page() {
   };
 
   return (
-    <div className="overflow-hidden h-screen">
+    <div className="overflow-hidden h-svh">
       <main className="flex-1 overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-[400px_1fr] gap-0 h-svh overflow-hidden">
           <div

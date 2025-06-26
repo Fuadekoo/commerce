@@ -28,6 +28,7 @@ export class CustomError extends CredentialsSignin {
 }
 
 const authConfig = {
+  trustHost: true,
   pages: {
     signIn: "/signin",
     signOut: "/signout",

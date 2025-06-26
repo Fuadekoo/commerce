@@ -157,7 +157,7 @@ function Header({
         <AlignLeft className="size-7" />
       </Button>
       <div className="flex-1 text-foreground-500/80 text-sm">
-        My Invitation code: {data && data.user?.myCode}
+        My Invitation: {data && data.user?.myCode}
       </div>
       {/* <Theme /> */}
       <button
@@ -178,6 +178,7 @@ function Header({
       >
         <ShareIcon />
       </button>
+      <User sidebar={true} />
     </header>
   );
 }
@@ -195,7 +196,7 @@ function User({ sidebar }: { sidebar: boolean }) {
           color="primary"
           variant="flat"
           className={cn(
-            "w-full h-fit inline-flex gap-5 justify-start",
+            "w-auto h-fit inline-flex gap-5 justify-start",
             sidebar ? "md:px-4 md:py-1" : ""
           )}
         >
@@ -206,7 +207,7 @@ function User({ sidebar }: { sidebar: boolean }) {
             height={100}
             className="size-10"
           />
-          {sidebar && (
+          {/* {sidebar && (
             <p className="px-4 grid justify-start">
               <span className="text-medium overflow-hidden whitespace-nowrap ">
                 {data?.user?.username ?? "User"}
@@ -215,7 +216,7 @@ function User({ sidebar }: { sidebar: boolean }) {
                 {data?.user?.myCode ?? ""}
               </span>
             </p>
-          )}
+          )} */}
         </Button>
       </DropdownTrigger>
       <DropdownMenu color="primary" variant="flat">

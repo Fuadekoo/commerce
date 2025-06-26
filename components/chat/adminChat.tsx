@@ -87,11 +87,27 @@ function Chat({ chatId, guestId }: ChatProps) {
 
   // Optimistically add message to UI and emit to server
   const handleSendMessage = (message: string) => {
-    if (!socket || !message.trim() || !currentUserId) return;
+    if (!socket || !message.trim() || !currentUserId || !chatId) return;
+
+    // Optimistically add the message to the UI
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Math.random().toString(36).slice(2), // Temporary id
+        fromUserId: currentUserId,
+        toUserId: chatId,
+        msg: message,
+        createdAt: new Date(),
+        self: true,
+      },
+    ]);
+
+    // Emit to server
     socket.emit("msg", {
       id: chatId,
       msg: message,
       fromUserId: currentUserId,
+      toUserId: chatId,
     });
   };
 
