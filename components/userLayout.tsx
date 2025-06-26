@@ -164,7 +164,7 @@ function Header({
         className="text-primary-500"
         onClick={async () => {
           if (data && data.user?.myCode) {
-            const url = `http://localhost:3000/en/signup?invitationCode=${data.user.myCode}`;
+            const url = `${process.env.NEXT_PUBLIC_BASE_URL}/en/signup?invitationCode=${data.user.myCode}`;
             await navigator.clipboard.writeText(url);
             addToast({
               title: "Copied!",
