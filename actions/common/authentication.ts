@@ -45,7 +45,7 @@ export async function authenticate(
 export async function logout() {
   try {
     await signOut({ redirect: false });
-    redirect("/en/guest/login");
+    redirect("/en/login");
     return { message: "Logout successful", status: true };
   } catch (error) {
     console.error("Logout failed:", error);

@@ -19,6 +19,7 @@ import { getUser } from "../actions/user/newUser"; // Adjust the import path as 
 import Image from "next/image";
 // import { div } from "framer-motion/client";
 import { addToast } from "@heroui/toast";
+import { logout } from "@/actions/common/authentication"; // Add this import
 
 export default function UserLayout({
   children,
@@ -224,7 +225,10 @@ function User({ sidebar }: { sidebar: boolean }) {
           key={"signout"}
           startContent={<DoorOpen className="size-4" />}
           color="danger"
-          onClick={() => signOut({ callbackUrl: `/${lang}/login` })}
+          onClick={async () => {
+            await logout();
+            window.location.href = `/${lang}/login`;
+          }}
         >
           Sign Out
         </DropdownItem>

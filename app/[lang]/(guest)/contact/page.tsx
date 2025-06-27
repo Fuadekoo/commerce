@@ -55,6 +55,7 @@ function Page() {
         </h1>
         <Input
           {...register("username")}
+          placeholder="enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required

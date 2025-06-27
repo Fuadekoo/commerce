@@ -1,15 +1,15 @@
 "use client";
 import { useEffect } from "react";
 import { redirect, useRouter } from "next/navigation";
+import LoginPage from "./[lang]/(guest)/login/login-page";
 
-function Home() {
+export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
     redirect("/en/login");
   }, [router]);
 
-  return null;
+  return <LoginPage />;
 }
 
-export default Home;

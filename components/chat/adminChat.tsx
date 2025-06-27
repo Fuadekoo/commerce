@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import useAction from "@/hooks/useAction";
 import { getChatToAdmin } from "@/actions/guest/chat";
 import io, { Socket } from "socket.io-client";
-// import { io } from "socket.io-client";
+import { ChevronLeft } from "lucide-react";
 
 type ChatMessage = {
   id: string;
@@ -18,9 +18,10 @@ type ChatMessage = {
 type ChatProps = {
   chatId: string; // admin user id
   guestId: string; // guest user id
+  onBack?: () => void; // <-- Add this prop for back button
 };
 
-function Chat({ chatId, guestId }: ChatProps) {
+function Chat({ chatId, guestId, onBack }: ChatProps) {
   const currentUserId = guestId;
   const adminId = chatId;
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -114,9 +115,26 @@ function Chat({ chatId, guestId }: ChatProps) {
   const loading = userLoading;
 
   return (
-    <div className="h-svh flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="h-svh w-svw p-5 flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
+      {/* Fixed Header */}
+      <header className="flex items-center gap-2 px-4 py-3 border-b sticky top-0 bg-white z-10">
+        <button
+          onClick={() => {
+            if (onBack) {
+              onBack();
+            } else {
+              window.location.href = "/en/login";
+            }
+          }}
+          className="p-2 rounded-full hover:bg-gray-100 transition"
+          aria-label="Back"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <span className="font-semibold text-lg">Chat</span>
+      </header>
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 ">
         {loading ? (
           <div className="text-center text-gray-400">Loading...</div>
         ) : messages.length > 0 ? (

@@ -36,9 +36,6 @@ function UserList({ onSelectChat }: UserListProps) {
             >
               <div>
                 <p className="font-semibold">{chat.username}</p>
-                <p className="text-sm text-gray-500">
-                  {chat.phone || "No recent messages"}
-                </p>
               </div>
               <span className="text-xs text-gray-400">{chat.socket}</span>
             </div>

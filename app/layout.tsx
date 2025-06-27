@@ -14,8 +14,8 @@ import "./globals.css";
 // });
 
 export const metadata: Metadata = {
-  title: "commerce system",
-  description: "commerce system for best users",
+  title: "Walmart",
+  description: "Walmart ecommerce system",
 };
 
 export default function RootLayout({

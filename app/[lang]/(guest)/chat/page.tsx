@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Chat from "@/components/chat/adminChat";
 import AdminList from "@/components/chat/adminList";
 import { getUserByUsername } from "@/actions/admin/chat";
+import { Button, Input, Card } from "@heroui/react";
 
 function Page() {
   const [showPopup, setShowPopup] = useState(true);
@@ -35,30 +36,34 @@ function Page() {
   // Step 2: Show popup until guestId is set
   if (showPopup || !guestId) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-blur bg-opacity-40 z-50">
-        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm">
-          <h2 className="text-lg font-bold mb-4">
-            Enter your username to start chat
+      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 bg-opacity-70 z-50">
+        <Card className="w-full max-w-sm p-8 shadow-xl border border-blue-200">
+          <h2 className="text-xl font-bold mb-4 text-blue-700 text-center">
+            Start a Chat
           </h2>
-          <input
-            className="w-full border rounded px-3 py-2 mb-2"
-            placeholder="Username"
+          <Input
+            className="mb-2"
+            placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleStartChat();
             }}
+            color={inputError ? "danger" : "primary"}
+            variant="bordered"
           />
           {inputError && (
-            <div className="text-red-500 text-sm mb-2">{inputError}</div>
+            <div className="text-danger-500 text-sm mb-2">{inputError}</div>
           )}
-          <button
-            className="w-full bg-blue-500 text-white rounded py-2 font-semibold"
+          <Button
+            color="primary"
+            className="w-full font-semibold"
             onClick={handleStartChat}
+            size="lg"
           >
             Start Chat
-          </button>
-        </div>
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -66,10 +71,12 @@ function Page() {
   // Step 3: If no admin selected, show AdminList
   if (!chatId) {
     return (
-      <div className="overflow-hidden h-screen">
-        {/* <h1>Contact Admin</h1> */}
-        <main className="flex-1 overflow-hidden">
-          <div className="h-full overflow-hidden">
+      <div className="bg-gradient-to-br from-blue-50 via-white to-green-50 min-h-screen">
+        <main className="flex-1 p-5 flex flex-col items-center">
+          <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 mt-10">
+            <h1 className="text-2xl font-bold text-blue-700 mb-4 text-center">
+              Contact Admin
+            </h1>
             <AdminList onSelectChat={(adminId: string) => setChatId(adminId)} />
           </div>
         </main>
@@ -79,10 +86,9 @@ function Page() {
 
   // Step 4: Show Chat with chatId (admin) and guestId
   return (
-    <div className="overflow-hidden h-screen">
-      {/* <h1>Contact Admin</h1> */}
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full overflow-hidden">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-green-50 min-h-screen">
+      <main className="flex-1 flex flex-col items-center">
+        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-4 mt-10">
           <Chat chatId={chatId} guestId={guestId} />
         </div>
       </main>

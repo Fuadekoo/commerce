@@ -5,6 +5,7 @@ import { getLoginUserId } from "@/actions/admin/chat";
 import useAction from "@/hooks/useAction";
 import { getUserChat } from "@/actions/admin/chat";
 import io, { Socket } from "socket.io-client";
+import { ChevronLeft } from "lucide-react";
 
 type ChatMessage = {
   id: string;
@@ -85,7 +86,6 @@ function Chat({ chatId }: ChatProps) {
   }, [messages]);
 
   // Optimistically add message to UI and emit to server
-  // Optimistically add message to UI and emit to server
   const handleSendMessage = (message: string) => {
     if (!socket || !message.trim() || !currentUserId || !chatId) return;
 
@@ -114,25 +114,23 @@ function Chat({ chatId }: ChatProps) {
   const loading = userLoading;
 
   return (
-    <div className="h-svh flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="h-[100svh] w-full max-w-lg mx-auto flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-blue-50 overflow-hidden">
-        <div className="flex items-center gap-3 overflow-hidden">
-          {/* Show back button only on mobile */}
-          <button
-            className="block md:hidden text-blue-500 text-xl font-bold px-2 overflow-hidden"
-            onClick={() => window.history.back()}
-            aria-label="Back"
-          >
-            &lt;
-          </button>
-        </div>
-      </div>
+      <header className="flex items-center gap-2 px-4 py-3 border-b bg-blue-600 sticky top-0 z-10">
+        <button
+          className="p-2 rounded-full hover:bg-blue-700 transition text-white"
+          onClick={() => window.history.back()}
+          aria-label="Back"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <span className="font-semibold text-lg text-white">Chat</span>
+      </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-blue-50">
         {loading ? (
-          <div className="text-center text-gray-400">Loading...</div>
+          <div className="text-center text-blue-400">Loading...</div>
         ) : messages.length > 0 ? (
           messages.map((msg) => (
             <div
@@ -161,13 +159,13 @@ function Chat({ chatId }: ChatProps) {
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-400">No messages yet.</div>
+          <div className="text-center text-blue-400">No messages yet.</div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div className="border-t bg-white px-4 py-3 overflow-hidden">
+      <div className="border-t bg-white px-4 py-3">
         <ChatWriteCard onSendMessage={handleSendMessage} />
       </div>
     </div>
