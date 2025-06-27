@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@heroui/button";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 import {
   cn,
   Dropdown,
@@ -127,7 +127,7 @@ function Sidebar({
         </div>
         <div className="p-5 max-xl:lg:p-2 grid gap-2 overflow-hidden">
           {/* {isManager && <SelectedTerm />} */}
-          <User sidebar={sidebar} />
+          {/* <User sidebar={sidebar} /> */}
         </div>
       </div>
       <div
