@@ -95,6 +95,7 @@ model product {
   id          String   @id @default(cuid())
   name        String
   price       Decimal
+  photo       String?
   stock       Int      @default(0)
   orderNumber Int      @unique
   createdAt   DateTime @default(now())

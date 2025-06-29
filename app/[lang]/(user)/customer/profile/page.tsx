@@ -1,91 +1,78 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { User, DollarSign, Users, Gift, Phone, Pen } from "lucide-react";
+import { User, Phone } from "lucide-react";
+import useAction from "@/hooks/useAction";
+import { viewProfile } from "@/actions/common/profile";
+import Loading from "@/components/loading";
 
 function Page() {
-  // Sample user data
-  const user = {
-    name: "Shane",
-    phone: "+1 234 567 890",
-    email: "shane.sine@gmail.com",
-    balance: 1250.75,
-    invitedUsers: 8,
-    commission: 320.5,
-  };
+  const [user, , isLoadingUser] = useAction(viewProfile, [true, () => {}]);
+  // const [showModal, setShowModal] = useState(false);
+
+  // const { register, handleSubmit, reset } = useForm({
+  //   resolver: zodResolver(updateProfileSchema),
+  // });
+
+  // const [updateResponse, updateAction, isLoadingUpdate] = useAction(
+  //   profileUpdate,
+  //   [, () => {}]
+  // );
+
+  // const openModal = () => setShowModal(true);
+
+  if (isLoadingUser) {
+    // You can use your own Loading component or a skeleton here
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-1 px-1 overflow-auto">
-      <div className="max-w-3xl mx-auto rounded-2xl shadow-xl p-4 flex flex-col gap-8 items-center">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-8 px-2 md:px-4 overflow-auto">
+      <div className="max-w-2xl mx-auto rounded-2xl shadow-xl p-6 md:p-10 flex flex-col gap-8 items-center bg-white">
         {/* Profile Picture */}
         <div className="flex flex-col items-center gap-3 w-full">
           <div className="relative">
             <Image
               src="/profile.jpg"
-              width={96}
-              height={96}
+              width={120}
+              height={120}
               priority
               alt="Profile"
-              className="w-24 h-24 rounded-full border-4 border-green-400 shadow-lg ring-4 ring-green-100 object-cover"
+              className="w-32 h-32 rounded-full border-4 border-gray-400 shadow-lg ring-4 ring-green-100 object-cover"
             />
-            <span className="absolute bottom-2 right-2 bg-green-500 rounded-full p-1 border-2 border-white">
-              <User className="w-4 h-4 text-white" />
+            <span className="absolute bottom-2 right-2 bg-black rounded-full p-1 border-2 border-white">
+              <User className="w-5 h-5 text-white" />
             </span>
           </div>
+          <h1 className="text-2xl font-bold mt-2 text-center">Profile</h1>
         </div>
-        {/* Combined Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <DollarSign className="w-6 h-6 text-green-500 mb-1" />
-            <p className="text-lg font-bold text-green-700">
-              ${user.balance.toLocaleString()}
-            </p>
-            <p className="text-gray-500 text-xs mt-1">Balance</p>
+        {/* User Info */}
+        <div className="w-full flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row md:items-center md:gap-8">
+            <div className="flex-1 flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-600">Name</label>
+              <div className="text-lg font-semibold text-gray-800 bg-gray-50 rounded px-3 py-2">
+                {user?.username || "-"}
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col gap-2 mt-4 md:mt-0">
+              <label className="text-sm font-medium text-gray-600">Phone</label>
+              <div className="flex items-center gap-2 text-lg font-semibold text-gray-800 bg-gray-50 rounded px-3 py-2">
+                <Phone className="w-4 h-4 text-gray-400" />
+                {user?.phone || "-"}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <Users className="w-6 h-6 text-blue-500 mb-1" />
-            <p className="text-lg font-bold text-blue-700">
-              {user.invitedUsers}
-            </p>
-            <p className="text-gray-500 text-xs mt-1">Invited</p>
+          <div className="flex flex-col gap-2 mt-4">
+            <label className="text-sm font-medium text-gray-600">Email</label>
+            <div className="text-base text-gray-700 bg-gray-50 rounded px-3 py-2">
+              {user?.email || "-"}
+            </div>
           </div>
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <Gift className="w-6 h-6 text-orange-500 mb-1" />
-            <p className="text-lg font-bold text-orange-600">
-              ${user.commission.toLocaleString()}
-            </p>
-            <p className="text-gray-500 text-xs mt-1">Commission</p>
-          </div>
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <DollarSign className="w-6 h-6 text-green-400 mb-1" />
-            <p className="text-lg font-bold text-green-700">$120.50</p>
-            <p className="text-gray-500 text-xs mt-1">Today Profit</p>
-          </div>
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <DollarSign className="w-6 h-6 text-blue-400 mb-1" />
-            <p className="text-lg font-bold text-blue-700">$850.00</p>
-            <p className="text-gray-500 text-xs mt-1">Week Profit</p>
-          </div>
-          <div className="flex flex-col items-center bg-white rounded-xl shadow p-3">
-            <DollarSign className="w-6 h-6 text-orange-400 mb-1" />
-            <p className="text-lg font-bold text-orange-600">$3,200.00</p>
-            <p className="text-gray-500 text-xs mt-1">Month Profit</p>
-          </div>
-        </div>
-        {/* Profile Info */}
-        <div className="w-full flex flex-col items-center">
-          <button className="px-2 py-0 hover:bg-green-600 text-gray-700 rounded-lg font-semibold flex items-center gap-2 shadow transition mb-2">
-            <Pen className="w-5 h-5" />
-            Update
-          </button>
-          <h2 className="text-2xl font-extrabold text-gray-800 mb-1">
-            {user.name}
-          </h2>
-          <div className="flex items-center gap-2 text-gray-500 text-base">
-            <Phone className="w-4 h-4" />
-            <span>{user.phone}</span>
-          </div>
-          <p className="text-gray-400 text-sm">{user.email}</p>
         </div>
       </div>
     </div>

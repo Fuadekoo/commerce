@@ -22,6 +22,7 @@ interface ProductItem {
   name: string;
   description?: string;
   price: number;
+  photo?: string | File; // Assuming photo can be a URL or a File object
   stock?: number;
   orderNumber?: number;
   // image?: string;
@@ -169,7 +170,10 @@ function ProductList() {
 
   const rows = (productData?.data || []).map((product) => ({
     ...Object.fromEntries(
-      Object.entries(product).map(([k, v]) => [k, v === undefined || v === null ? "" : v.toString()])
+      Object.entries(product).map(([k, v]) => [
+        k,
+        v === undefined || v === null ? "" : v.toString(),
+      ])
     ),
     key: product.id?.toString(),
     id: product.id?.toString(),
@@ -205,6 +209,7 @@ function ProductList() {
       label: "Stock",
       renderCell: (item) => item.stock || "N/A",
     },
+    { key: "photo", label: "Photo" },
     {
       key: "orderNumber",
       label: "Order No.",
@@ -225,15 +230,19 @@ function ProductList() {
             size="sm"
             color="primary"
             variant="flat"
-            onPress={() => handleEditProduct({
-              id: item.id,
-              name: item.name,
-              price: Number(item.price),
-              stock: item.stock ? Number(item.stock) : undefined,
-              orderNumber: item.orderNumber ? Number(item.orderNumber) : undefined,
-              createdAt: item.createdAt,
-              description: "", // or fetch description if available
-            })}
+            onPress={() =>
+              handleEditProduct({
+                id: item.id,
+                name: item.name,
+                price: Number(item.price),
+                stock: item.stock ? Number(item.stock) : undefined,
+                orderNumber: item.orderNumber
+                  ? Number(item.orderNumber)
+                  : undefined,
+                createdAt: item.createdAt,
+                description: "", // or fetch description if available
+              })
+            }
             disabled={isLoadingDelete}
           >
             Edit

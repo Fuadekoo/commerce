@@ -14,5 +14,5 @@ export default async function Layout({
   }
 
   // Optionally render children if you want to allow access
-  return <div className="overflow-hidden">{children}</div>;
+  return <div className="overflow-hidden h-svh">{children}</div>;
 }

@@ -10,6 +10,7 @@ import {
   resetTransactionPassword,
   blockUser,
   unblockUser,
+  updateBalance,
 } from "@/actions/admin/user";
 import { Lock, Unlock } from "lucide-react";
 import {
@@ -24,7 +25,6 @@ import { addToast } from "@heroui/toast";
 interface ColumnDef {
   key: string;
   label: string;
-
   renderCell?: (
     item: Record<string, string> & {
       key?: string | number;
@@ -61,16 +61,31 @@ function CustomerPage() {
 
   const [, setIsAnyModalOpen] = useState(false);
 
+  // Balance modal state
+  const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
+  const [currentBalanceItemId, setCurrentBalanceItemId] = useState<
+    string | null
+  >(null);
+  const [balanceInput, setBalanceInput] = useState("");
+
   useEffect(() => {
     setIsAnyModalOpen(
-      isRemarkModalOpen || isOrderModalOpen || isProfitModalOpen
+      isRemarkModalOpen ||
+        isOrderModalOpen ||
+        isProfitModalOpen ||
+        isBalanceModalOpen
     );
-  }, [isRemarkModalOpen, isOrderModalOpen, isProfitModalOpen]);
+  }, [
+    isRemarkModalOpen,
+    isOrderModalOpen,
+    isProfitModalOpen,
+    isBalanceModalOpen,
+  ]);
 
   const [data, refresh, isLoading] = useAction(
     getUser,
     [true, () => {}],
-    search, // Pass search, page, pageSize directly as per useAction typical usage
+    search,
     page,
     pageSize
   );
@@ -82,14 +97,10 @@ function CustomerPage() {
         addToast({
           title: "Block User",
           description: response.message,
-          // status: response.error ? "error" : "success",
         });
       } else {
-        // This case might not be hit if your action always returns a response object
         addToast({
-          // title: "Block User",
           description: "User status updated.",
-          // status: "success",
         });
       }
       if (response) {
@@ -105,14 +116,11 @@ function CustomerPage() {
         addToast({
           title: "Unblock User",
           description: response.message,
-          // status: response.error ? "error" : "success",
         });
       } else {
-        // This case might not be hit if your action always returns a response object
         addToast({
           title: "Unblock User",
           description: "User status updated.",
-          // status: "success",
         });
       }
       if (response) {
@@ -130,16 +138,38 @@ function CustomerPage() {
           addToast({
             title: "Reset Password",
             description: response.message,
-            // status: response.error ? "error" : "success",
           });
         } else {
           addToast({
             title: "Reset Password",
             description: "Password reset successfully!",
-            // status: "success",
           });
         }
         refresh();
+      },
+    ]
+  );
+
+  const [, executeUpdateBalance, isLoadingUpdateBalance] = useAction(
+    updateBalance,
+    [
+      ,
+      (response) => {
+        if (response) {
+          addToast({
+            title: "Update Balance",
+            description: response.message,
+          });
+        } else {
+          addToast({
+            title: "Update Balance",
+            description: "Balance updated successfully!",
+          });
+        }
+        refresh();
+        setIsBalanceModalOpen(false);
+        setCurrentBalanceItemId(null);
+        setBalanceInput("");
       },
     ]
   );
@@ -152,40 +182,17 @@ function CustomerPage() {
           addToast({
             title: "Reset Transaction Password",
             description: response.message,
-            // status: response.error ? "error" : "success",
           });
         } else {
           addToast({
             title: "Reset Transaction Password",
             description: "Transaction password reset successfully!",
-            // status: "success",
           });
         }
-        // Optionally call refresh() if this action should update table data
         refresh();
       },
     ]);
 
-  // --- Add Remark ---
-  // const onRemarkAddedOrFailed = (response: {
-  //   message: string;
-  //   user?: any;
-  //   error?: string;
-  // }) => {
-  //   if (response) {
-  //     if (response.error) {
-  //       alert(`Error: ${response.error}`); // TODO: Replace with toast
-  //     } else if (response.message) {
-  //       alert(response.message); // TODO: Replace with toast
-  //       if (response.user) {
-  //         refresh();
-  //         handleCloseRemarkModal();
-  //       }
-  //     }
-  //   } else {
-  //     alert("An unexpected response occurred while adding the remark."); // TODO: Replace with toast
-  //   }
-  // };
   const [, executeAddRemark, isLoadingRemark] = useAction(addRemarksUser, [
     ,
     (remarkResponse) => {
@@ -204,6 +211,36 @@ function CustomerPage() {
     },
   ]);
 
+  // Balance modal handlers
+  const openBalanceModal = (itemId: string) => {
+    setCurrentBalanceItemId(itemId);
+    setBalanceInput("");
+    setIsBalanceModalOpen(true);
+  };
+  const handleCloseBalanceModal = () => {
+    setIsBalanceModalOpen(false);
+    setCurrentBalanceItemId(null);
+    setBalanceInput("");
+  };
+  const handleSubmitBalance = async () => {
+    if (!currentBalanceItemId || balanceInput.trim() === "") {
+      addToast({
+        title: "Error",
+        description: "User ID and balance are required.",
+      });
+      return;
+    }
+    const balance = parseFloat(balanceInput);
+    if (isNaN(balance)) {
+      addToast({
+        title: "Error",
+        description: "Balance must be a valid number.",
+      });
+      return;
+    }
+    await executeUpdateBalance(currentBalanceItemId, balance);
+  };
+
   const openRemarkModal = (itemId: string) => {
     setCurrentRemarkItemId(itemId);
     setRemarkText("");
@@ -216,30 +253,15 @@ function CustomerPage() {
   };
   const handleSubmitRemark = async () => {
     if (!currentRemarkItemId || remarkText.trim() === "") {
-      alert("Item ID and remark text are required."); // TODO: Replace with toast
+      addToast({
+        title: "Error",
+        description: "Item ID and remark text are required.",
+      });
       return;
     }
     await executeAddRemark(currentRemarkItemId, remarkText);
   };
 
-  // --- Set Order (Set Task) ---
-  // const onSetTaskCompleted = (response: {
-  //   message: string;
-  //   todayTask?: number;
-  //   error?: string;
-  // }) => {
-  //   if (response) {
-  //     if (response.error) {
-  //       alert(`Error setting task: ${response.error}`); // TODO: Replace with toast
-  //     } else if (response.message) {
-  //       alert(response.message); // TODO: Replace with toast
-  //       refresh();
-  //       handleCloseOrderModal();
-  //     }
-  //   } else {
-  //     alert("An unexpected response occurred while setting the task."); // TODO: Replace with toast
-  //   }
-  // };
   const [, executeSetTask, isLoadingSetTask] = useAction(setTask, [
     ,
     (taskResponse) => {
@@ -274,35 +296,23 @@ function CustomerPage() {
   };
   const handleSubmitOrder = async () => {
     if (!currentOrderItemId || orderNumberInput.trim() === "") {
-      alert("Item ID and order number are required."); // TODO: Replace with toast
+      addToast({
+        title: "Error",
+        description: "Item ID and order number are required.",
+      });
       return;
     }
     const orderNum = parseInt(orderNumberInput, 10);
     if (isNaN(orderNum)) {
-      alert("Order number must be a valid number."); // TODO: Replace with toast
+      addToast({
+        title: "Error",
+        description: "Order number must be a valid number.",
+      });
       return;
     }
     await executeSetTask(currentOrderItemId, orderNum);
   };
 
-  // --- Add Profit Card ---
-  // const onAddProfitCardCompleted = (response: {
-  //   message: string;
-  //   profitCard?: any;
-  //   error?: string;
-  // }) => {
-  //   if (response) {
-  //     if (response.error) {
-  //       alert(`Error adding profit card: ${response.error}`); // TODO: Replace with toast
-  //     } else if (response.message) {
-  //       alert(response.message); // TODO: Replace with toast
-  //       refresh();
-  //       handleCloseProfitModal();
-  //     }
-  //   } else {
-  //     alert("An unexpected response occurred while adding the profit card."); // TODO: Replace with toast
-  //   }
-  // };
   const [profitResponse, executeAddProfitCard, isLoadingAddProfitCard] =
     useAction(addprofitCard, [
       ,
@@ -346,7 +356,10 @@ function CustomerPage() {
       profitAmountInput.trim() === "" ||
       priceDifferenceInput.trim() === ""
     ) {
-      alert("All profit fields are required."); // TODO: Replace with toast
+      addToast({
+        title: "Error",
+        description: "All profit fields are required.",
+      });
       return;
     }
     const orderNum = parseInt(profitOrderNumberInput, 10);
@@ -354,9 +367,11 @@ function CustomerPage() {
     const priceDiff = parseFloat(priceDifferenceInput);
 
     if (isNaN(orderNum) || isNaN(profit) || isNaN(priceDiff)) {
-      alert(
-        "Order number, profit, and price difference must be valid numbers."
-      ); // TODO: Replace with toast
+      addToast({
+        title: "Error",
+        description:
+          "Order number, profit, and price difference must be valid numbers.",
+      });
       return;
     }
     await executeAddProfitCard(
@@ -396,7 +411,6 @@ function CustomerPage() {
     createdAt: user.createdAt
       ? new Date(user.createdAt).toLocaleDateString()
       : "N/A",
-    // Add any other fields as needed, ensuring all are strings
   }));
 
   const columns: ColumnDef[] = [
@@ -419,7 +433,6 @@ function CustomerPage() {
     { key: "balance", label: "Balance" },
     { key: "remarks", label: "Remarks" },
     { key: "createdAt", label: "Joined Date" },
-    // { key: "invitationCode", label: "Invitation Code" },
     { key: "myCode", label: "My Code" },
     {
       key: "isBlocked",
@@ -520,6 +533,18 @@ function CustomerPage() {
             }}
           >
             Add remark
+          </Button>
+          <Button
+            size="sm"
+            color="secondary"
+            variant="flat"
+            onPress={() => {
+              if (item.id !== undefined) {
+                openBalanceModal(String(item.id));
+              }
+            }}
+          >
+            Update Balance
           </Button>
         </div>
       ),
@@ -676,6 +701,40 @@ function CustomerPage() {
                 }
               >
                 {isLoadingAddProfitCard ? "Submitting..." : "Submit Profit"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Balance Modal */}
+      {isBalanceModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Update Balance</h2>
+            <input
+              type="number"
+              step="0.01"
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter new balance"
+              value={balanceInput}
+              onChange={(e) => setBalanceInput(e.target.value)}
+              disabled={isLoadingUpdateBalance}
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="ghost"
+                onPress={handleCloseBalanceModal}
+                disabled={isLoadingUpdateBalance}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                onPress={handleSubmitBalance}
+                disabled={isLoadingUpdateBalance || balanceInput.trim() === ""}
+              >
+                {isLoadingUpdateBalance ? "Updating..." : "Update Balance"}
               </Button>
             </div>
           </div>

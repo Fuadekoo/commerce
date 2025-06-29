@@ -33,7 +33,7 @@ export default async function Layout({
   const isManager = false;
 
   return (
-    <div className="overflow-hidden h-full w-full">
+    <div className="overflow-hidden h-svh w-svw">
       <UserLayout menu={menu} isManager={isManager}>
         {children}
       </UserLayout>

@@ -267,6 +267,19 @@ export async function resetTransactionPassword(id: string) {
   };
 }
 
+export async function updateBalance(userId: string, newBalance: number) {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { balance: newBalance },
+    });
+    return { message: "Balance updated successfully" };
+  } catch (error) {
+    console.error(error);
+    return { message: "Error updating balance" };
+  }
+}
+
 // export async function resetAllPassword() {
 //   const session = await auth();
 //   if (!session || !session.user || !session.user.id) {
